@@ -3,6 +3,8 @@ package com.unimag.edu.proyecto_final.domine.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -21,9 +23,8 @@ public class User {
     private Status status;
     private Integer phone;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "ticket_id", nullable = false)
-    private Ticket ticket;
+    @OneToMany( mappedBy = "user")
+    private Set<Ticket> tickets;
 
 
 }

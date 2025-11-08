@@ -3,6 +3,8 @@ package com.unimag.edu.proyecto_final.domine.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "tickets")
 @Getter
@@ -23,7 +25,10 @@ public class Ticket {
     private PaymentMethod paymentMethod;
     private Status status;
     // private qr qr;todo opcional, igualmente lo pongo por si lo hacemos, sino lo dejamos asi :)
+    @OneToMany(mappedBy = "ticket")
+    private Set<Baggage> baggages;
 
-
+    @OneToMany(mappedBy = "ticket")
+    private Set<Trip> trips;
 
 }
