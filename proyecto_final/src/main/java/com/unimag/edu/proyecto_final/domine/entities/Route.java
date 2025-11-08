@@ -1,8 +1,9 @@
 package com.unimag.edu.proyecto_final.domine.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "routes")
@@ -12,4 +13,23 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Route {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false, unique = true)
+    private String routeCode;
+    @Column(nullable = false)
+    private String routeName;
+    private String originName;
+    private String destinationName;
+    private Double distance;
+    private Double time;
+
+    @OneToMany(mappedBy = "route")
+    private Set<Stop> stops;
+    @OneToMany(mappedBy = "route")
+    private Set<Trip> trips;
+    @OneToMany(mappedBy = "route")
+    private Set<FareRule> fareRules;
+
 }

@@ -1,8 +1,10 @@
 package com.unimag.edu.proyecto_final.domine.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusBus;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "buses")
@@ -12,4 +14,17 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Bus {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(length = 7)
+    private String plate;
+    private Integer capacity;
+    @Column(columnDefinition = "TEXT")
+    private String amenities;
+    @Enumerated(EnumType.STRING)
+    private StatusBus status;
+
+    @OneToMany(mappedBy = "bus")
+    private Set<Trip> trips;
 }
