@@ -18,13 +18,13 @@ public class Assignment {
     private Integer id;
     @ManyToOne()
     @JoinColumn(name = "driver_id",nullable = false)
-    private User driverUser;
+    private User driver;
     @ManyToOne()
     @JoinColumn(name = "dispatcher_id",nullable = false)
     private User dispatcher;
     @ManyToOne()
     @JoinColumn(name = "trip_id")
     private Trip trip;
-    private String ChecklistOk;
+    private String checklistOk;
     private LocalDate assignedDate;
 }

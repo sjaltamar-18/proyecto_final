@@ -1,12 +1,13 @@
 package com.unimag.edu.proyecto_final.domine.repository;
 
+import com.unimag.edu.proyecto_final.domine.entities.Baggage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface Baggage extends JpaRepository<Baggage,Long> {
+public interface BaggageRepository extends JpaRepository<Baggage,Long> {
     // Buscar equipaje por ticket
     @Query("""
            SELECT b FROM Baggage b

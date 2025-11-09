@@ -19,7 +19,7 @@ public interface RouteRepository extends JpaRepository<Route,Long> {
            """)
     List<Route> searchByCity(@Param("city") String city);
 // busca ruta por código
-    Optional<Route>FindByCode(String code);
+    Optional<Route>findByRouteCode(String code);
 // validar existencia entre origen y destino exactos
     @Query("""
            SELECT r FROM Route r
@@ -29,7 +29,7 @@ public interface RouteRepository extends JpaRepository<Route,Long> {
     Optional<Route> findByOriginAndDestination(@Param("origin") String origin,
                                            @Param("destination") String destination);
 // lista todas las rutas con paradas
-    @EntityGraph(attributePaths = {"stops"})
+@Query("SELECT DISTINCT r FROM Route r LEFT JOIN FETCH r.stops")
     List<Route> findAllWithStops();
 // busca las rutas que tengan ciutdades en sus paradas
 

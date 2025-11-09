@@ -21,7 +21,7 @@ public class SeatHold {
     @ManyToOne()
     @JoinColumn(name = "trip_id",nullable = false)
     private Trip trip;
-    private int seatNumber;
+    private String seatNumber;
     private LocalDateTime expirationDate;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

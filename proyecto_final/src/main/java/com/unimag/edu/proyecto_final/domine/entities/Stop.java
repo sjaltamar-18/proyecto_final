@@ -20,7 +20,7 @@ public class Stop {
     @JoinColumn(name = "route_id", nullable = false)
     private Route route;
     private String stopName;
-    private Integer order;
+    private Integer stopOrder;
     private Double latitude;
     private Double longitude;
 

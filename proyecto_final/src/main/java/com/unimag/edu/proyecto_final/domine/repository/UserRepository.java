@@ -10,15 +10,21 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User,Long> {
-    @Override
-    Optional<User> findById(Long aLong);
+public interface UserRepository extends JpaRepository<User, Long> {
+
+
     Optional<User> findByEmail(String email);
 
+
     Optional<User> findByPhone(String phone);
+
+
     boolean existsByEmail(String email);
 
+
     List<User> findAllByRole(Role role);
+
+
     List<User> findByStatus(StatusUser status);
 
     @Query("SELECT COUNT(u) FROM User u WHERE u.role = :role")

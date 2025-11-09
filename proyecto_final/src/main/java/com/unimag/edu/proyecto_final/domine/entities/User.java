@@ -2,6 +2,7 @@ package com.unimag.edu.proyecto_final.domine.entities;
 
 import com.unimag.edu.proyecto_final.domine.entities.enumera.Role;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusTicket;
+import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusUser;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +17,6 @@ import java.util.Set;
 @Builder
 public class User {
 
-    // Phone, email(unico), status, Name, PasswordHash
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,9 +29,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
     @Enumerated(EnumType.STRING)
-    private StatusTicket status ;
+    private StatusUser status ;
 
-    @OneToMany( mappedBy = "user")
+    @OneToMany( mappedBy = "passenger")
     private Set<Ticket> tickets;
     @OneToMany(mappedBy = "user")
     private Set<SeatHold> seatHolds;

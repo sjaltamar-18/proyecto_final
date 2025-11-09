@@ -24,9 +24,9 @@ public interface FareRuleRepository extends JpaRepository<FareRule,Long> {
     @Query("""
            SELECT f FROM FareRule f
            WHERE f.route.id = :routeId
-           ORDER BY f.fromStop.order, f.toStop.order
+           ORDER BY f.fromStop.stopOrder, f.toStop.stopOrder
            """)
-    List<FareRule> findByRouteId(@Param("routeId") Long routeId);
+    List<FareRule> findByRoute_Id(@Param("routeId") Long routeId);
 
     // Buscar tarifas con precios dinámicos habilitados
     @Query("""
@@ -36,20 +36,20 @@ public interface FareRuleRepository extends JpaRepository<FareRule,Long> {
     List<FareRule> findDynamicPricingRules(@Param("routeId") Long routeId);
 
     // Buscar tarifas con descuentos configurados (niños, estudiante, etc.)
-    @Query("""
-           SELECT f FROM FareRule f
-           WHERE f.route.id = :routeId
-             AND JSON_LENGTH(f.discountPrice) > 0
-           """)
+    @Query(value = """
+   SELECT * FROM fare_rules f
+   WHERE f.route_id = :routeId
+     AND f.discount_price <> '{}'
+   """, nativeQuery = true)
     List<FareRule> findWithDiscounts(@Param("routeId") Long routeId);
 
     // Buscar todos los tramos válidos entre dos paradas de una ruta
     @Query("""
            SELECT f FROM FareRule f
            WHERE f.route.id = :routeId
-             AND f.fromStop.order >= :fromOrder
-             AND f.toStop.order <= :toOrder
-           ORDER BY f.fromStop.order
+             AND f.fromStop.stopOrder >= :fromOrder
+             AND f.toStop.stopOrder <= :toOrder
+           ORDER BY f.fromStop.stopOrder
            """)
     List<FareRule> findSegmentRange(@Param("routeId") Long routeId,
                                     @Param("fromOrder") int fromOrder,

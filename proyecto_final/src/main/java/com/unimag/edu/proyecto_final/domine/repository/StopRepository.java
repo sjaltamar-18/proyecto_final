@@ -11,22 +11,22 @@ import java.util.Optional;
 public interface StopRepository extends JpaRepository<Stop,Long> {
 
 // obtiene todas las paradas de una ruta ordenadas por secuencia
-    List<Stop> findByRouteIdOrder(Long routeId);
+List<Stop> findByRouteIdOrderByStopOrderAsc(Long routeId);
 // Busca una parada especificado dentro de una ruta
     @Query("SELECT s FROM Stop s WHERE s.route.id =:routeId AND lower(s.stopName) = LOWER(:name)")
     Optional<Stop> findByRouteAndName(@Param("routeId") Long routeId, @Param("name") String name);
 // encuentra la parada anterior o posterior según el orden, validando tramos
-    @Query("SELECT s FROM Stop s WHERE s.route.id = :routeId AND s.order = :order - 1")
+    @Query("SELECT s FROM Stop s WHERE s.route.id = :routeId AND s.stopOrder = :order - 1")
     Optional<Stop> findPreviousStop(@Param("routeId") Long routeId, @Param("order") int order);
-    @Query("SELECT s FROM Stop s WHERE s.route.id = :routeId AND s.order = :order + 1")
+    @Query("SELECT s FROM Stop s WHERE s.route.id = :routeId AND s.stopOrder = :order + 1")
     Optional<Stop> findNextStop(@Param("routeId") Long routeId, @Param("order") int order);
 // pares consecutivos de paradas, verificando su validez
 @Query("""
            SELECT s1.id, s1.stopName, s2.id, s2.stopName
            FROM Stop s1
-           JOIN Stop s2 ON s2.route.id = s1.route.id AND s2.order = s1.order + 1
+           JOIN Stop s2 ON s2.route.id = s1.route.id AND s2.stopOrder = s1.stopOrder + 1
            WHERE s1.route.id = :routeId
-           ORDER BY s1.order
+           ORDER BY s1.stopOrder
            """)
 List<Object[]> findConsecutiveSegments(@Param("routeId") Long routeId);
 }

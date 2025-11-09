@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.loader.ast.internal.CacheEntityLoaderHelper;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "incidents")
@@ -21,13 +22,13 @@ public class Incident {
     private Long id;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EntityType type;
+    private EntityType entityType;
     private Long entityId;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Type entityType;
+    private Type type;
     private String note;
-    private LocalDate creationDate;
+    private LocalDateTime creationDate;
 
 
 

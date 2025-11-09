@@ -17,7 +17,7 @@ public class Bus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 7)
+    @Column(length = 7,unique = true)
     private String plate;
     private Integer capacity;
     @Column(columnDefinition = "TEXT")

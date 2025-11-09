@@ -25,7 +25,7 @@ public class Ticket {
     @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false)
     private User passenger;
-    private Integer seatNumber;
+    private String seatNumber;
     @ManyToOne()
     @JoinColumn(name = "from_stop_id")
     private Stop fromStop;
@@ -39,9 +39,16 @@ public class Ticket {
 
     @Enumerated(EnumType.STRING)
     private StatusTicket statusTicket;
-    // private qr qr;todo opcional, igualmente lo pongo por si lo hacemos, sino lo dejamos asi :)
+     private String qrCode;
     @OneToMany(mappedBy = "ticket")
     private Set<Baggage> baggages;
+    @Column(nullable = false, updatable = false)
+    private java.time.LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        createdAt = java.time.LocalDateTime.now();
+    }
 
 
 

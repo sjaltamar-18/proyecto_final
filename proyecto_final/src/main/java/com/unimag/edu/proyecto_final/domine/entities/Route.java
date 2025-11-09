@@ -3,6 +3,7 @@ package com.unimag.edu.proyecto_final.domine.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -25,8 +26,9 @@ public class Route {
     private Double distance;
     private Double time;
 
-    @OneToMany(mappedBy = "route")
-    private Set<Stop> stops;
+    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Stop> stops = new HashSet<>();
     @OneToMany(mappedBy = "route")
     private Set<Trip> trips;
     @OneToMany(mappedBy = "route")

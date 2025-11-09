@@ -20,14 +20,14 @@ public interface TicketRepository extends JpaRepository<Ticket,Long> {
 
     // encuentra los ticketes activos dentro de un viaje
 
-    @Query("SELECT t FROM Ticket t WHERE t.trip.id = :tripId AND t.status = 'SOLD'")
+    @Query("SELECT t FROM Ticket t WHERE t.trip.id = :tripId AND t.statusTicket = 'SOLD'")
     List<Ticket> findSoldTicketsByTrip(@Param("tripId") Long tripId);
 
     // verificar si una silla ya está ocupada en un viaje (por tramo)
     @Query("""
            SELECT COUNT(t) > 0 FROM Ticket t WHERE t.trip.id = :tripId AND t.seatNumber = :seat AND t.statusTicket = 'SOLD'
            AND (
-                (t.fromStop.order <= :toOrder AND t.toStop.order > :fromOrder)
+                (t.fromStop.stopOrder <= :toOrder AND t.toStop.stopOrder > :fromOrder)
            )
            """)
     boolean isSeatOccupied(

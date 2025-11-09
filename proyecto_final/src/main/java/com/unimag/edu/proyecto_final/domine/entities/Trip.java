@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -26,8 +27,8 @@ public class Trip {
     @JoinColumn(name = "bus_id", nullable = false)
     private Bus bus;
     private LocalDate date;
-    private LocalDate departureAt;
-    private LocalDate arrivalAt;
+    private LocalDateTime departureAt;
+    private LocalDateTime arrivalAt;
     @Enumerated(EnumType.STRING)
     private StatusTrip statusTrip;
 
