@@ -15,6 +15,7 @@ import lombok.*;
 @Builder
 public class Confi {
     @Id
+    private Long id;
     private String key;
 
     @Column(nullable = false)

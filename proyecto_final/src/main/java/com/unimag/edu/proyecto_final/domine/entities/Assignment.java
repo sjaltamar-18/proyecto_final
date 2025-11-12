@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class Assignment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     @ManyToOne()
     @JoinColumn(name = "driver_id",nullable = false)
     private User driver;
@@ -25,6 +25,6 @@ public class Assignment {
     @ManyToOne()
     @JoinColumn(name = "trip_id")
     private Trip trip;
-    private String checklistOk;
+    private Boolean checklistOk;
     private LocalDate assignedDate;
 }

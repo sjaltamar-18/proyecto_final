@@ -7,7 +7,7 @@ public class ConfiDtos {
     public record ConfigCreateRequest(String key, String value) implements Serializable {
     }
 
-    public record ConfigResponse(String key, String value) implements Serializable {
+    public record ConfigResponse(Long id, String key, String value) implements Serializable {
     }
 
     public record ConfigUpdateRequest(String value) implements Serializable {
