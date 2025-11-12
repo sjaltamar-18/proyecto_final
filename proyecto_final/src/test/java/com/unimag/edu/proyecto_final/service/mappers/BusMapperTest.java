@@ -19,7 +19,7 @@ class BusMapperTest {
         var request = new BusCreateRequest(
                 "ABC123",     // plate
                 40,           // capacity
-                Map.of("wifi", true, "usb", true)
+                "{\"wifi\":true,\"usb\":true}"
 
         );
 
@@ -54,8 +54,8 @@ class BusMapperTest {
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.plate()).isEqualTo("XYZ789");
         assertThat(dto.capacity()).isEqualTo(50);
-        assertThat(dto.amenities()).containsEntry("wifi", true);
-        assertThat(dto.amenities()).containsEntry("usb", false);
+        assertThat(dto.amenities()).contains("\"wifi\":true");
+        assertThat(dto.amenities()).contains("\"usb\":false");
         assertThat(dto.status()).isEqualTo("IN_SERVICE");
     }
 
@@ -71,11 +71,10 @@ class BusMapperTest {
 
         var update = new BusUpdateRequest(
                 35,
-                Map.of("wifi", true, "ac", true),
+                "{\"wifi\":true,\"ac\":true}",
                 "ACTIVE"
-        );
 
-        // when
+        );        // when
         mapper.updateEntityFromDto(update, entity);
 
         // then

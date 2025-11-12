@@ -24,7 +24,7 @@ public class Route {
     private String originName;
     private String destinationName;
     private Double distance;
-    private Double time;
+    private Integer time;
 
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
