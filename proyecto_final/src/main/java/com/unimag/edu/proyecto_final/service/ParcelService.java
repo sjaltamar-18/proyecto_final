@@ -8,11 +8,14 @@ public interface ParcelService {
 
     ParcelResponse create(ParcelCreateRequest request);
 
+
     ParcelResponse get(Long id);
 
-    ParcelResponse updateStatus(String code, ParcelUpdateRequest request);
+    ParcelResponse getByCode(String code);
 
-    Page<ParcelResponse> listInTransit(Pageable pageable);
+    Page<ParcelResponse> listByStatus(String status, Pageable pageable);
 
-    Page<ParcelResponse> listByUser(Long userId, Pageable pageable);
+    ParcelResponse update(Long id, ParcelUpdateRequest request);
+
+    void delete(Long id);
 }

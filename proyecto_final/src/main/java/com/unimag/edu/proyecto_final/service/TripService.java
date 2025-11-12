@@ -4,22 +4,22 @@ import com.unimag.edu.proyecto_final.api.dto.TripDtos.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public interface TripService {
 
-    TripResponse schedule(TripCreateRequest request);
+    TripResponse create(TripCreateRequest request);
 
     TripResponse get(Long id);
 
-    Page<TripResponse> list(Long routeId, LocalDate date, Pageable pageable);
+    List<TripResponse> listByRoute(Long routeId, LocalDate date);
 
-    TripResponse updateStatus(Long id, TripUpdateRequest request);
+    List<TripResponse> listUpcoming();
 
-    void openBoarding(Long id);
+    List<TripResponse> listBetween(LocalDateTime start, LocalDateTime end);
 
-    void closeBoarding(Long id);
+    TripResponse update(Long id, TripUpdateRequest request);
 
-    void markDeparted(Long id);
-
-    void markArrived(Long id);
+    void delete(Long id);
 }

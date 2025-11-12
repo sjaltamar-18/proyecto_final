@@ -4,17 +4,22 @@ import com.unimag.edu.proyecto_final.api.dto.TicketDtos.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface TicketService {
 
     TicketResponse create(TicketCreateRequest request);
 
     TicketResponse get(Long id);
 
-    Page<TicketResponse> listByUser(Long userId, Pageable pageable);
+    List<TicketResponse> listByTrip(Long tripId);
 
-    TicketResponse cancel(Long id);
+    List<TicketResponse> listByPassenger(Long passengerId);
 
-    TicketResponse markNoShow(Long id);
+    TicketResponse update(Long id, TicketUpdateRequest request);
 
-    double calculatePrice(TicketUpdateRequest request);
+    void cancel(Long id);
+
+
+    TicketResponse getByQrCode(String qrCode);
 }

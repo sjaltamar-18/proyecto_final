@@ -10,18 +10,20 @@ public interface ParcelMapper {
 
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "status", constant = "CREATED")
-    @Mapping(target = "proofPhotoUrl", ignore = true)
-    @Mapping(target = "deliveryOtp", ignore = true)
+    @Mapping(target = "statusParcel", constant = "CREATED")
+    @Mapping(target = "fromStop", ignore = true)
+    @Mapping(target = "toStop", ignore = true)
     Parcel toEntity(ParcelCreateRequest request);
 
 
-    @Mapping(target = "status", expression = "java(parcel.getStatus() != null ? parcel.getStatus().name() : null)")
+    @Mapping(source = "statusParcel", target = "status", expression = "java(parcel.getStatusParcel() != null ? parcel.getStatusParcel().name() : null)")
+    @Mapping(source = "fromStop.id", target = "fromStopId")
+    @Mapping(source = "toStop.id", target = "toStopId")
     ParcelResponse toResponse(Parcel parcel);
 
     // Actualización de estado
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "status", expression = "java(request.status() != null ? mapStatus(request.status()) : parcel.getStatus())")
+    @Mapping(target = "statusParcel", expression = "java(request.status() != null ? mapStatus(request.status()) : parcel.getStatus())")
     void updateEntityFromStatusRequest(ParcelUpdateRequest request, @MappingTarget Parcel parcel);
 
     default StatusParcel mapStatus(String value) {

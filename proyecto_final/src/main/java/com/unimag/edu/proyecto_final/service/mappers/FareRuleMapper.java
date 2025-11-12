@@ -10,11 +10,16 @@ public interface FareRuleMapper {
 
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "route", ignore = true)
+    @Mapping(target = "fromStop", ignore = true)
+    @Mapping(target = "toStop", ignore = true)
     @Mapping(target = "dynamicPricing", expression = "java(mapDynamicPricing(request.dynamicPricing()))")
     FareRule toEntity(FareRuleCreateRequest request);
 
-
-    @Mapping(target = "dynamicPricing", expression = "java(fareRule.getDynamicPricing() != null ? fareRule.getDynamicPricing().name() : null)")
+    @Mapping(source = "route.id", target = "routeId")
+    @Mapping(source = "fromStop.id", target = "fromStopId")
+    @Mapping(source = "toStop.id", target = "toStopId")
+    @Mapping(target = "dynamicPricing", expression = "java(fareRule.getDynamicPricing() == com.unimag.edu.proyecto_final.domine.entities.enumera.DynamicPricing.ON)")
     FareRuleResponse toResponse(FareRule fareRule);
 
 
@@ -23,12 +28,9 @@ public interface FareRuleMapper {
     void updateEntityFromDto(FareRuleUpdateRequest request, @MappingTarget FareRule fareRule);
 
 
-    default DynamicPricing mapDynamicPricing(String value) {
-        if (value == null) return null;
-        try {
-            return DynamicPricing.valueOf(value.toUpperCase());
-        } catch (IllegalArgumentException ex) {
-            return DynamicPricing.OFF;
-        }
+    default DynamicPricing mapDynamicPricing(Boolean dynamic) {
+        if (dynamic == null) return DynamicPricing.OFF;
+        return dynamic ? DynamicPricing.ON : DynamicPricing.OFF;
     }
+
 }
