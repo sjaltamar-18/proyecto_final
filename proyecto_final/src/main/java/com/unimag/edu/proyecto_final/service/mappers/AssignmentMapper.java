@@ -1,8 +1,8 @@
 package com.unimag.edu.proyecto_final.service.mappers;
 
 import com.unimag.edu.proyecto_final.api.dto.AssignmentDtos.*;
-import com.unimag.edu.proyecto_final.domine.entities.Assignment;
 import org.mapstruct.*;
+import com.unimag.edu.proyecto_final.domine.entities.Assignment;
 
 @Mapper(componentModel = "spring")
 public interface AssignmentMapper {

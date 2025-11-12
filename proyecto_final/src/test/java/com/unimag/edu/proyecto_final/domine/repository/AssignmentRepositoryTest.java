@@ -71,8 +71,8 @@ class AssignmentRepositoryTest extends AbstractRepositoryIT {
                         .dispatcher(dispatcher)
                         .driver(driver)
                         .trip(trip)
-                        .checklistOk("Sí")
-                        .assignedDate(LocalDate.now())
+                        .checklistOk(true)
+                        .assignedDate(LocalDateTime.now())
                         .build()
         );
 
@@ -106,8 +106,8 @@ class AssignmentRepositoryTest extends AbstractRepositoryIT {
                 Assignment.builder()
                         .dispatcher(dispatcher)
                         .driver(driver)
-                        .checklistOk("Si")
-                        .assignedDate(LocalDate.now())
+                        .checklistOk(true)
+                        .assignedDate(LocalDateTime.now())
                         .build()
         );
 
@@ -139,8 +139,8 @@ class AssignmentRepositoryTest extends AbstractRepositoryIT {
         Assignment assignment = assignmentRepository.save(Assignment.builder()
                 .driver(driver)
                 .dispatcher(dispatcher)
-                .checklistOk("Si")
-                .assignedDate(LocalDate.now())
+                .checklistOk(true)
+                .assignedDate(LocalDateTime.now())
                 .build()
         );
         List<Assignment> result = assignmentRepository.findByDispatcherId(dispatcher.getId());

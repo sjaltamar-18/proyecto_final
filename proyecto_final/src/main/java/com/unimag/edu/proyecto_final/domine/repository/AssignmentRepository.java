@@ -14,7 +14,7 @@ public interface AssignmentRepository extends JpaRepository<Assignment,Long> {
     // Buscar asignaciones por conductor
     List<Assignment> findByDriverId(Long driverId);
 
-    // Buscar asignaciones por bus
+    // Buscar asignaciones por dispatcher
     List<Assignment> findByDispatcherId(Long dispatcherId);
 
 

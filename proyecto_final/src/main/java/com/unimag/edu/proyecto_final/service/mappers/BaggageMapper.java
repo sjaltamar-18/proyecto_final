@@ -8,8 +8,10 @@ import org.mapstruct.*;
 public interface BaggageMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "ticket", ignore = true)
     Baggage toEntity(BaggageCreateRequest request);
 
+    @Mapping(source = "ticket.id",target = "ticketId")
     BaggageResponse toResponse(Baggage baggage);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
