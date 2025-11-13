@@ -53,7 +53,7 @@ public class AssignmentServicelmpl implements AssignmentService {
                 .trip(trip)
                 .driver(driver)
                 .checklistOk(request.checklistOk())
-                .assignedDate(LocalDate.now())
+                .assignedDate(LocalDateTime.now())
                 .build();
 
         trip.setStatusTrip(StatusTrip.BOARDING);

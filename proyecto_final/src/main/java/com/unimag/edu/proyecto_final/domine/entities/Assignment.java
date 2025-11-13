@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "assignments")
@@ -26,5 +27,5 @@ public class Assignment {
     @JoinColumn(name = "trip_id")
     private Trip trip;
     private Boolean checklistOk;
-    private LocalDate assignedDate;
+    private LocalDateTime assignedDate;
 }
