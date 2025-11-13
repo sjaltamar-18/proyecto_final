@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/stops")
 @RequiredArgsConstructor
-@Value
 public class StopController {
     private final StopService stopService;
 
@@ -29,6 +28,18 @@ public class StopController {
     public ResponseEntity<StopResponse> get(@PathVariable Long id) {
         StopResponse stop = stopService.get(id);
         return ResponseEntity.ok(stop);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StopResponse> update(@PathVariable Long id, @Valid @RequestBody StopUpdateRequest request){
+        StopResponse updated = stopService.update(id, request);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<StopResponse> delete(@PathVariable Long id){
+        stopService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 

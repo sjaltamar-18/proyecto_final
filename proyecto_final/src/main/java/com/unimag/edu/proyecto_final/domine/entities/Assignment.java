@@ -25,6 +25,6 @@ public class Assignment {
     @ManyToOne()
     @JoinColumn(name = "trip_id")
     private Trip trip;
-    private String checklistOk;
+    private Boolean checklistOk;
     private LocalDate assignedDate;
 }

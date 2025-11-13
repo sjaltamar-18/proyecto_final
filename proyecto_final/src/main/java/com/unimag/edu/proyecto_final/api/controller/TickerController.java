@@ -2,6 +2,7 @@ package com.unimag.edu.proyecto_final.api.controller;
 
 import com.unimag.edu.proyecto_final.api.dto.TicketDtos.*;
 import com.unimag.edu.proyecto_final.service.TicketService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +13,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tickets")
 @RequiredArgsConstructor
-@Value
 public class TickerController {
     private final TicketService ticketService;
 
     @PostMapping
-    public ResponseEntity<TicketResponse> create(@RequestBody TicketCreateRequest request){
+    public ResponseEntity<TicketResponse> create(@Valid @RequestBody TicketCreateRequest request){
         return ResponseEntity.ok(ticketService.create(request));
     }
     @GetMapping("/{id}")
@@ -35,7 +35,7 @@ public class TickerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TicketResponse> update(@PathVariable Long id, @RequestBody TicketUpdateRequest request){
+    public ResponseEntity<TicketResponse> update(@PathVariable Long id, @Valid@RequestBody TicketUpdateRequest request){
         return ResponseEntity.ok(ticketService.update(id, request));
     }
     @DeleteMapping("/{id}")

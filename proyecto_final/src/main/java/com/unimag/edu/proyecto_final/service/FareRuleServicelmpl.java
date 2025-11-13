@@ -7,8 +7,8 @@ import com.unimag.edu.proyecto_final.domine.entities.Stop;
 import com.unimag.edu.proyecto_final.domine.repository.FareRuleRepository;
 import com.unimag.edu.proyecto_final.domine.repository.RouteRepository;
 import com.unimag.edu.proyecto_final.domine.repository.StopRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.FareRuleMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,13 +32,13 @@ public class FareRuleServicelmpl  implements FareRuleService{
     public FareRuleDtos.FareRuleResponse create(FareRuleDtos.FareRuleCreateRequest request) {
 
         Route route = routeRepository.findById(request.routeId())
-                .orElseThrow(() -> new EntityNotFoundException("Route not found"));
+                .orElseThrow(() -> new NotFoundException("Route not found"));
 
         Stop toStop = stopRepository.findById(request.toStopId())
-                .orElseThrow(() -> new EntityNotFoundException("Stop not found"));
+                .orElseThrow(() -> new NotFoundException("Stop not found"));
 
         Stop fromStop = stopRepository.findById(request.fromStopId())
-                .orElseThrow(() -> new EntityNotFoundException("Stop not found"));
+                .orElseThrow(() -> new NotFoundException("Stop not found"));
 
         FareRule fareRule = fareRuleMapper.toEntity(request);
         fareRule.setRoute(route);
@@ -53,7 +53,7 @@ public class FareRuleServicelmpl  implements FareRuleService{
     @Transactional(readOnly = true)
     public FareRuleDtos.FareRuleResponse get(Long id) {
         FareRule fareRule = fareRuleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("FareRule not found"));
+                .orElseThrow(() -> new NotFoundException("FareRule not found"));
         return fareRuleMapper.toResponse(fareRule);
     }
 
@@ -71,7 +71,7 @@ public class FareRuleServicelmpl  implements FareRuleService{
     @Override
     public FareRuleDtos.FareRuleResponse update(Long id, FareRuleDtos.FareRuleUpdateRequest request) {
        FareRule fareRule = fareRuleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("FareRule not found"));
+                .orElseThrow(() -> new NotFoundException("FareRule not found"));
 
        fareRuleMapper.updateEntityFromDto(request,fareRule);
        FareRule result = fareRuleRepository.save(fareRule);
@@ -82,7 +82,7 @@ public class FareRuleServicelmpl  implements FareRuleService{
     public void delete(Long id) {
 
         FareRule fareRule = fareRuleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("FareRule not found"));
+                .orElseThrow(() -> new NotFoundException("FareRule not found"));
 
         fareRuleRepository.delete(fareRule);
 

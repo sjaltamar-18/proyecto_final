@@ -4,8 +4,8 @@ import com.unimag.edu.proyecto_final.api.dto.BusDtos;
 import com.unimag.edu.proyecto_final.domine.entities.Bus;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusBus;
 import com.unimag.edu.proyecto_final.domine.repository.BusRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.BusMapper;
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,7 +24,7 @@ public class BusServicelmpl  implements BusService
     @Override
     public BusDtos.BusResponse create(BusDtos.BusCreateRequest request) {
        if (busRepository.existsByPlate(request.plate())){
-           throw new EntityExistsException("plate already exists");
+           throw new NotFoundException("plate already exists");
        }
         Bus bus = busMapper.toEntity(request);
        bus.setStatus(StatusBus.AVAILABLE);

@@ -9,11 +9,9 @@ import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusTrip;
 import com.unimag.edu.proyecto_final.domine.repository.BusRepository;
 import com.unimag.edu.proyecto_final.domine.repository.RouteRepository;
 import com.unimag.edu.proyecto_final.domine.repository.TripRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.TripMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,10 +33,10 @@ public class TripServicelmpl implements  TripService {
     @Override
     public TripDtos.TripResponse create(TripDtos.TripCreateRequest request) {
         Route route = routeRepository.findById(request.routeId())
-                .orElseThrow(() -> new EntityNotFoundException("Route not found"));
+                .orElseThrow(() -> new NotFoundException("Route not found"));
 
         Bus bus = busRepository.findById(request.busId())
-                .orElseThrow(() -> new EntityNotFoundException("Bus not found"));
+                .orElseThrow(() -> new NotFoundException("Bus not found"));
 
         if (bus.getStatus() != StatusBus.AVAILABLE){
             throw new IllegalStateException("Bus not available");
@@ -67,7 +65,7 @@ public class TripServicelmpl implements  TripService {
     @Transactional(readOnly = true)
     public TripDtos.TripResponse get(Long id) {
         Trip trip =  tripRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Trip not found"));
+                .orElseThrow(() -> new NotFoundException("Trip not found"));
         return tripMapper.toResponse(trip);
     }
 
@@ -95,7 +93,7 @@ public class TripServicelmpl implements  TripService {
     @Override
     public TripDtos.TripResponse update(Long id, TripDtos.TripUpdateRequest request) {
         Trip trip = tripRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("Trip not found"));
+                .orElseThrow(()-> new NotFoundException("Trip not found"));
 
         tripMapper.updateEntityFromStatusRequest(request, trip);
         Trip saved = tripRepository.save(trip);
@@ -105,7 +103,7 @@ public class TripServicelmpl implements  TripService {
     @Override
     public void delete(Long id) {
         Trip trip = tripRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("Trip not found"));
+                .orElseThrow(()-> new NotFoundException("Trip not found"));
 
         if (trip.getStatusTrip() == StatusTrip.DEPARTED ||
         trip.getStatusTrip() == StatusTrip.ARRIVED){

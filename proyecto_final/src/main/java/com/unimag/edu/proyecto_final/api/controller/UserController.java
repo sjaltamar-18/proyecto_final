@@ -2,6 +2,7 @@ package com.unimag.edu.proyecto_final.api.controller;
 
 import com.unimag.edu.proyecto_final.api.dto.UserDtos.*;
 import com.unimag.edu.proyecto_final.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.http.HttpStatus;
@@ -13,13 +14,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@Value
 public class UserController {
 
     private final UserService service;
 
     @PostMapping
-    public ResponseEntity<UserResponse> create (@RequestBody UserCreateRequest userCreateRequest){
+    public ResponseEntity<UserResponse> create (@Valid@RequestBody UserCreateRequest userCreateRequest){
         UserResponse created = service.create(userCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> update(@PathVariable Long id, @RequestBody UserUpdateRequest userUpdateRequest){
+    public ResponseEntity<UserResponse> update(@PathVariable Long id,@Valid @RequestBody UserUpdateRequest userUpdateRequest){
         return ResponseEntity.ok(service.update(id, userUpdateRequest));
     }
 

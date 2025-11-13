@@ -3,8 +3,8 @@ package com.unimag.edu.proyecto_final.service;
 import com.unimag.edu.proyecto_final.api.dto.ConfiDtos;
 import com.unimag.edu.proyecto_final.domine.entities.Confi;
 import com.unimag.edu.proyecto_final.domine.repository.ConfiRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.ConfiMapper;
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,7 @@ public class ConfiServicelmpl implements ConfiService {
     @Override
     public ConfiDtos.ConfigResponse create(ConfiDtos.ConfigCreateRequest request) {
         if(confiRepository.existsByKey(request.key())){
-            throw new EntityExistsException("config already exists");
+            throw new NotFoundException("config already exists");
         }
         Confi confi = confiMapper.toEntity(request);
         confiRepository.save(confi);

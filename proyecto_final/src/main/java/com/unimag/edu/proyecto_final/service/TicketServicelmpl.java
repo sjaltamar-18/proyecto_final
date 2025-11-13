@@ -10,11 +10,10 @@ import com.unimag.edu.proyecto_final.domine.repository.StopRepository;
 import com.unimag.edu.proyecto_final.domine.repository.TicketRepository;
 import com.unimag.edu.proyecto_final.domine.repository.TripRepository;
 import com.unimag.edu.proyecto_final.domine.repository.UserRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.TicketMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,16 +34,16 @@ public class TicketServicelmpl implements TicketService {
     @Override
     public TicketDtos.TicketResponse create(TicketDtos.TicketCreateRequest request) {
         Trip trip = tripRepository.findById(request.tripId())
-                .orElseThrow(()-> new EntityNotFoundException("trip not found"));
+                .orElseThrow(()-> new NotFoundException("trip not found"));
 
         User passenger = userRepository.findById(request.passengerId())
-                .orElseThrow(()-> new EntityNotFoundException("passenger not found"));
+                .orElseThrow(()-> new NotFoundException("passenger not found"));
 
         Stop fromStop = stopRepository.findById(request.fromStopId())
-                .orElseThrow(()-> new EntityNotFoundException("stop not found"));
+                .orElseThrow(()-> new NotFoundException("stop not found"));
 
         Stop toStop = stopRepository.findById(request.toStopId())
-                .orElseThrow(()-> new EntityNotFoundException("stop not found"));
+                .orElseThrow(()-> new NotFoundException("stop not found"));
 
         Boolean ocupado = ticketRepository.isSeatOccupied(
                 trip.getId(),
@@ -71,7 +70,7 @@ public class TicketServicelmpl implements TicketService {
     @Transactional(readOnly = true)
     public TicketDtos.TicketResponse get(Long id) {
         Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("ticket not found"));
+                .orElseThrow(()-> new NotFoundException("ticket not found"));
 
         return ticketMapper.toResponse(ticket);
     }
@@ -93,7 +92,7 @@ public class TicketServicelmpl implements TicketService {
     @Override
     public TicketDtos.TicketResponse update(Long id, TicketDtos.TicketUpdateRequest request) {
         Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("ticket not found"));
+                .orElseThrow(()-> new NotFoundException("ticket not found"));
 
         ticketMapper.updateEntityFromStatusRequest(request,ticket);
         Ticket saved = ticketRepository.save(ticket);
@@ -103,7 +102,7 @@ public class TicketServicelmpl implements TicketService {
     @Override
     public void cancel(Long id) {
         if (!ticketRepository.existsById(id)) {
-            throw new EntityNotFoundException("ticket not found");
+            throw new NotFoundException("ticket not found");
         }
         ticketRepository.markAsCancelled(id);
 
@@ -113,7 +112,7 @@ public class TicketServicelmpl implements TicketService {
     @Transactional(readOnly = true)
     public TicketDtos.TicketResponse getByQrCode(String qrCode) {
         Ticket ticket = ticketRepository.findByQrCode(qrCode)
-                .orElseThrow(()-> new EntityNotFoundException("QR not found"));
+                .orElseThrow(()-> new NotFoundException("QR not found"));
         return ticketMapper.toResponse(ticket);
     }
 }
