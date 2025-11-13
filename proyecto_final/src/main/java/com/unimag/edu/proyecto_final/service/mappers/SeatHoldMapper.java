@@ -15,10 +15,10 @@ public interface SeatHoldMapper {
     @Mapping(target = "expirationDate", expression = "java(java.time.LocalDateTime.now().plusMinutes(10))")
     SeatHold toEntity(SeatHoldCreateRequest request);
 
-    @Mapping(source = "expirationDate", target = "expiresAt")
-    @Mapping(source = "status", target = "status", expression = "java(seatHold.getStatus() != null ? seatHold.getStatus().name() : null)")
-    @Mapping(source = "trip.id", target = "tripId")
-    @Mapping(source = "user.id", target = "userId")
+    @Mapping(target = "expiresAt", source = "expirationDate")
+    @Mapping(target = "status", expression = "java(seatHold.getStatus() != null ? seatHold.getStatus().name() : null)")
+    @Mapping(target = "tripId", source = "trip.id")
+    @Mapping(target = "userId", source = "user.id")
     SeatHoldResponse toResponse(SeatHold seatHold);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

@@ -31,7 +31,7 @@ class AssignmentMapperTest {
         assertThat(entity.getDispatcher()).isEqualTo(3L);
         assertThat(entity.getChecklistOk()).isEqualTo("true");
         assertThat(entity.getAssignedDate()).isNotNull();
-        assertThat(entity.getAssignedDate()).isBeforeOrEqualTo(LocalDate.from(LocalDateTime.now()));
+        assertThat(entity.getAssignedDate()).isBeforeOrEqualTo(LocalDateTime.from(LocalDateTime.now()));
     }
 
     @Test
@@ -45,8 +45,8 @@ class AssignmentMapperTest {
                 .trip(trip)
                 .driver(driver)
                 .dispatcher(dispatcher)
-                .checklistOk("true")
-                .assignedDate(LocalDate.now())
+                .checklistOk(true)
+                .assignedDate(LocalDateTime.now())
                 .build();
 
         // when
@@ -80,8 +80,8 @@ class AssignmentMapperTest {
                 .trip(trip)
                 .driver(driver)
                 .dispatcher(dispatcher)
-                .checklistOk("false")
-                .assignedDate(LocalDate.now().minusDays(1))
+                .checklistOk(false)
+                .assignedDate(LocalDateTime.now().minusDays(1))
                 .build();
 
         var update = new AssignmentUpdateRequest(true);

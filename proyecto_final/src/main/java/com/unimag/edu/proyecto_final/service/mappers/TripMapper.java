@@ -9,14 +9,16 @@ import org.mapstruct.*;
 public interface TripMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "status", constant = "SCHEDULED")
+    @Mapping(target = "statusTrip", constant = "SCHEDULED")
     Trip toEntity(TripCreateRequest request);
 
-    @Mapping(target = "status", expression = "java(trip.getStatus() != null ? trip.getStatus().name() : null)")
+    @Mapping(target = "status", expression = "java(trip.getStatusTrip() != null ? trip.getStatusTrip().name() : null)")
+    @Mapping(source = "route.id", target = "routeId")
+    @Mapping(source = "bus.id", target = "busId")
     TripResponse toResponse(Trip trip);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "status", expression = "java(request.status() != null ? mapStatus(request.status()) : trip.getStatus())")
+    @Mapping(target = "statusTrip", expression = "java(request.status() != null ? mapStatus(request.status()) : trip.getStatusTrip())")
     void updateEntityFromStatusRequest(TripUpdateRequest request, @MappingTarget Trip trip);
 
     default StatusTrip mapStatus(String value) {

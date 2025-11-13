@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "assignments")
@@ -25,6 +26,6 @@ public class Assignment {
     @ManyToOne()
     @JoinColumn(name = "trip_id")
     private Trip trip;
-    private String checklistOk;
-    private LocalDate assignedDate;
+    private Boolean checklistOk;
+    private LocalDateTime assignedDate;
 }
