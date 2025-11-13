@@ -29,8 +29,9 @@ public class StopServicelmpl implements StopService {
        Route route = routeRepository.findById(routeId)
                .orElseThrow(()-> new EntityNotFoundException("route not found"));
 
-       stopRepository.findByRouteAndName(request.routeId(), request.name())
-               .orElseThrow(()-> new IllegalArgumentException("stop already exists"));
+        if (stopRepository.findByRouteAndName(routeId, request.name()).isPresent()) {
+            throw new IllegalArgumentException("Stop already exists for this route");
+        }
 
         Stop stop = stopMapper.toEntity(request);
         stop.setRoute(route);
@@ -55,7 +56,7 @@ public class StopServicelmpl implements StopService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<StopDtos.StopResponse> listByRoute(Long routeId, Pageable pageable) {
+    public List<StopDtos.StopResponse> listByRoute(Long routeId) {
         List<Stop> stops = stopRepository.findByRouteIdOrderByStopOrderAsc(routeId);
         return stops.stream().map(stopMapper::toResponse).toList();
     }
@@ -67,7 +68,7 @@ public class StopServicelmpl implements StopService {
 
        stopMapper.updateEntityFromDto(request,stop);
        Stop update = stopRepository.save(stop);
-       return stopMapper.toResponse(stop);
+       return stopMapper.toResponse(update);
     }
 
     @Override

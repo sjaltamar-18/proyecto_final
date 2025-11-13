@@ -12,7 +12,7 @@ public interface StopService {
 
     StopResponse get(Long id);
 
-    List<StopResponse> listByRoute(Long routeId, Pageable pageable);
+    List<StopResponse> listByRoute(Long routeI);
 
     StopResponse update(Long id, StopUpdateRequest request);
 

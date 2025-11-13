@@ -102,7 +102,7 @@ public class TicketServicelmpl implements TicketService {
 
     @Override
     public void cancel(Long id) {
-        if (ticketRepository.existsById(id)) {
+        if (!ticketRepository.existsById(id)) {
             throw new EntityNotFoundException("ticket not found");
         }
         ticketRepository.markAsCancelled(id);
