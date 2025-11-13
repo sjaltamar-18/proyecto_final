@@ -8,7 +8,7 @@ import com.unimag.edu.proyecto_final.domine.entities.Assignment;
 public interface AssignmentMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "assignedAt", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "assignedDate", expression = "java(java.time.LocalDateTime.now())")
     Assignment toEntity(AssignmentCreateRequest request);
 
     AssignmentResponse toResponse(Assignment assignment);

@@ -10,18 +10,28 @@ import org.mapstruct.*;
 public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "role", expression = "java(mapRole(request.role()))")
-    @Mapping(target = "status", constant = "ACTIVE")
+    @Mapping(target = "role", expression = "java(mapRole(request.profile() != null ? request.profile().role() : null))")
+    @Mapping(target = "status", expression = "java(mapStatus(request.profile() != null ? request.profile().status() : null))")
+    @Mapping(target = "phone", expression = "java(request.profile() != null ? request.profile().phone() : null)")
     User toEntity(UserCreateRequest request);
 
-    @Mapping(target = "role", expression = "java(user.getRole() != null ? user.getRole().name() : null)")
-    @Mapping(target = "status", expression = "java(user.getStatus() != null ? user.getStatus().name() : null)")
+    @Mapping(target = "profile", expression = "java(toProfileDto(user))")
+    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     UserResponse toResponse(User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "role", expression = "java(request.role() != null ? mapRole(request.role()) : user.getRole())")
-    @Mapping(target = "status", expression = "java(request.status() != null ? mapStatus(request.status()) : user.getStatus())")
+    @Mapping(target = "role", expression = "java(request.profile() != null && request.profile().role() != null ? mapRole(request.profile().role()) : user.getRole())")
+    @Mapping(target = "status", expression = "java(request.profile() != null && request.profile().status() != null ? mapStatus(request.profile().status()) : user.getStatus())")
+    @Mapping(target = "phone", expression = "java(request.profile() != null && request.profile().phone() != null ? request.profile().phone() : user.getPhone())")
     void updateEntityFromDto(UserUpdateRequest request, @MappingTarget User user);
+
+    default UserProfileDto toProfileDto(User user) {
+        return new UserProfileDto(
+                user.getPhone(),
+                user.getRole() != null ? user.getRole().name() : null,
+                user.getStatus() != null ? user.getStatus().name() : null
+        );
+    }
 
     default Role mapRole(String value) {
         if (value == null) return Role.PASSENGER;
