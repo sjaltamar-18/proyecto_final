@@ -11,6 +11,8 @@ import com.unimag.edu.proyecto_final.domine.repository.UserRepository;
 import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.SeatHoldMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +22,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-
+@Slf4j
 public class SeatHoldServicelmpl implements  SeatHoldService {
 
     private final SeatHoldRepository seatHoldRepository;
@@ -80,8 +82,10 @@ public class SeatHoldServicelmpl implements  SeatHoldService {
         return seatHoldMapper.toResponse(saved);
     }
 
-    @Override
+    @Override @Scheduled(fixedRate = 60000)
     public int expireHolds() {
+        int expired = seatHoldRepository.expireHolds();
+        if (expired > 0) log.info("Expired {} seat holds", expired);
         return seatHoldRepository.expireHolds();
     }
 

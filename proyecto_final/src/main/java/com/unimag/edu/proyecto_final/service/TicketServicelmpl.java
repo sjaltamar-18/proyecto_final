@@ -55,6 +55,12 @@ public class TicketServicelmpl implements TicketService {
         if (ocupado) {
             throw new IllegalStateException("seat "+ request.seatNumber()+" already occupied");
         }
+        double ocupacion = (double) ticketRepository.countSoldSeats(trip.getId()) / trip.getBus().getCapacity();
+        long minutosRestantes = java.time.Duration.between(java.time.LocalDateTime.now(), trip.getDepartureAt()).toMinutes();
+
+        if (ocupacion > 0.95 && minutosRestantes < 30 && Boolean.FALSE.equals(request.approvedByDispatcher())) {
+            throw new IllegalStateException("Overbooking requires dispatcher approval");
+        }
         Ticket ticket = ticketMapper.toEntity(request);
         ticket.setTrip(trip);
         ticket.setPassenger(passenger);
@@ -101,10 +107,10 @@ public class TicketServicelmpl implements TicketService {
 
     @Override
     public void cancel(Long id) {
-        if (!ticketRepository.existsById(id)) {
-            throw new NotFoundException("ticket not found");
-        }
-        ticketRepository.markAsCancelled(id);
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("ticket not found"));
+        ticket.setStatusTicket(StatusTicket.CANCELLED);
+        ticketRepository.save(ticket);
 
     }
 
