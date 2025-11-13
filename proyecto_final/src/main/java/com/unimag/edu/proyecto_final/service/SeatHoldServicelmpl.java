@@ -1,0 +1,103 @@
+package com.unimag.edu.proyecto_final.service;
+
+import com.unimag.edu.proyecto_final.api.dto.SeatHoldDtos;
+import com.unimag.edu.proyecto_final.domine.entities.SeatHold;
+import com.unimag.edu.proyecto_final.domine.entities.Trip;
+import com.unimag.edu.proyecto_final.domine.entities.User;
+import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusSeatHold;
+import com.unimag.edu.proyecto_final.domine.repository.SeatHoldRepository;
+import com.unimag.edu.proyecto_final.domine.repository.TripRepository;
+import com.unimag.edu.proyecto_final.domine.repository.UserRepository;
+import com.unimag.edu.proyecto_final.service.mappers.SeatHoldMapper;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+
+public class SeatHoldServicelmpl implements  SeatHoldService {
+
+    private final SeatHoldRepository seatHoldRepository;
+    private final TripRepository tripRepository;
+    private final UserRepository userRepository;
+    private final SeatHoldMapper seatHoldMapper;
+
+
+    @Override
+    public SeatHoldDtos.SeatHoldResponse create(SeatHoldDtos.SeatHoldCreateRequest request) {
+        Trip trip  = tripRepository.findById(request.tripId())
+                .orElseThrow(() -> new EntityNotFoundException("trip not found"));
+
+        User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new EntityNotFoundException("user not found"));
+
+        if (seatHoldRepository.isSeatOnHold(request.tripId(), request.seatNumber())){
+            throw new IllegalArgumentException("the seat " +request.seatNumber()+" is already on hold");
+        }
+        SeatHold seatHold = seatHoldMapper.toEntity(request);
+        seatHold.setTrip(trip);
+        seatHold.setUser(user);
+
+        SeatHold saved = seatHoldRepository.save(seatHold);
+        return seatHoldMapper.toResponse(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SeatHoldDtos.SeatHoldResponse get(Long id) {
+        SeatHold seatHold = seatHoldRepository.findById(id)
+                .orElseThrow(()-> new EntityNotFoundException("seatHold not found"));
+        return seatHoldMapper.toResponse(seatHold);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SeatHoldDtos.SeatHoldResponse> listActiveByTrip(Long tripId) {
+        List<SeatHold> holds = seatHoldRepository.findByTripIdAndStatus(tripId, StatusSeatHold.HOLD);
+        return holds.stream().map(seatHoldMapper::toResponse).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SeatHoldDtos.SeatHoldResponse> listByUser(Long userId) {
+        List<SeatHold> holds = seatHoldRepository.findByUserIdAndStatus(userId, StatusSeatHold.HOLD);
+        return holds.stream().map(seatHoldMapper::toResponse).toList();
+    }
+
+    @Override
+    public SeatHoldDtos.SeatHoldResponse update(Long id, SeatHoldDtos.SeatHoldUpdateRequest request) {
+        SeatHold seatHold = seatHoldRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("seatHold not found"));
+
+        seatHoldMapper.updateEntityFromStatusRequest(request,seatHold);
+        SeatHold saved = seatHoldRepository.save(seatHold);
+        return seatHoldMapper.toResponse(saved);
+    }
+
+    @Override
+    public int expireHolds() {
+        return seatHoldRepository.expireHolds();
+    }
+
+    @Override
+    public int cleanOldExpired() {
+        LocalDateTime limit = LocalDateTime.now().minusDays(1);
+        return seatHoldRepository.deleteExpiredOlderThan(limit);
+    }
+
+    @Override
+    public void delete(Long id) {
+        SeatHold seatHold = seatHoldRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("seatHold not found"));
+        seatHoldRepository.delete(seatHold);
+
+    }
+}
