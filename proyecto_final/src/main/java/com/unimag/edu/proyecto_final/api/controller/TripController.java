@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,8 @@ public class TripController {
     @PostMapping
     public ResponseEntity<TripResponse> createTrip(@Valid@RequestBody TripCreateRequest request )
     {
-        return ResponseEntity.ok(tripService.create(request));
+        TripResponse created = tripService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
     @GetMapping("/{id}")
     public ResponseEntity<TripResponse> get(@PathVariable Long id)

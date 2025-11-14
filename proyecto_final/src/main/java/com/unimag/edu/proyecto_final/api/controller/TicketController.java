@@ -4,7 +4,7 @@ import com.unimag.edu.proyecto_final.api.dto.TicketDtos.*;
 import com.unimag.edu.proyecto_final.service.TicketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,12 +13,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tickets")
 @RequiredArgsConstructor
-public class TickerController {
+public class TicketController {
     private final TicketService ticketService;
 
     @PostMapping
     public ResponseEntity<TicketResponse> create(@Valid @RequestBody TicketCreateRequest request){
-        return ResponseEntity.ok(ticketService.create(request));
+        TicketResponse created = ticketService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
     @GetMapping("/{id}")
     public ResponseEntity<TicketResponse> get(@PathVariable Long id){
@@ -44,7 +45,7 @@ public class TickerController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/qr/qrCode}")
+    @GetMapping("/qr/qrCode")
     public ResponseEntity<TicketResponse> qrCode(@RequestParam String ticketCode){
         return ResponseEntity.ok(ticketService.getByQrCode(ticketCode));
     }
