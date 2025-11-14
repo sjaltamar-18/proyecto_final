@@ -2,6 +2,8 @@ package com.unimag.edu.proyecto_final.service.mappers;
 
 import com.unimag.edu.proyecto_final.api.dto.SeatHoldDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.SeatHold;
+import com.unimag.edu.proyecto_final.domine.entities.Trip;
+import com.unimag.edu.proyecto_final.domine.entities.User;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusSeatHold;
 import org.mapstruct.*;
 
@@ -9,8 +11,8 @@ import org.mapstruct.*;
 public interface SeatHoldMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "trip", ignore = true)
-    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "trip", expression = "java(toTrip(request.tripId()))")
+    @Mapping(target = "user", expression = "java(toUser(request.userId()))")
     @Mapping(target = "status", constant = "HOLD")
     @Mapping(target = "expirationDate", expression = "java(java.time.LocalDateTime.now().plusMinutes(10))")
     SeatHold toEntity(SeatHoldCreateRequest request);
@@ -32,5 +34,12 @@ public interface SeatHoldMapper {
         } catch (IllegalArgumentException ex) {
             return StatusSeatHold.HOLD;
         }
+    }
+    default Trip toTrip(Long id) {
+        return id == null ? null : Trip.builder().id(id).build();
+    }
+
+    default User toUser(Long id) {
+        return id == null ? null : User.builder().id(id).build();
     }
 }

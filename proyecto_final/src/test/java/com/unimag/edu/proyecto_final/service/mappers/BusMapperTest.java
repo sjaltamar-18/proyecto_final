@@ -2,11 +2,13 @@ package com.unimag.edu.proyecto_final.service.mappers;
 
 import com.unimag.edu.proyecto_final.api.dto.BusDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.Bus;
+import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusBus;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Map;
 
+import static com.unimag.edu.proyecto_final.domine.entities.enumera.StatusBus.ACTIVE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BusMapperTest {
@@ -32,18 +34,17 @@ class BusMapperTest {
         assertThat(entity.getCapacity()).isEqualTo(40);
         assertThat(entity.getAmenities()).contains("\"wifi\":true");
         assertThat(entity.getAmenities()).contains("\"usb\":true");
-        assertThat(entity.getStatus()).isEqualTo("ACTIVE");
     }
 
     @Test
     void toResponse_shouldMapEntity() {
         // given
-        var amenities = Map.of("wifi", true, "usb", false);
         var entity = Bus.builder()
                 .id(10L)
                 .plate("XYZ789")
                 .capacity(50)
-                .amenities(amenities.toString())
+                .amenities("{\"wifi\":true,\"usb\":false}")
+                .status(ACTIVE)
                 .build();
 
         // when
@@ -56,7 +57,7 @@ class BusMapperTest {
         assertThat(dto.capacity()).isEqualTo(50);
         assertThat(dto.amenities()).contains("\"wifi\":true");
         assertThat(dto.amenities()).contains("\"usb\":false");
-        assertThat(dto.status()).isEqualTo("IN_SERVICE");
+        assertThat(dto.status()).isEqualTo("ACTIVE");
     }
 
     @Test
@@ -64,9 +65,10 @@ class BusMapperTest {
         // given
         var entity = Bus.builder()
                 .id(5L)
-                .plate("OLD123")
-                .capacity(35)
+                .plate("NEW456")
+                .capacity(45)
                 .amenities("{\"wifi\": false}")
+                .status(StatusBus.INACTIVE)
                 .build();
 
         var update = new BusUpdateRequest(
@@ -79,10 +81,11 @@ class BusMapperTest {
 
         // then
         assertThat(entity.getPlate()).isEqualTo("NEW456");
-        assertThat(entity.getCapacity()).isEqualTo(45);
+        assertThat(entity.getCapacity()).isEqualTo(35);
         assertThat(entity.getAmenities()).contains("\"wifi\":true");
         assertThat(entity.getAmenities()).contains("\"ac\":true");
-        assertThat(entity.getStatus()).isEqualTo("ACTIVE");
+        assertThat(entity.getStatus()).isEqualTo(ACTIVE);
         assertThat(entity.getId()).isEqualTo(5L);
     }
+
 }

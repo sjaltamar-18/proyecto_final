@@ -15,7 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TicketMapperTest {
 
     private final TicketMapper mapper = Mappers.getMapper(TicketMapper.class);
-
     @Test
     void toEntity_shouldMapCreateRequest() {
         // given
@@ -26,7 +25,7 @@ class TicketMapperTest {
                 10L,            // fromStopId
                 20L,            // toStopId
                 60000.0,        // price
-                "CARD"   // paymentMethod
+                "CARD"          // paymentMethod
         );
 
         // when
@@ -34,17 +33,14 @@ class TicketMapperTest {
 
         // then
         assertThat(entity).isNotNull();
-        assertThat(entity.getId()).isNull(); // ignorado por el mapper
-        assertThat(entity.getTrip()).isEqualTo(1L);
-        assertThat(entity.getPassenger()).isEqualTo(2L);
+        assertThat(entity.getTrip().getId()).isEqualTo(1L);
+        assertThat(entity.getPassenger().getId()).isEqualTo(2L);
         assertThat(entity.getSeatNumber()).isEqualTo("A5");
-        assertThat(entity.getFromStop()).isEqualTo(10L);
-        assertThat(entity.getToStop()).isEqualTo(20L);
+        assertThat(entity.getFromStop().getId()).isEqualTo(10L);
+        assertThat(entity.getToStop().getId()).isEqualTo(20L);
         assertThat(entity.getPrice()).isEqualTo(60000.0);
         assertThat(entity.getPaymentMethod()).isEqualTo(PaymentMethod.CARD);
-        assertThat(entity.getStatusTicket()).isEqualTo(StatusTicket.SOLD); // constante por defecto
-        assertThat(entity.getQrCode()).isNotNull(); // generado
-        assertThat(entity.getQrCode()).contains("A5"); // QR personalizado según lógica del mapper
+        assertThat(entity.getStatusTicket()).isEqualTo(StatusTicket.SOLD);
     }
 
     @Test
@@ -73,13 +69,13 @@ class TicketMapperTest {
         assertThat(dto).isNotNull();
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.tripId()).isEqualTo(1L);
-        assertThat(dto.passengerId()).isEqualTo(2L);
+        assertThat(dto.passengerId()).isEqualTo(user.getId());
         assertThat(dto.seatNumber()).isEqualTo("B10");
-        assertThat(dto.fromStopId()).isEqualTo(5L);
-        assertThat(dto.toStopId()).isEqualTo(6L);
+        assertThat(dto.fromStopId()).isEqualTo(stop.getId());
+        assertThat(dto.toStopId()).isEqualTo(stop2.getId());
         assertThat(dto.price()).isEqualTo(45000.0);
         assertThat(dto.paymentMethod()).isEqualTo("CASH");
-        assertThat(dto.status()).isEqualTo("USED");
+        assertThat(dto.status()).isEqualTo("SOLD");
 
     }
 

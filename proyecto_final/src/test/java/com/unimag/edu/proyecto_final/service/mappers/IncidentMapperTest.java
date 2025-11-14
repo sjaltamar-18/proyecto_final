@@ -76,10 +76,7 @@ class IncidentMapperTest {
                 .creationDate(LocalDateTime.now().minusDays(1))
                 .build();
 
-        var update = new IncidentUpdateRequest(
-                "OVERBOOK", // nuevo tipo
-                "Reasignación de asiento por sobreventa" // nueva nota
-        );
+        var update = new IncidentUpdateRequest("Reasignación de asiento por sobreventa","OVERBOOK");
 
         // when
         mapper.updateEntityFromDto(update, entity);

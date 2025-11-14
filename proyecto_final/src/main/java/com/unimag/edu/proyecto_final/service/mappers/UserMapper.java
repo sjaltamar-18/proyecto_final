@@ -13,6 +13,7 @@ public interface UserMapper {
     @Mapping(target = "role", expression = "java(mapRole(request.profile() != null ? request.profile().role() : null))")
     @Mapping(target = "status", expression = "java(mapStatus(request.profile() != null ? request.profile().status() : null))")
     @Mapping(target = "phone", expression = "java(request.profile() != null ? request.profile().phone() : null)")
+    @Mapping(target = "passwordHash", source = "password")
     User toEntity(UserCreateRequest request);
 
     @Mapping(target = "profile", expression = "java(toProfileDto(user))")
