@@ -23,7 +23,10 @@ public interface ParcelMapper {
 
     // Actualización de estado
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "statusParcel", expression = "java(request.status() != null ? mapStatus(request.status()) : parcel.getStatus())")
+    @Mapping(
+            target = "statusParcel",
+            expression = "java(request.status() != null ? mapStatus(request.status()) : parcel.getStatusParcel())"
+    )
     void updateEntityFromStatusRequest(ParcelUpdateRequest request, @MappingTarget Parcel parcel);
 
     default StatusParcel mapStatus(String value) {
