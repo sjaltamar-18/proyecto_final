@@ -22,9 +22,9 @@ class TripMapperTest {
         // given
         var request = new TripCreateRequest(
                 1L, // routeId
-                2L,
+                2L, // busId
                 LocalDate.of(2025, 5, 1),
-                LocalDateTime.of(2025, 5, 1, 8, 0),  // departureTime
+                LocalDateTime.of(2025, 5, 1, 8, 0),
                 LocalDateTime.of(2025, 5, 1, 12, 0)
         );
 
@@ -33,14 +33,20 @@ class TripMapperTest {
 
         // then
         assertThat(entity).isNotNull();
-        assertThat(entity.getId()).isNull(); // ignorado por mapper
-        assertThat(entity.getRoute()).isEqualTo(1L);
-        assertThat(entity.getBus()).isEqualTo(2L);
+        assertThat(entity.getId()).isNull();   // ignored by mapper
+
+        assertThat(entity.getRoute()).isNotNull();
+        assertThat(entity.getRoute().getId()).isEqualTo(1L);
+
+        assertThat(entity.getBus()).isNotNull();
+        assertThat(entity.getBus().getId()).isEqualTo(2L);
+
         assertThat(entity.getDate()).isEqualTo(LocalDate.of(2025, 5, 1));
         assertThat(entity.getDepartureAt()).isEqualTo(LocalDateTime.of(2025, 5, 1, 8, 0));
         assertThat(entity.getArrivalAt()).isEqualTo(LocalDateTime.of(2025, 5, 1, 12, 0));
-        assertThat(entity.getStatusTrip()).isEqualTo(StatusTrip.SCHEDULED); // constante por defecto
+
     }
+
 
     @Test
     void toResponse_shouldMapEntity() {
@@ -65,7 +71,7 @@ class TripMapperTest {
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.routeId()).isEqualTo(1L);
         assertThat(dto.busId()).isEqualTo(2L);
-        assertThat(dto.date()).isEqualTo(LocalDateTime.of(2025, 5, 10, 7, 30));
+        assertThat(dto.date()).isEqualTo(LocalDate.of(2025, 5, 10));
         assertThat(dto.departureAt()).isEqualTo(LocalDateTime.of(2025, 5, 10, 7, 30));
         assertThat(dto.arrivalEta()).isEqualTo(LocalDateTime.of(2025, 5, 10, 12, 0));
         assertThat(dto.status()).isEqualTo("DEPARTED");

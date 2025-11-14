@@ -6,9 +6,31 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface StopMapper {
+
+
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "route", ignore = true)   // evitar cargar entidad
+    @Mapping(source = "name", target = "stopName")
+    @Mapping(source = "order", target = "stopOrder")
+    @Mapping(source = "lat", target = "latitude")
+    @Mapping(source = "lng", target = "longitude")
     Stop toEntity(StopCreateRequest request);
+
+
+    @Mapping(source = "route.id", target = "routeId")
+    @Mapping(source = "stopName", target = "name")
+    @Mapping(source = "stopOrder", target = "order")
+    @Mapping(source = "latitude", target = "lat")
+    @Mapping(source = "longitude", target = "lng")
     StopResponse toResponse(Stop stop);
+
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "route", ignore = true)   // no se toca route
+    @Mapping(source = "name", target = "stopName")
+    @Mapping(source = "order", target = "stopOrder")
+    @Mapping(source = "lat", target = "latitude")
+    @Mapping(source = "lng", target = "longitude")
     void updateEntityFromDto(StopUpdateRequest request, @MappingTarget Stop stop);
 }
+

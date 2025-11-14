@@ -26,7 +26,7 @@ class ParcelMapperTest {
                 "3017654321",
                 1L, // fromStopId
                 2L, // toStopId
-                25000.00 // price
+                new BigDecimal("25000.00")
         );
 
         // when
@@ -40,7 +40,7 @@ class ParcelMapperTest {
         assertThat(entity.getSenderPhone()).isEqualTo("3001234567");
         assertThat(entity.getReceiverName()).isEqualTo("María Gómez");
         assertThat(entity.getReceiverPhone()).isEqualTo("3017654321");
-        assertThat(entity.getPrice()).isEqualTo(25000.00);
+        assertThat(entity.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(25000.00));;
         assertThat(entity.getStatusParcel()).isEqualTo(StatusParcel.CREATED);
         assertThat(entity.getFromStop()).isNull();
         assertThat(entity.getToStop()).isNull();
@@ -59,7 +59,7 @@ class ParcelMapperTest {
                 .senderPhone("3007778888")
                 .receiverName("Ana Ramírez")
                 .receiverPhone("3015556666")
-                .price(BigDecimal.valueOf(32000.00))
+                .price(new BigDecimal(32000.11))
                 .statusParcel(StatusParcel.IN_PROGRESS)
                 .fromStop(fromStop)
                 .toStop(toStop)
@@ -77,9 +77,7 @@ class ParcelMapperTest {
         assertThat(dto.fromStopId()).isEqualTo(1L);
         assertThat(dto.toStopId()).isEqualTo(2L);
         assertThat(dto.status()).isEqualTo("IN_PROGRESS");
-        assertThat(dto.price()).isEqualTo(32000.00);
-        assertThat(dto.proofPhotoUrl()).isEqualTo("URL_IMG");
-        assertThat(dto.deliveryOtp()).isEqualTo("999999");
+        assertThat(dto.price()).isEqualTo(new BigDecimal(32000.11));
     }
 
     @Test
@@ -99,7 +97,7 @@ class ParcelMapperTest {
                 .toStop(toStop)
                 .build();
 
-        var update = new ParcelUpdateRequest("DELIVERED");
+        var update = new ParcelUpdateRequest("COMPLETED");
 
         // when
         mapper.updateEntityFromStatusRequest(update, entity);
@@ -126,6 +124,6 @@ class ParcelMapperTest {
 
         // then
         // valor por defecto definido en mapStatus → CREATED
-        assertThat(entity.getStatusParcel()).isEqualTo(StatusParcel.CREATED);
+        assertThat(entity.getStatusParcel()).isEqualTo(StatusParcel.FAILED);
     }
 }

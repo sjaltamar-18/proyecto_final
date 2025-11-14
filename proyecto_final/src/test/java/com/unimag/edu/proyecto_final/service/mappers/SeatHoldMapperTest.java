@@ -20,8 +20,8 @@ class SeatHoldMapperTest {
     void toEntity_shouldMapCreateRequest() {
         // given
         var request = new SeatHoldCreateRequest(
-                1L, // tripId
-                "4", // userId
+                1L,
+                "4B",
                 4L
         );
 
@@ -30,10 +30,10 @@ class SeatHoldMapperTest {
 
         // then
         assertThat(entity).isNotNull();
-        assertThat(entity.getId()).isNull(); // ignorado por mapper
-        assertThat(entity.getTrip()).isNull(); // se ignora en el mapper
-        assertThat(entity.getUser()).isNull();
-        assertThat(entity.getSeatNumber()).isEqualTo(4);
+        assertThat(entity.getId()).isNull();
+        assertThat(entity.getTrip().getId()).isEqualTo(1L);
+        assertThat(entity.getUser().getId()).isEqualTo(4L);
+        assertThat(entity.getSeatNumber()).isEqualTo("4B");
         assertThat(entity.getStatus()).isEqualTo(StatusSeatHold.HOLD);
         assertThat(entity.getExpirationDate()).isAfter(LocalDateTime.now());
         assertThat(entity.getExpirationDate()).isBeforeOrEqualTo(LocalDateTime.now().plusMinutes(10));
@@ -49,7 +49,7 @@ class SeatHoldMapperTest {
                 .id(10L)
                 .trip(trip)
                 .user(user)
-                .seatNumber("7")
+                .seatNumber("7D")
                 .status(StatusSeatHold.HOLD)
                 .expirationDate(LocalDateTime.now().plusMinutes(8))
                 .build();
@@ -62,7 +62,7 @@ class SeatHoldMapperTest {
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.tripId()).isEqualTo(1L);
         assertThat(dto.userId()).isEqualTo(2L);
-        assertThat(dto.seatNumber()).isEqualTo(7);
+        assertThat(dto.seatNumber()).isEqualTo("7D");
         assertThat(dto.status()).isEqualTo("HOLD");
         assertThat(dto.expiresAt()).isAfter(LocalDateTime.now());
     }

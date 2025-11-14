@@ -43,7 +43,7 @@ public class ParcelServicelmpl implements  ParcelService{
         Parcel parcel = parcelMapper.toEntity(request);
         parcel.setFromStop(fromStop);
         parcel.setToStop(toStop);
-        parcel.setPrice(BigDecimal.valueOf(request.price()));
+        parcel.setPrice(request.price());
         parcel.setStatusParcel(StatusParcel.CREATED);
 
         Parcel saved = parcelRepository.save(parcel);

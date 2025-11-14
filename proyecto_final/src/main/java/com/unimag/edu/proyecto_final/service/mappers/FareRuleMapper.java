@@ -8,29 +8,41 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface FareRuleMapper {
 
-
+    // CREATE → ENTITY
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "route", ignore = true)
     @Mapping(target = "fromStop", ignore = true)
     @Mapping(target = "toStop", ignore = true)
-    @Mapping(target = "dynamicPricing", expression = "java(mapDynamicPricing(request.dynamicPricing()))")
+    @Mapping(target = "discountPrice", source = "discounts")
+    @Mapping(target = "dynamicPricing", qualifiedByName = "booleanToDynamic")
     FareRule toEntity(FareRuleCreateRequest request);
 
+    // ENTITY → RESPONSE
     @Mapping(source = "route.id", target = "routeId")
     @Mapping(source = "fromStop.id", target = "fromStopId")
     @Mapping(source = "toStop.id", target = "toStopId")
-    @Mapping(target = "dynamicPricing", expression = "java(fareRule.getDynamicPricing() == com.unimag.edu.proyecto_final.domine.entities.enumera.DynamicPricing.ON)")
+    @Mapping(target = "discounts", source = "discountPrice")
+    @Mapping(target = "dynamicPricing", qualifiedByName = "dynamicToBoolean")
     FareRuleResponse toResponse(FareRule fareRule);
 
-
+    // UPDATE
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "dynamicPricing", expression = "java(request.dynamicPricing() != null ? mapDynamicPricing(request.dynamicPricing()) : fareRule.getDynamicPricing())")
+    @Mapping(target = "discountPrice", source = "discounts")
+    @Mapping(target = "dynamicPricing", qualifiedByName = "booleanToDynamic")
     void updateEntityFromDto(FareRuleUpdateRequest request, @MappingTarget FareRule fareRule);
 
-
-    default DynamicPricing mapDynamicPricing(Boolean dynamic) {
+    // BOOLEAN → ENUM
+    @Named("booleanToDynamic")
+    default DynamicPricing booleanToDynamic(Boolean dynamic) {
         if (dynamic == null) return DynamicPricing.OFF;
         return dynamic ? DynamicPricing.ON : DynamicPricing.OFF;
     }
 
+    // ENUM → BOOLEAN
+    @Named("dynamicToBoolean")
+    default Boolean dynamicToBoolean(DynamicPricing dynamic) {
+        return dynamic == DynamicPricing.ON;
+    }
 }
+
+

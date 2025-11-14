@@ -29,7 +29,7 @@ class StopMapperTest {
         // then
         assertThat(entity).isNotNull();
         assertThat(entity.getId()).isNull(); // Ignorado por el mapper
-        assertThat(entity.getRoute()).isEqualTo(1L);
+        assertThat(entity.getRoute()).isNull();
         assertThat(entity.getStopName()).isEqualTo("Terminal Norte");
         assertThat(entity.getStopOrder()).isEqualTo(1);
         assertThat(entity.getLatitude()).isEqualTo(4.7110);
@@ -38,7 +38,7 @@ class StopMapperTest {
 
     @Test
     void toResponse_shouldMapEntity() {
-        var route = Route.builder().id(1L).build();
+        var route = Route.builder().id(2L).build();
         var entity = Stop.builder()
                 .id(10L)
                 .route(route)
@@ -74,21 +74,23 @@ class StopMapperTest {
                 .build();
 
         var update = new StopUpdateRequest(
-                "Nuevo Paradero", // name
-                null,             // order (no cambia)
-                4.6200,           // lat
-                -74.1200          // lng
+                "Nuevo Paradero",
+                null,
+                4.6200,
+                -74.1200
         );
 
-        // when
         mapper.updateEntityFromDto(update, entity);
 
-        // then
-        assertThat(entity.getId()).isEqualTo(3L); // se mantiene
-        assertThat(entity.getRoute()).isEqualTo(1L); // no cambia
+
+        assertThat(entity.getId()).isEqualTo(3L);
+
+        assertThat(entity.getRoute().getId()).isEqualTo(1L);
+
         assertThat(entity.getStopName()).isEqualTo("Nuevo Paradero");
-        assertThat(entity.getStopOrder()).isEqualTo(2); // permanece igual
+        assertThat(entity.getStopOrder()).isEqualTo(2);
         assertThat(entity.getLatitude()).isEqualTo(4.6200);
         assertThat(entity.getLongitude()).isEqualTo(-74.1200);
     }
+
 }
