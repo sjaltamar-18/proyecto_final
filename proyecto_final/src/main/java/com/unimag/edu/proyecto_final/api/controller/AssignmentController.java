@@ -12,12 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/asignments")
+@RequestMapping("/api/assignments")
 @RequiredArgsConstructor
 public class AssignmentController {
 
     private final AssignmentService service;
 
+    @PostMapping
     public ResponseEntity<AssignmentResponse> create(@Valid @RequestBody AssignmentCreateRequest request) {
         AssignmentResponse response = service.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

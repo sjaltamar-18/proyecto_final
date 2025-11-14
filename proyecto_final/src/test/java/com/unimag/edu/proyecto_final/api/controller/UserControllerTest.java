@@ -3,7 +3,11 @@ package com.unimag.edu.proyecto_final.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unimag.edu.proyecto_final.api.dto.UserDtos.*;
 import com.unimag.edu.proyecto_final.service.UserService;
+import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -14,12 +18,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
+@Import(SecurityConfig.class)
+@AutoConfigureMockMvc(addFilters = false)
 class UserControllerTest {
 
     @Autowired
@@ -49,7 +54,7 @@ class UserControllerTest {
                         .content(mapper.writeValueAsString(request)))
                         .andExpect(status().isCreated())
                         .andExpect(jsonPath("$.id").value(1))
-                        .andExpect(jsonPath("$.email").value("luis@mail.com"));
+                        .andExpect(jsonPath("$.email").value("luis@gmail.com"));
 
 
     }
