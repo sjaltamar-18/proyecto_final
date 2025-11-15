@@ -25,13 +25,19 @@ class AssignmentMapperTest {
         Assignment entity = (Assignment) mapper.toEntity(request);
 
         // then
-        assertThat(entity).isNotNull();
-        assertThat(entity.getTrip()).isEqualTo(1L);
-        assertThat(entity.getDriver()).isEqualTo(2L);
-        assertThat(entity.getDispatcher()).isEqualTo(3L);
-        assertThat(entity.getChecklistOk()).isEqualTo("true");
+        assertThat(entity.getTrip()).isNotNull();
+        assertThat(entity.getTrip().getId()).isEqualTo(1L);
+
+        assertThat(entity.getDriver()).isNotNull();
+        assertThat(entity.getDriver().getId()).isEqualTo(2L);
+
+        assertThat(entity.getDispatcher()).isNotNull();
+        assertThat(entity.getDispatcher().getId()).isEqualTo(3L);
+
+        assertThat(entity.getChecklistOk()).isTrue();
+
         assertThat(entity.getAssignedDate()).isNotNull();
-        assertThat(entity.getAssignedDate()).isBeforeOrEqualTo(LocalDateTime.from(LocalDateTime.now()));
+        assertThat(entity.getAssignedDate()).isBeforeOrEqualTo(LocalDateTime.now());
     }
 
     @Test
@@ -50,15 +56,7 @@ class AssignmentMapperTest {
                 .build();
 
         // when
-        AssignmentCreateRequest request = new AssignmentCreateRequest(
-                1L, // tripId
-                2L, // driverId
-                3L, // dispatcherId
-                true // checklistOk
-        );
-
-        Assignment mapperEntity = mapper.toEntity(request);
-        AssignmentResponse dto = mapper.toResponse(mapperEntity);
+        AssignmentResponse dto = mapper.toResponse(entity);
 
         // then
         assertThat(dto).isNotNull();
@@ -69,8 +67,10 @@ class AssignmentMapperTest {
         assertThat(dto.checklistOk()).isTrue();
     }
 
+
     @Test
     void updateEntityFromDto_shouldUpdateNonNullFields() {
+        // given
         var trip = Trip.builder().id(1L).build();
         var driver = User.builder().id(2L).build();
         var dispatcher = User.builder().id(3L).build();
@@ -90,8 +90,12 @@ class AssignmentMapperTest {
         mapper.updateEntityFromDto(update, entity);
 
         // then
-        assertThat(entity.getChecklistOk()).isEqualTo(true);
-        assertThat(entity.getId()).isEqualTo(10L);
-        assertThat(entity.getTrip()).isEqualTo(1L);
+        assertThat(entity.getChecklistOk()).isTrue(); // debe actualizarse
+        assertThat(entity.getId()).isEqualTo(10L); // no debe cambiar
+        assertThat(entity.getTrip()).isNotNull(); // sigue existiendo
+        assertThat(entity.getTrip().getId()).isEqualTo(1L); // relación intacta
+        assertThat(entity.getDriver().getId()).isEqualTo(2L);
+        assertThat(entity.getDispatcher().getId()).isEqualTo(3L);
     }
+
 }

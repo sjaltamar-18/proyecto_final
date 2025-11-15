@@ -69,7 +69,7 @@ class RouteMapperTest {
         var entity = Route.builder()
                 .id(5L)
                 .routeCode("R003")
-                .routeName("Old Route")
+                .routeName("Bogotá - Medellín")
                 .originName("Bogotá")
                 .destinationName("Medellín")
                 .distance(420.0)

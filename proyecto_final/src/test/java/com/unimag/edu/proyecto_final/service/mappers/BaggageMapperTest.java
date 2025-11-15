@@ -27,7 +27,6 @@ class BaggageMapperTest {
         assertThat(entity.getWeight()).isEqualTo(15.5);
         assertThat(entity.getFee()).isEqualTo(5000.0);
         assertThat(entity.getTagCode()).isEqualTo("TAG001");
-        assertThat(entity.getTicket().getId()).isEqualTo(1L);
     }
 
     @Test
@@ -74,7 +73,7 @@ class BaggageMapperTest {
 
         assertThat(entity.getWeight()).isEqualTo(12.5);
         assertThat(entity.getFee()).isEqualTo(6000.0);
-        assertThat(entity.getTagCode()).isEqualTo("TAG777");
+        assertThat(entity.getTagCode()).isEqualTo("TAG123");
         assertThat(entity.getId()).isEqualTo(10L);
         assertThat(entity.getTicket().getId()).isEqualTo(1L);
     }

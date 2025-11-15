@@ -58,7 +58,7 @@ class BaggageRepositoryTest extends AbstractRepositoryIT {
                 .ticket(ticket)
                 .weight(12.3)
 
-                .fee(BigDecimal.valueOf(500))
+                .fee(500.0)
                 .tagCode("VGO001")
                 .build());
 
@@ -99,7 +99,7 @@ class BaggageRepositoryTest extends AbstractRepositoryIT {
         baggageRepository.save(Baggage.builder()
                 .ticket(ticket)
                 .weight(10.0)
-                .fee(BigDecimal.ZERO)
+                .fee(0.0)
                 .tagCode("BG002")
                 .build());
 
@@ -138,7 +138,7 @@ class BaggageRepositoryTest extends AbstractRepositoryIT {
         baggageRepository.save(Baggage.builder()
                 .ticket(ticket)
                 .weight(30.5)
-                .fee(BigDecimal.valueOf(1000))
+                .fee(1000.0)
                 .tagCode("BG003")
                 .build());
 
