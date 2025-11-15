@@ -6,8 +6,8 @@ import com.unimag.edu.proyecto_final.domine.entities.Stop;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusParcel;
 import com.unimag.edu.proyecto_final.domine.repository.ParcelRepository;
 import com.unimag.edu.proyecto_final.domine.repository.StopRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.ParcelMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -35,10 +35,10 @@ public class ParcelServicelmpl implements  ParcelService{
         }
 
         Stop  fromStop = stopRepository.findById(request.fromStopId())
-                .orElseThrow(() -> new EntityNotFoundException("Stop not found"));
+                .orElseThrow(() -> new NotFoundException("Stop not found"));
 
         Stop toStop = stopRepository.findById(request.toStopId())
-                .orElseThrow(() -> new EntityNotFoundException("Stop not found"));
+                .orElseThrow(() -> new NotFoundException("Stop not found"));
 
         Parcel parcel = parcelMapper.toEntity(request);
         parcel.setFromStop(fromStop);
@@ -54,7 +54,7 @@ public class ParcelServicelmpl implements  ParcelService{
     @Transactional(readOnly = true)
     public ParcelDtos.ParcelResponse get(Long id) {
         Parcel parcel = parcelRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Parcel not found"));
+                .orElseThrow(() -> new NotFoundException("Parcel not found"));
         return parcelMapper.toResponse(parcel);
     }
 
@@ -62,7 +62,7 @@ public class ParcelServicelmpl implements  ParcelService{
     @Transactional(readOnly = true)
     public ParcelDtos.ParcelResponse getByCode(String code) {
         Parcel parcel =  parcelRepository.findByCode(code)
-                .orElseThrow(() -> new EntityNotFoundException("Parcel not found"));
+                .orElseThrow(() -> new NotFoundException("Parcel not found"));
         return parcelMapper.toResponse(parcel);
     }
 
@@ -78,7 +78,7 @@ public class ParcelServicelmpl implements  ParcelService{
     @Override
     public ParcelDtos.ParcelResponse update(Long id, ParcelDtos.ParcelUpdateRequest request) {
         Parcel parcel = parcelRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Parcel not found"));
+                .orElseThrow(() -> new NotFoundException("Parcel not found"));
         parcelMapper.updateEntityFromStatusRequest(request, parcel);
         Parcel updated = parcelRepository.save(parcel);
         return parcelMapper.toResponse(updated);
@@ -87,7 +87,7 @@ public class ParcelServicelmpl implements  ParcelService{
     @Override
     public void delete(Long id) {
         Parcel parcel = parcelRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Parcel not found"));
+                .orElseThrow(() -> new NotFoundException("Parcel not found"));
         parcelRepository.delete(parcel);
 
     }

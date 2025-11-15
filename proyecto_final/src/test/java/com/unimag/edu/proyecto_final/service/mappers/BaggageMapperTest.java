@@ -37,7 +37,7 @@ class BaggageMapperTest {
                 .id(10L)
                 .ticket(ticket)
                 .weight(20.0)
-                .fee(8000.0)
+                .fee(BigDecimal.valueOf(8000.0))
                 .tagCode("TAG999")
                 .build();
 
@@ -61,7 +61,7 @@ class BaggageMapperTest {
                 .id(10L)
                 .ticket(ticket)
                 .weight(10.0)
-                .fee(4000.0)
+                .fee(BigDecimal.valueOf(4000.0))
                 .tagCode("TAG123")
                 .build();
 

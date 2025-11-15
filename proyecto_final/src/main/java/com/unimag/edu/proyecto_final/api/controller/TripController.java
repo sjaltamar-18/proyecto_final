@@ -3,9 +3,11 @@ package com.unimag.edu.proyecto_final.api.controller;
 import com.unimag.edu.proyecto_final.api.dto.TripDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.Trip;
 import com.unimag.edu.proyecto_final.service.TripService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,14 +18,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/trips")
 @RequiredArgsConstructor
-@Value
 public class TripController {
     private final TripService tripService;
 
     @PostMapping
-    public ResponseEntity<TripResponse> createTrip(@RequestBody TripCreateRequest request )
+    public ResponseEntity<TripResponse> createTrip(@Valid@RequestBody TripCreateRequest request )
     {
-        return ResponseEntity.ok(tripService.create(request));
+        TripResponse created = tripService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
     @GetMapping("/{id}")
     public ResponseEntity<TripResponse> get(@PathVariable Long id)
@@ -31,9 +33,9 @@ public class TripController {
         return ResponseEntity.ok(tripService.get(id));
     }
 
-    @GetMapping("/route/{route}")
+    @GetMapping("/route/{routeId}")
     public ResponseEntity<List<TripResponse>> listByRoute(@PathVariable Long routeId,
-                                                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDate date)
+                                                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate date)
     {
         return ResponseEntity.ok(tripService.listByRoute(routeId, date));
     }
@@ -51,7 +53,7 @@ public class TripController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TripResponse> update(@PathVariable Long id, @RequestBody TripUpdateRequest request){
+    public ResponseEntity<TripResponse> update(@PathVariable Long id, @Valid @RequestBody TripUpdateRequest request){
         return ResponseEntity.ok(tripService.update(id, request));
     }
 

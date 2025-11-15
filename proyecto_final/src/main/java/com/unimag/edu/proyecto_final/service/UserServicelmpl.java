@@ -5,6 +5,7 @@ import com.unimag.edu.proyecto_final.domine.entities.User;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.Role;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusUser;
 import com.unimag.edu.proyecto_final.domine.repository.UserRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.UserMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class UserServicelmpl implements UserService {
     @Transactional(readOnly = true)
     public UserDtos.UserResponse get(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         return userMapper.toResponse(user);
     }
@@ -58,7 +59,7 @@ public class UserServicelmpl implements UserService {
     @Transactional(readOnly = true)
     public UserDtos.UserResponse getByEmail(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         return userMapper.toResponse(user);
     }
@@ -80,7 +81,7 @@ public class UserServicelmpl implements UserService {
     @Override
     public UserDtos.UserResponse update(Long id, UserDtos.UserUpdateRequest request) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (request.email() != null && !request.email().equals(user.getEmail())) {
             throw new IllegalArgumentException("User already exists");
@@ -102,7 +103,7 @@ public class UserServicelmpl implements UserService {
     @Override
     public void delete(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         user.setStatus(StatusUser.INACTIVE);
         userRepository.save(user);
