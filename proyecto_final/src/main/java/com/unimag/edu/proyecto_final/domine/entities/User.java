@@ -6,6 +6,7 @@ import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusUser;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -30,6 +31,11 @@ public class User {
     private Role role;
     @Enumerated(EnumType.STRING)
     private StatusUser status ;
+    private LocalDateTime createdAt;
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 
     @OneToMany( mappedBy = "passenger")
     private Set<Ticket> tickets;
