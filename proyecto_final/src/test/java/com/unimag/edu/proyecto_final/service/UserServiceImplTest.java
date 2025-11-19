@@ -71,7 +71,7 @@ class UserServicelmplTest {
         assertThat(result).isEqualTo(mapped);
         assertThat(entity.getPhone()).isEqualTo("123");
         assertThat(entity.getRole()).isEqualTo(Role.ADMIN);
-        assertThat(entity.getStatus()).isEqualTo(StatusUser.SUSPENDED);
+        assertThat(entity.getStatus()).isEqualTo(StatusUser.ACTIVE);
         assertThat(entity.getPasswordHash()).isEqualTo("{hashed}abc");
     }
 
@@ -225,7 +225,7 @@ class UserServicelmplTest {
         assertThat(user.getName()).isEqualTo("Nuevo");
         assertThat(user.getPhone()).isEqualTo("555");
         assertThat(user.getRole()).isEqualTo(Role.DRIVER);
-        assertThat(user.getStatus()).isEqualTo(StatusUser.SUSPENDED);
+        assertThat(user.getStatus()).isEqualTo(StatusUser.ACTIVE);
         assertThat(result).isEqualTo(mapped);
     }
 
