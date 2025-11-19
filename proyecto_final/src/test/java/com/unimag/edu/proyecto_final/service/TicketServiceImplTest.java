@@ -160,7 +160,7 @@ class TicketServicelmplTest {
         when(stopRepository.findById(3L)).thenReturn(Optional.of(Stop.builder().stopOrder(1).build()));
         when(stopRepository.findById(4L)).thenReturn(Optional.of(Stop.builder().stopOrder(5).build()));
 
-        when(ticketRepository.isSeatOccupied(1L, "10C", 1, 5)).thenReturn(true);
+        when(ticketRepository.isSeatOccupied(isNull(), eq("10C"), eq(1), eq(5))).thenReturn(true);
 
         assertThatThrownBy(() -> service.create(req))
                 .isInstanceOf(IllegalStateException.class)

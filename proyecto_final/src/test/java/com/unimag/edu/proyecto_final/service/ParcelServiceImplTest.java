@@ -101,7 +101,7 @@ class ParcelServiceImplTest {
         ParcelCreateRequest req = mock(ParcelCreateRequest.class);
         when(req.code()).thenReturn("PX100");
         when(req.fromStopId()).thenReturn(1L);
-        when(req.toStopId()).thenReturn(2L);
+
 
         when(parcelRepository.existsByCode("PX100")).thenReturn(false);
         when(stopRepository.findById(1L)).thenReturn(Optional.empty());
