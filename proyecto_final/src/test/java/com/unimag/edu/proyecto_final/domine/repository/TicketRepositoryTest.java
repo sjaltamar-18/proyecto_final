@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -138,6 +139,53 @@ class TicketRepositoryTest extends AbstractRepositoryIT {
 
         assertThat(result).isTrue();
     }
+    @Test
+    @DisplayName("Debe identificar si un asiento ya está vendido")
+    void isSeatSold_ShouldReturnTrue_WhenSeatIsSold() {
+
+        User user = userRepository.save(
+                User.builder()
+                        .name("Test User")
+                        .email("test@example.com")
+                        .passwordHash("123")
+                        .role(Role.PASSENGER)
+                        .status(StatusUser.ACTIVE)
+                        .build()
+        );
+
+        Route route = routeRepository.save(
+                Route.builder()
+                        .routeCode("RT01")
+                        .routeName("Cartagena - Barranquilla")
+                        .build()
+        );
+
+        Bus bus = busRepository.save(
+                Bus.builder()
+                        .plate("AAA111")
+                        .build()
+        );
+
+        Trip trip = tripRepository.save(
+                Trip.builder()
+                        .route(route)
+                        .bus(bus)
+                        .build()
+        );
+
+        ticketRepository.save(
+                Ticket.builder()
+                        .trip(trip)
+                        .passenger(user)
+                        .seatNumber("A1")
+                        .statusTicket(StatusTicket.SOLD)
+                        .build()
+        );
+
+        boolean result = ticketRepository.isSeatSold(trip.getId(), "A1");
+
+        assertThat(result).isTrue();
+    }
 
     @Test
     @DisplayName("Debe encontrar tickets por pasajero ordenados por fecha")
@@ -259,6 +307,7 @@ class TicketRepositoryTest extends AbstractRepositoryIT {
         Trip trip = tripRepository.save(Trip.builder()
                 .route(route)
                 .bus(bus)
+                .departureAt(LocalDateTime.now().minusHours(1))
                 .build());
 
 
@@ -268,7 +317,10 @@ class TicketRepositoryTest extends AbstractRepositoryIT {
                 .statusTicket(StatusTicket.NO_SHOW)
                 .build());
 
-        List<Ticket> result = ticketRepository.findNoShowTickets(trip.getId());
+        LocalDateTime limit = trip.getDepartureAt().minusMinutes(5);
+
+        List<Ticket> result = ticketRepository.findNoShowTickets(trip.getId()
+        ,StatusTicket.NO_SHOW,limit);
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getStatusTicket()).isEqualTo(StatusTicket.NO_SHOW);

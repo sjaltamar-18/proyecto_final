@@ -6,7 +6,6 @@ import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusBus;
 import com.unimag.edu.proyecto_final.domine.repository.BusRepository;
 import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.BusMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +37,7 @@ public class BusServicelmpl  implements BusService
     @Transactional(readOnly = true)
     public BusDtos.BusResponse get(Long id) {
         Bus bus = busRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("bus not found"));
+                .orElseThrow(() -> new NotFoundException("bus not found"));
         return busMapper.toResponse(bus);
     }
 
@@ -52,7 +51,7 @@ public class BusServicelmpl  implements BusService
     @Override
     public BusDtos.BusResponse update(Long id, BusDtos.BusUpdateRequest request) {
         Bus bus = busRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("bus not found"));
+                .orElseThrow(() -> new NotFoundException("bus not found"));
 
         busMapper.updateEntityFromDto(request,bus);
 
@@ -66,7 +65,7 @@ public class BusServicelmpl  implements BusService
     @Override
     public void delete(Long id) {
         Bus bus =  busRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("bus not found"));
+                .orElseThrow(() -> new NotFoundException("bus not found"));
         busRepository.delete(bus);
 
     }

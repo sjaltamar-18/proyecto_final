@@ -2,6 +2,7 @@ package com.unimag.edu.proyecto_final.service.mappers;
 
 import com.unimag.edu.proyecto_final.api.dto.SeatHoldDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.SeatHold;
+import com.unimag.edu.proyecto_final.domine.entities.Stop;
 import com.unimag.edu.proyecto_final.domine.entities.Trip;
 import com.unimag.edu.proyecto_final.domine.entities.User;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusSeatHold;
@@ -13,6 +14,8 @@ public interface SeatHoldMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "trip", expression = "java(toTrip(request.tripId()))")
     @Mapping(target = "user", expression = "java(toUser(request.userId()))")
+    @Mapping(target = "fromStop", expression = "java(toStop(request.fromStopId()))")
+    @Mapping(target = "toStop", expression = "java(toStop(request.toStopId()))")
     @Mapping(target = "status", constant = "HOLD")
     @Mapping(target = "expirationDate", expression = "java(java.time.LocalDateTime.now().plusMinutes(10))")
     SeatHold toEntity(SeatHoldCreateRequest request);
@@ -21,6 +24,8 @@ public interface SeatHoldMapper {
     @Mapping(target = "status", expression = "java(seatHold.getStatus() != null ? seatHold.getStatus().name() : null)")
     @Mapping(target = "tripId", source = "trip.id")
     @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "fromStopId", source = "fromStop.id")
+    @Mapping(target = "toStopId", source = "toStop.id")
     SeatHoldResponse toResponse(SeatHold seatHold);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -42,4 +47,6 @@ public interface SeatHoldMapper {
     default User toUser(Long id) {
         return id == null ? null : User.builder().id(id).build();
     }
+
+    default Stop toStop(Long id) {return id == null ? null : Stop.builder().id(id).build();}
 }

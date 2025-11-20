@@ -1,5 +1,5 @@
 package com.unimag.edu.proyecto_final.domine.repository;
-
+import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusTicket;
 import com.unimag.edu.proyecto_final.domine.entities.Ticket;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -36,6 +36,15 @@ public interface TicketRepository extends JpaRepository<Ticket,Long> {
             @Param("fromOrder") int fromOrder,
             @Param("toOrder") int toOrder
     );
+    // verifica que la silla ya este comprada
+    @Query("""
+       SELECT COUNT(t) > 0
+       FROM Ticket t
+       WHERE t.trip.id = :tripId
+         AND t.seatNumber = :seatNumber
+         AND t.statusTicket = com.unimag.edu.proyecto_final.domine.entities.enumera.StatusTicket.SOLD
+       """)
+    boolean isSeatSold(Long tripId, String seatNumber);
 
     //  buscar tickets por pasajero (historial)
     @EntityGraph(attributePaths = {"trip", "trip.route"})
@@ -52,8 +61,16 @@ public interface TicketRepository extends JpaRepository<Ticket,Long> {
     void markAsCancelled(@Param("id") Long id);
 
     // buscar tickets con estado NO_SHOW (para métricas de puntualidad)
-    @Query("SELECT t FROM Ticket t WHERE t.trip.id = :tripId AND t.statusTicket = 'NO_SHOW'")
-    List<Ticket> findNoShowTickets(@Param("tripId") Long tripId);
+    @Query("""
+       SELECT t
+       FROM Ticket t
+       WHERE t.trip.id = :tripId
+         AND t.statusTicket = :status
+         AND t.trip.departureAt < :limit
+       """)
+    List<Ticket> findNoShowTickets(@Param("tripId") Long tripId,
+                                   @Param("status") StatusTicket status,
+                                   @Param("limit") LocalDateTime limit);
 
     // total de ingresos por viaje (sumatoria de precios)
     @Query("SELECT SUM(t.price) FROM Ticket t WHERE t.trip.id = :tripId AND t.statusTicket = 'SOLD'")
@@ -61,5 +78,6 @@ public interface TicketRepository extends JpaRepository<Ticket,Long> {
 
     // buscar por QR (para control de abordaje)
     Optional<Ticket> findByQrCode(String qrCode);
+
 
 }

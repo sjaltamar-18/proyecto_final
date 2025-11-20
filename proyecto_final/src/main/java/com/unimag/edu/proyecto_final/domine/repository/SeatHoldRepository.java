@@ -39,5 +39,19 @@ public interface SeatHoldRepository extends JpaRepository<SeatHold,Long> {
     int deleteExpiredOlderThan(@Param("limit") LocalDateTime limit);
 // encuentra hold por usuaario
 List<SeatHold> findByUserIdAndStatus(Long userId, StatusSeatHold status);
+    @Query("""
+    SELECT CASE WHEN COUNT(sh) > 0 THEN TRUE ELSE FALSE END
+    FROM SeatHold sh
+    WHERE sh.trip.id = :tripId
+      AND sh.seatNumber = :seatNumber
+      AND sh.status = 'HOLD'
+      AND sh.expirationDate > CURRENT_TIMESTAMP
+      AND sh.fromStop.stopOrder <= :toStopOrder
+      AND sh.toStop.stopOrder   >= :fromStopOrder
+    """)
+    boolean isSeatOnHoldByTramo(Long tripId,
+                                String seatNumber,
+                                int fromStopOrder,
+                                int toStopOrder);
 
 }

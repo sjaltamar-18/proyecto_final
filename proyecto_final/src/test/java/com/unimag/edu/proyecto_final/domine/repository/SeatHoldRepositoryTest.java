@@ -28,6 +28,9 @@ class SeatHoldRepositoryTest extends AbstractRepositoryIT{
     @Autowired
     private RouteRepository routeRepository;
 
+    @Autowired
+    private StopRepository stopRepository;
+
     @Test
     @DisplayName("Debe listar los asientos en hold activos por viaje")
     void findByTripIdAndStatus() {
@@ -227,5 +230,51 @@ class SeatHoldRepositoryTest extends AbstractRepositoryIT{
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getUser().getId()).isEqualTo(user.getId());
+    }
+    @Test
+    @DisplayName("Debe retornar TRUE cuando el hold ocupa el tramo consultado")
+    void testIsSeatOnHoldByTramo_Positive() {
+
+        Route route = routeRepository.save(Route.builder().routeCode("ASV123")
+                .routeName("Cartagena-santa marta").build());
+
+        Bus bus = busRepository.save(Bus.builder().plate("000123").build());
+
+        Trip trip = tripRepository.save(Trip.builder()
+                .route(route)
+                .bus(bus).build());
+
+
+        Stop s1 = stopRepository.save(Stop.builder().route(route).stopName("Parada1").stopOrder(1).build());
+        Stop s2 = stopRepository.save(Stop.builder().route(route).stopName("Parada3").stopOrder(3).build());
+
+        Stop sConsultaFrom = stopRepository.save(Stop.builder().route(route).stopName("Parada2").stopOrder(2).build());
+        Stop sConsultaTo   = stopRepository.save(Stop.builder().route(route).stopName("Parada4").stopOrder(4).build());
+
+        User user = userRepository.save(User.builder()
+                .name("User Test")
+                .email("test@mail.com")
+                .passwordHash("123")
+                .build());
+
+        seatHoldRepository.save(SeatHold.builder()
+                .trip(trip)
+                .user(user)
+                .seatNumber("10A")
+                .fromStop(s1)
+                .toStop(s2)
+                .status(StatusSeatHold.HOLD)
+                .expirationDate(LocalDateTime.now().plusMinutes(10))
+                .build());
+
+
+        boolean result = seatHoldRepository.isSeatOnHoldByTramo(
+                trip.getId(),
+                "10A",
+                sConsultaFrom.getStopOrder(),
+                sConsultaTo.getStopOrder()
+        );
+
+        assertThat(result).isTrue();
     }
 }
