@@ -7,7 +7,6 @@ import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusUser;
 import com.unimag.edu.proyecto_final.domine.repository.UserRepository;
 import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.UserMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

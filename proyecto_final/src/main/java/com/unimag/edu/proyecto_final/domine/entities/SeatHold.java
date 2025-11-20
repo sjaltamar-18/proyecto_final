@@ -28,5 +28,12 @@ public class SeatHold {
     private User user;
     @Enumerated(EnumType.STRING)
     private StatusSeatHold status;
+    @ManyToOne
+    @JoinColumn(name = "from_stop_id")
+    private Stop fromStop;
+
+    @ManyToOne
+    @JoinColumn(name = "to_stop_id")
+    private Stop toStop;
 
 }

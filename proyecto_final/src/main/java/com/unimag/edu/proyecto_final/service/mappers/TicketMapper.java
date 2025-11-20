@@ -49,6 +49,8 @@ public interface TicketMapper {
     @Mapping(source = "passenger", target = "passengerId")
     @Mapping(source = "fromStop", target = "fromStopId")
     @Mapping(source = "toStop", target = "toStopId")
+    @Mapping(target = "paymentMethod", expression = "java(ticket.getPaymentMethod() != null ? ticket.getPaymentMethod().name() : null)")
+    @Mapping(target = "status", expression = "java(ticket.getStatusTicket() != null ? ticket.getStatusTicket().name() : null)")
     TicketResponse toResponse(Ticket ticket);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

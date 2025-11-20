@@ -5,7 +5,6 @@ import com.unimag.edu.proyecto_final.domine.entities.Confi;
 import com.unimag.edu.proyecto_final.domine.repository.ConfiRepository;
 import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.ConfiMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +33,7 @@ public class ConfiServicelmpl implements ConfiService {
     @Transactional(readOnly = true)
     public ConfiDtos.ConfigResponse get(String key) {
         Confi confi = confiRepository.findByKey(key)
-                .orElseThrow(() -> new EntityNotFoundException("config not found"));
+                .orElseThrow(() -> new NotFoundException("config not found"));
         return confiMapper.toResponse(confi);
     }
 
@@ -48,7 +47,7 @@ public class ConfiServicelmpl implements ConfiService {
     @Override
     public ConfiDtos.ConfigResponse update(String key, ConfiDtos.ConfigUpdateRequest request) {
        Confi confi = confiRepository.findByKey(key)
-                .orElseThrow(() -> new EntityNotFoundException("config not found"));
+                .orElseThrow(() -> new NotFoundException("config not found"));
        confiMapper.updateEntityFromDto(request,confi);
        confiRepository.save(confi);
 
@@ -58,7 +57,7 @@ public class ConfiServicelmpl implements ConfiService {
     @Override
     public void delete(String key) {
         Confi confi = confiRepository.findByKey(key)
-                .orElseThrow(() -> new EntityNotFoundException("config not found"));
+                .orElseThrow(() -> new NotFoundException("config not found"));
         confiRepository.delete(confi);
     }
 }
