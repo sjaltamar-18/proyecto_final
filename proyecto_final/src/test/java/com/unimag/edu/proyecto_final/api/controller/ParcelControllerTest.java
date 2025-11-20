@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,13 +47,13 @@ class ParcelControllerTest {
         ParcelCreateRequest request = new ParcelCreateRequest(
                 "P001", "Carlos", "3001234567",
                 "Maria", "3119876543",
-                1L, 2L, 15000.0
+                1L, 2L, BigDecimal.valueOf(15000.0)
         );
 
         ParcelResponse response = new ParcelResponse(
                 1L, "P001", "Carlos", "3001234567",
                 "Maria", "3119876543",
-                1L, 2L, 15000.0,
+                1L, 2L, BigDecimal.valueOf(15000.0),
                 "PENDING", null, null
         );
 
@@ -72,7 +73,7 @@ class ParcelControllerTest {
         ParcelResponse response = new ParcelResponse(
                 1L, "P001", "Carlos", "3001234567",
                 "Maria", "3119876543",
-                1L, 2L, 15000.0,
+                1L, 2L, BigDecimal.valueOf(15000.0),
                 "PENDING", null, null
         );
 
@@ -89,7 +90,7 @@ class ParcelControllerTest {
         ParcelResponse response = new ParcelResponse(
                 1L, "P001", "Carlos", "3001234567",
                 "Maria", "3119876543",
-                1L, 2L, 15000.0,
+                1L, 2L, BigDecimal.valueOf(15000.0),
                 "PENDING", null, null
         );
 
@@ -107,7 +108,7 @@ class ParcelControllerTest {
         ParcelResponse response = new ParcelResponse(
                 1L, "P001", "Carlos", "3001234567",
                 "Maria", "3119876543",
-                1L, 2L, 15000.0,
+                1L, 2L, BigDecimal.valueOf(15000.0),
                 "PENDING", null, null
         );
 
@@ -132,7 +133,7 @@ class ParcelControllerTest {
         ParcelResponse response = new ParcelResponse(
                 1L, "P001", "Carlos", "3001234567",
                 "Maria", "3119876543",
-                1L, 2L, 15000.0,
+                1L, 2L, BigDecimal.valueOf(15000.0),
                 "DELIVERED", null, null
         );
 

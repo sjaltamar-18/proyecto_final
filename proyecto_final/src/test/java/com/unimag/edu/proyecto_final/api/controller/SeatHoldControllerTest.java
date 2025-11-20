@@ -44,11 +44,11 @@ class SeatHoldControllerTest {
     void createSeatHold_shouldReturn201() throws Exception {
 
        SeatHoldCreateRequest request = new SeatHoldCreateRequest(
-               1L,"A1",2L
+               1L,"A1",2L, 3L, 4L
        );
 
        SeatHoldResponse response = new SeatHoldResponse(
-               2L,1L,"A1",2L, LocalDateTime.now(),"HOLD"
+               2L,1L,"A1",2L, LocalDateTime.now(),"HOLD",3L, 4L
        );
        when(service.create(any())).thenReturn(response);
 
@@ -62,7 +62,7 @@ class SeatHoldControllerTest {
     @Test
     void getSeatHoldById_shouldReturn200() throws Exception {
         SeatHoldResponse response = new SeatHoldResponse(
-                5L,1L,"A1",2L, LocalDateTime.now(),"HOLD"
+                5L,1L,"A1",2L, LocalDateTime.now(),"HOLD",3L, 4L
         );
         when(service.get(5L)).thenReturn(response);
 
@@ -78,7 +78,7 @@ class SeatHoldControllerTest {
 
         List<SeatHoldResponse> list = List.of(
                 new SeatHoldResponse(
-                        1L,1L,"A1",2L, LocalDateTime.now(),"HOLD"
+                        1L,1L,"A1",2L, LocalDateTime.now(),"HOLD",3L, 4L
                 )
         );
         when(service.listByUser(2L)).thenReturn(list);
@@ -94,7 +94,7 @@ class SeatHoldControllerTest {
                 "Expired"
         );
         SeatHoldResponse response = new SeatHoldResponse(
-                1L,1L,"A1",2L, LocalDateTime.now(),"EXPIRED"
+                1L,1L,"A1",2L, LocalDateTime.now(),"EXPIRED",3L, 4L
         );
 
         when(service.update(eq(1L), any())).thenReturn(response);
