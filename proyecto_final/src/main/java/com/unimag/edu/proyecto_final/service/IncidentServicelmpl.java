@@ -2,7 +2,6 @@ package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.IncidentDtos;
 import com.unimag.edu.proyecto_final.domine.entities.Incident;
-import com.unimag.edu.proyecto_final.domine.entities.enumera.EntityType;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.Type;
 import com.unimag.edu.proyecto_final.domine.repository.IncidentRepository;
 import com.unimag.edu.proyecto_final.exception.NotFoundException;

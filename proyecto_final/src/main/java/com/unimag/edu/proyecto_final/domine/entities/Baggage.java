@@ -20,7 +20,7 @@ public class Baggage {
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
     private Double weight;
-    private Double fee;
+    private BigDecimal fee;
     private String tagCode;
 
 }
