@@ -5,9 +5,9 @@ import com.unimag.edu.proyecto_final.domine.entities.Incident;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.EntityType;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.Type;
 import com.unimag.edu.proyecto_final.domine.repository.IncidentRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.IncidentMapper;
 
-import jakarta.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,7 +78,7 @@ class IncidentServiceImplTest {
         when(incidentMapper.toEntity(req)).thenReturn(incident);
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Incident not found");
     }
 
@@ -93,7 +93,7 @@ class IncidentServiceImplTest {
         when(incidentMapper.toEntity(req)).thenReturn(incident);
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Incident type not found");
     }
 
@@ -119,7 +119,7 @@ class IncidentServiceImplTest {
         when(incidentRepository.findById(999L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(999L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Incident not found");
     }
 
@@ -229,7 +229,7 @@ class IncidentServiceImplTest {
         IncidentUpdateRequest req = mock(IncidentUpdateRequest.class);
 
         assertThatThrownBy(() -> service.update(88L, req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Incident not found");
     }
 
@@ -251,7 +251,7 @@ class IncidentServiceImplTest {
         when(incidentRepository.findById(1000L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(1000L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Incident not found");
     }
 

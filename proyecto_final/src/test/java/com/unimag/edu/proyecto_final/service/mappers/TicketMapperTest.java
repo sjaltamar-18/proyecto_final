@@ -25,7 +25,8 @@ class TicketMapperTest {
                 10L,            // fromStopId
                 20L,            // toStopId
                 60000.0,        // price
-                "CARD"          // paymentMethod
+                "CARD",
+                true// paymentMethod
         );
 
         // when

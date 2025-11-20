@@ -101,8 +101,8 @@ class TripMapperTest {
         // then
         assertThat(entity.getStatusTrip()).isEqualTo(StatusTrip.CANCELLED);
         assertThat(entity.getId()).isEqualTo(20L);
-        assertThat(entity.getRoute()).isEqualTo(5L);
-        assertThat(entity.getBus()).isEqualTo(8L);
+        assertThat(entity.getRoute().getId()).isEqualTo(20L);
+        assertThat(entity.getBus().getId()).isEqualTo(8L);
     }
 
     @Test

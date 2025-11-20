@@ -5,9 +5,9 @@ import com.unimag.edu.proyecto_final.domine.entities.User;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.Role;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusUser;
 import com.unimag.edu.proyecto_final.domine.repository.UserRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.UserMapper;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -132,7 +132,7 @@ class UserServicelmplTest {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(99L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("User not found");
     }
 
@@ -159,7 +159,7 @@ class UserServicelmplTest {
         when(userRepository.findByEmail("none@mail.com")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.getByEmail("none@mail.com"))
-                .isInstanceOf(EntityNotFoundException.class);
+                .isInstanceOf(NotFoundException.class);
     }
 
     // ==========================================================================
@@ -270,6 +270,6 @@ class UserServicelmplTest {
         when(userRepository.findById(20L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(20L))
-                .isInstanceOf(EntityNotFoundException.class);
+                .isInstanceOf(NotFoundException.class);
     }
 }

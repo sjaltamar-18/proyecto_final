@@ -3,10 +3,11 @@ package com.unimag.edu.proyecto_final.service;
 import com.unimag.edu.proyecto_final.api.dto.ConfiDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.Confi;
 import com.unimag.edu.proyecto_final.domine.repository.ConfiRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.ConfiMapper;
 
 import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
+
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +70,7 @@ class ConfiServiceImplTest {
         when(confiRepository.existsByKey("HOLD_TIME")).thenReturn(true);
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityExistsException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("config already exists");
     }
 
@@ -93,7 +94,7 @@ class ConfiServiceImplTest {
         when(confiRepository.findByKey("UNKNOWN")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get("UNKNOWN"))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("config not found");
     }
 
@@ -141,7 +142,7 @@ class ConfiServiceImplTest {
         ConfigUpdateRequest req = mock(ConfigUpdateRequest.class);
 
         assertThatThrownBy(() -> service.update("NOT_EXIST", req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("config not found");
     }
 
@@ -160,7 +161,7 @@ class ConfiServiceImplTest {
         when(confiRepository.findByKey("INVALID")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete("INVALID"))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("config not found");
     }
 }

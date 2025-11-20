@@ -7,9 +7,9 @@ import com.unimag.edu.proyecto_final.domine.entities.Stop;
 import com.unimag.edu.proyecto_final.domine.repository.FareRuleRepository;
 import com.unimag.edu.proyecto_final.domine.repository.RouteRepository;
 import com.unimag.edu.proyecto_final.domine.repository.StopRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.FareRuleMapper;
 
-import jakarta.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -95,7 +95,7 @@ class FareRuleServiceImplTest {
         when(routeRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Route not found");
     }
 
@@ -109,7 +109,7 @@ class FareRuleServiceImplTest {
         when(stopRepository.findById(999L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Stop not found");
     }
 
@@ -125,7 +125,7 @@ class FareRuleServiceImplTest {
         when(stopRepository.findById(999L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Stop not found");
     }
 
@@ -148,7 +148,7 @@ class FareRuleServiceImplTest {
         when(fareRuleRepository.findById(404L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(404L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("FareRule not found");
     }
 
@@ -198,7 +198,7 @@ class FareRuleServiceImplTest {
         FareRuleUpdateRequest req = mock(FareRuleUpdateRequest.class);
 
         assertThatThrownBy(() -> service.update(7L, req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("FareRule not found");
     }
 
@@ -218,7 +218,7 @@ class FareRuleServiceImplTest {
         when(fareRuleRepository.findById(999L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(999L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("FareRule not found");
     }
 }

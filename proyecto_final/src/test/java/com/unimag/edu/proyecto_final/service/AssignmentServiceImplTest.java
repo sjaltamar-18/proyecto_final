@@ -11,8 +11,9 @@ import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusTrip;
 import com.unimag.edu.proyecto_final.domine.repository.AssignmentRepository;
 import com.unimag.edu.proyecto_final.domine.repository.TripRepository;
 import com.unimag.edu.proyecto_final.domine.repository.UserRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.AssignmentMapper;
-import jakarta.persistence.EntityNotFoundException;
+
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -115,7 +116,7 @@ class AssignmentServiceImplTest {
         when(tripRepository.findById(10L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Trip not found");
     }
 
@@ -190,7 +191,7 @@ class AssignmentServiceImplTest {
         when(assignmentRepository.findById(999L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(999L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Asignación no encontrada");
     }
 
@@ -239,7 +240,7 @@ class AssignmentServiceImplTest {
         AssignmentUpdateRequest req = mock(AssignmentUpdateRequest.class);
 
         assertThatThrownBy(() -> service.update(55L, req))
-                .isInstanceOf(EntityNotFoundException.class);
+                .isInstanceOf(NotFoundException.class);
     }
 
 
@@ -260,6 +261,6 @@ class AssignmentServiceImplTest {
         when(assignmentRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(99L))
-                .isInstanceOf(EntityNotFoundException.class);
+                .isInstanceOf(NotFoundException.class);
     }
 }

@@ -1,6 +1,7 @@
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.TicketDtos.*;
+import com.unimag.edu.proyecto_final.domine.entities.Ticket;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,6 +21,9 @@ public interface TicketService {
 
     void cancel(Long id);
 
+    TicketResponse confirmSeatHold(Long holdId);
+
+    List<Ticket> findNoShowTickets(Long tripId);
 
     TicketResponse getByQrCode(String qrCode);
 }

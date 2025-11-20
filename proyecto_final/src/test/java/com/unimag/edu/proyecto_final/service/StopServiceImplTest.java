@@ -5,9 +5,10 @@ import com.unimag.edu.proyecto_final.domine.entities.Route;
 import com.unimag.edu.proyecto_final.domine.entities.Stop;
 import com.unimag.edu.proyecto_final.domine.repository.RouteRepository;
 import com.unimag.edu.proyecto_final.domine.repository.StopRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.StopMapper;
 
-import jakarta.persistence.EntityNotFoundException;
+
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -87,7 +88,7 @@ class StopServicelmplTest {
         StopCreateRequest req = mock(StopCreateRequest.class);
 
         assertThatThrownBy(() -> service.create(99L, req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("route not found");
     }
 
@@ -128,7 +129,7 @@ class StopServicelmplTest {
         when(stopRepository.findById(404L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(404L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("stop not found");
     }
 
@@ -182,7 +183,7 @@ class StopServicelmplTest {
         StopUpdateRequest req = mock(StopUpdateRequest.class);
 
         assertThatThrownBy(() -> service.update(999L, req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("stop not found");
     }
 
@@ -204,7 +205,7 @@ class StopServicelmplTest {
         when(stopRepository.findById(77L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(77L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("stop not found");
     }
 }

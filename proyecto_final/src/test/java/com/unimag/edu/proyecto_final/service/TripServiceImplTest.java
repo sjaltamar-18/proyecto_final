@@ -5,9 +5,10 @@ import com.unimag.edu.proyecto_final.domine.entities.*;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.*;
 import com.unimag.edu.proyecto_final.domine.repository.*;
 
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.TripMapper;
 
-import jakarta.persistence.EntityNotFoundException;
+
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,7 +78,7 @@ class TripServicelmplTest {
         when(routeRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Route not found");
     }
 
@@ -91,7 +92,7 @@ class TripServicelmplTest {
         when(busRepository.findById(20L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Bus not found");
     }
 
@@ -151,7 +152,7 @@ class TripServicelmplTest {
         when(tripRepository.findById(404L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(404L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Trip not found");
     }
 
@@ -229,7 +230,7 @@ class TripServicelmplTest {
         when(tripRepository.findById(999L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.update(999L, mock(TripUpdateRequest.class)))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Trip not found");
     }
 
@@ -269,7 +270,7 @@ class TripServicelmplTest {
         when(tripRepository.findById(1000L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(1000L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Trip not found");
     }
 }

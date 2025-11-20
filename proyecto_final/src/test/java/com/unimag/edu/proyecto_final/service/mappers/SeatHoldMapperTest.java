@@ -22,7 +22,9 @@ class SeatHoldMapperTest {
         var request = new SeatHoldCreateRequest(
                 1L,
                 "4B",
-                4L
+                4L,
+                 2L,
+                3L
         );
 
         // when
@@ -33,6 +35,8 @@ class SeatHoldMapperTest {
         assertThat(entity.getId()).isNull();
         assertThat(entity.getTrip().getId()).isEqualTo(1L);
         assertThat(entity.getUser().getId()).isEqualTo(4L);
+        assertThat(entity.getFromStop().getId()).isEqualTo(2L);
+        assertThat(entity.getToStop().getId()).isEqualTo(3L);
         assertThat(entity.getSeatNumber()).isEqualTo("4B");
         assertThat(entity.getStatus()).isEqualTo(StatusSeatHold.HOLD);
         assertThat(entity.getExpirationDate()).isAfter(LocalDateTime.now());

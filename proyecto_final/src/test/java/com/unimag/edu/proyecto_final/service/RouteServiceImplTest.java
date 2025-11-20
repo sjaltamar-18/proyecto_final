@@ -3,9 +3,10 @@ package com.unimag.edu.proyecto_final.service;
 import com.unimag.edu.proyecto_final.api.dto.RouteDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.Route;
 import com.unimag.edu.proyecto_final.domine.repository.RouteRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.RouteMapper;
 
-import jakarta.persistence.EntityNotFoundException;
+
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -126,7 +127,7 @@ class RouteServicelmplTest {
         when(routeRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(99L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("route not found");
     }
 
@@ -220,7 +221,7 @@ class RouteServicelmplTest {
         RouteUpdateRequest req = mock(RouteUpdateRequest.class);
 
         assertThatThrownBy(() -> service.update(77L, req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("route not found");
     }
 
@@ -242,7 +243,7 @@ class RouteServicelmplTest {
         when(routeRepository.findById(888L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(888L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("route not found");
     }
 }

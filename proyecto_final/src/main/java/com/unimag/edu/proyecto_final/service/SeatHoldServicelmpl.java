@@ -2,17 +2,14 @@ package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.SeatHoldDtos;
 import com.unimag.edu.proyecto_final.domine.entities.SeatHold;
+import com.unimag.edu.proyecto_final.domine.entities.Stop;
 import com.unimag.edu.proyecto_final.domine.entities.Trip;
 import com.unimag.edu.proyecto_final.domine.entities.User;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusSeatHold;
-import com.unimag.edu.proyecto_final.domine.repository.SeatHoldRepository;
-import com.unimag.edu.proyecto_final.domine.repository.TripRepository;
-import com.unimag.edu.proyecto_final.domine.repository.UserRepository;
+import com.unimag.edu.proyecto_final.domine.repository.*;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.SeatHoldMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,22 +26,46 @@ public class SeatHoldServicelmpl implements  SeatHoldService {
     private final TripRepository tripRepository;
     private final UserRepository userRepository;
     private final SeatHoldMapper seatHoldMapper;
+    private final TicketRepository ticketRepository;
+    private final StopRepository stopRepository;
 
 
     @Override
     public SeatHoldDtos.SeatHoldResponse create(SeatHoldDtos.SeatHoldCreateRequest request) {
         Trip trip  = tripRepository.findById(request.tripId())
-                .orElseThrow(() -> new EntityNotFoundException("trip not found"));
+                .orElseThrow(() -> new NotFoundException("trip not found"));
 
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new EntityNotFoundException("user not found"));
+                .orElseThrow(() -> new NotFoundException("user not found"));
 
-        if (seatHoldRepository.isSeatOnHold(request.tripId(), request.seatNumber())){
-            throw new IllegalArgumentException("the seat " +request.seatNumber()+" is already on hold");
+        Stop fromStop = stopRepository.findById(request.fromStopId())
+                .orElseThrow(() -> new NotFoundException("fromStop not found"));
+
+        Stop toStop = stopRepository.findById(request.toStopId())
+                .orElseThrow(() -> new NotFoundException("toStop not found"));
+
+        if (seatHoldRepository.isSeatOnHoldByTramo(
+                trip.getId(),
+                request.seatNumber(),
+                fromStop.getStopOrder(),
+                toStop.getStopOrder()
+        )) {
+            throw new IllegalStateException("Seat is temporarily hold in this tramo");
+        }
+        if (ticketRepository.isSeatSold(request.tripId(), request.seatNumber())){
+            throw new IllegalStateException("the seat " +request.seatNumber()+" is already sold");
+        }
+        if (trip.getDepartureAt().isBefore(LocalDateTime.now())){
+            throw new IllegalStateException("Trip alredy departed");
         }
         SeatHold seatHold = seatHoldMapper.toEntity(request);
         seatHold.setTrip(trip);
         seatHold.setUser(user);
+        seatHold.setFromStop(fromStop);
+        seatHold.setToStop(toStop);
+
+        seatHold.setExpirationDate(LocalDateTime.now().plusMinutes(10));
+        seatHold.setStatus(StatusSeatHold.HOLD);
 
         SeatHold saved = seatHoldRepository.save(seatHold);
         return seatHoldMapper.toResponse(saved);
@@ -54,7 +75,7 @@ public class SeatHoldServicelmpl implements  SeatHoldService {
     @Transactional(readOnly = true)
     public SeatHoldDtos.SeatHoldResponse get(Long id) {
         SeatHold seatHold = seatHoldRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("seatHold not found"));
+                .orElseThrow(()-> new NotFoundException("seatHold not found"));
         return seatHoldMapper.toResponse(seatHold);
     }
 
@@ -75,7 +96,7 @@ public class SeatHoldServicelmpl implements  SeatHoldService {
     @Override
     public SeatHoldDtos.SeatHoldResponse update(Long id, SeatHoldDtos.SeatHoldUpdateRequest request) {
         SeatHold seatHold = seatHoldRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("seatHold not found"));
+                .orElseThrow(() -> new NotFoundException("seatHold not found"));
 
         seatHoldMapper.updateEntityFromStatusRequest(request,seatHold);
         SeatHold saved = seatHoldRepository.save(seatHold);
@@ -96,7 +117,7 @@ public class SeatHoldServicelmpl implements  SeatHoldService {
     @Override
     public void delete(Long id) {
         SeatHold seatHold = seatHoldRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("seatHold not found"));
+                .orElseThrow(() -> new NotFoundException("seatHold not found"));
         seatHoldRepository.delete(seatHold);
 
     }

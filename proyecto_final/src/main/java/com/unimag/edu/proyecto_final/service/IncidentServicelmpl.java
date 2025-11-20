@@ -5,8 +5,8 @@ import com.unimag.edu.proyecto_final.domine.entities.Incident;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.EntityType;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.Type;
 import com.unimag.edu.proyecto_final.domine.repository.IncidentRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.IncidentMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,10 +29,10 @@ public class IncidentServicelmpl  implements IncidentService{
         Incident incident = incidentMapper.toEntity(request);
 
         if (incident.getEntityType() == null || incident.getEntityType() == null) {
-            throw new EntityNotFoundException("Incident not found");
+            throw new NotFoundException("Incident not found");
         }
         if (incident.getType() == null ){
-            throw new EntityNotFoundException("Incident type not found");
+            throw new NotFoundException("Incident type not found");
         }
         Incident saved = incidentRepository.save(incident);
         return incidentMapper.toResponse(saved);
@@ -41,7 +41,7 @@ public class IncidentServicelmpl  implements IncidentService{
     @Override
     @Transactional(readOnly = true)
     public IncidentDtos.IncidentResponse get(Long id) {
-        Incident incident = incidentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Incident not found"));
+        Incident incident = incidentRepository.findById(id).orElseThrow(() -> new NotFoundException("Incident not found"));
 
         return incidentMapper.toResponse(incident);
     }
@@ -78,7 +78,7 @@ public class IncidentServicelmpl  implements IncidentService{
     @Override
     public IncidentDtos.IncidentResponse update(Long id, IncidentDtos.IncidentUpdateRequest request) {
         Incident incident = incidentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Incident not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Incident not found with id: " + id));
 
         incidentMapper.updateEntityFromDto(request, incident);
         Incident updated = incidentRepository.save(incident);
@@ -88,7 +88,7 @@ public class IncidentServicelmpl  implements IncidentService{
     @Override
     public void delete(Long id) {
         Incident incident = incidentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Incident not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Incident not found with id: " + id));
         incidentRepository.delete(incident);
     }
 

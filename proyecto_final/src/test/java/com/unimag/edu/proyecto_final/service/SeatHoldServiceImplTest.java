@@ -2,15 +2,15 @@ package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.SeatHoldDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.SeatHold;
+import com.unimag.edu.proyecto_final.domine.entities.Stop;
 import com.unimag.edu.proyecto_final.domine.entities.Trip;
 import com.unimag.edu.proyecto_final.domine.entities.User;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusSeatHold;
-import com.unimag.edu.proyecto_final.domine.repository.SeatHoldRepository;
-import com.unimag.edu.proyecto_final.domine.repository.TripRepository;
-import com.unimag.edu.proyecto_final.domine.repository.UserRepository;
+import com.unimag.edu.proyecto_final.domine.repository.*;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.SeatHoldMapper;
 
-import jakarta.persistence.EntityNotFoundException;
+
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +43,12 @@ class SeatHoldServicelmplTest {
     @Mock
     private SeatHoldMapper seatHoldMapper;
 
+    @Mock
+    private StopRepository stopRepository;
+
+    @Mock
+    private TicketRepository ticketRepository;
+
     @InjectMocks
     private SeatHoldServicelmpl service;
 
@@ -61,11 +67,23 @@ class SeatHoldServicelmplTest {
         when(req.seatNumber()).thenReturn("12A");
 
         Trip trip = Trip.builder().id(10L).build();
+        trip.setDepartureAt(LocalDateTime.now().plusDays(1));
+
+        Stop fromStop = new Stop();
+        fromStop.setStopOrder(1);
+        Stop toStop = new Stop();
+        toStop.setStopOrder(5);
+
         User user = User.builder().id(20L).build();
 
         when(tripRepository.findById(10L)).thenReturn(Optional.of(trip));
         when(userRepository.findById(20L)).thenReturn(Optional.of(user));
-        when(seatHoldRepository.isSeatOnHold(10L, "12A")).thenReturn(false);
+        when(seatHoldRepository.isSeatOnHoldByTramo(
+                10L,
+                "12A",
+                fromStop.getStopOrder(),
+                toStop.getStopOrder()
+        )).thenReturn(false);
 
         SeatHold seatHold = new SeatHold();
         when(seatHoldMapper.toEntity(req)).thenReturn(seatHold);
@@ -76,12 +94,21 @@ class SeatHoldServicelmplTest {
         SeatHoldResponse mapped = mock(SeatHoldResponse.class);
         when(seatHoldMapper.toResponse(saved)).thenReturn(mapped);
 
+
+
+        when(req.fromStopId()).thenReturn(1L);
+        when(req.toStopId()).thenReturn(2L);
+        when(stopRepository.findById(1L)).thenReturn(Optional.of(fromStop));
+        when(stopRepository.findById(2L)).thenReturn(Optional.of(toStop));
+
         var result = service.create(req);
 
         assertThat(result).isEqualTo(mapped);
         verify(tripRepository).findById(10L);
         verify(userRepository).findById(20L);
-        verify(seatHoldRepository).isSeatOnHold(10L, "12A");
+        verify(seatHoldRepository).isSeatOnHoldByTramo(
+                10L, "12A", fromStop.getStopOrder(), toStop.getStopOrder()
+        );
         verify(seatHoldRepository).save(seatHold);
     }
 
@@ -93,7 +120,7 @@ class SeatHoldServicelmplTest {
         when(tripRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("trip not found");
     }
 
@@ -107,7 +134,7 @@ class SeatHoldServicelmplTest {
         when(userRepository.findById(20L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("user not found");
     }
 
@@ -117,15 +144,33 @@ class SeatHoldServicelmplTest {
         when(req.tripId()).thenReturn(10L);
         when(req.userId()).thenReturn(20L);
         when(req.seatNumber()).thenReturn("12A");
+        when(req.fromStopId()).thenReturn(1L);
+        when(req.toStopId()).thenReturn(2L);
 
-        when(tripRepository.findById(10L)).thenReturn(Optional.of(new Trip()));
+        Stop fromStop = new Stop();
+        fromStop.setStopOrder(1);
+        Stop toStop = new Stop();
+        toStop.setStopOrder(5);
+
+        when(stopRepository.findById(1L)).thenReturn(Optional.of(fromStop));
+        when(stopRepository.findById(2L)).thenReturn(Optional.of(toStop));
+
+        Trip trip = new Trip();
+        trip.setId(10L);
+        when(tripRepository.findById(10L)).thenReturn(Optional.of(trip));
+
         when(userRepository.findById(20L)).thenReturn(Optional.of(new User()));
 
-        when(seatHoldRepository.isSeatOnHold(10L, "12A")).thenReturn(true);
+        when(seatHoldRepository.isSeatOnHoldByTramo(
+                10L,
+                "12A",
+                fromStop.getStopOrder(),
+                toStop.getStopOrder()
+        )).thenReturn(true);
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("is already on hold");
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Seat is temporarily hold in this tramo");
     }
 
     // ==========================================================================
@@ -150,7 +195,7 @@ class SeatHoldServicelmplTest {
         when(seatHoldRepository.findById(404L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(404L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("seatHold not found");
     }
 
@@ -215,7 +260,7 @@ class SeatHoldServicelmplTest {
         SeatHoldUpdateRequest req = mock(SeatHoldUpdateRequest.class);
 
         assertThatThrownBy(() -> service.update(999L, req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("seatHold not found");
     }
 
@@ -256,7 +301,7 @@ class SeatHoldServicelmplTest {
         when(seatHoldRepository.findById(777L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(777L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("seatHold not found");
     }
 }

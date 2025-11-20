@@ -6,9 +6,9 @@ import com.unimag.edu.proyecto_final.domine.entities.Stop;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusParcel;
 import com.unimag.edu.proyecto_final.domine.repository.ParcelRepository;
 import com.unimag.edu.proyecto_final.domine.repository.StopRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.ParcelMapper;
 
-import jakarta.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -99,15 +99,15 @@ class ParcelServiceImplTest {
     @Test
     void create_debe_fallar_si_fromStop_no_existe() {
         ParcelCreateRequest req = mock(ParcelCreateRequest.class);
-        when(req.code()).thenReturn("PX100");
-        when(req.fromStopId()).thenReturn(1L);
+        lenient().when(req.code()).thenReturn("PX100");
+        lenient().when(req.fromStopId()).thenReturn(1L);
+        lenient().when(req.toStopId()).thenReturn(2L);
 
-
-        when(parcelRepository.existsByCode("PX100")).thenReturn(false);
+        lenient().when(parcelRepository.existsByCode("PX100")).thenReturn(false);
         when(stopRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Stop not found");
     }
 
@@ -123,7 +123,7 @@ class ParcelServiceImplTest {
         when(stopRepository.findById(2L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Stop not found");
     }
 
@@ -149,7 +149,7 @@ class ParcelServiceImplTest {
         when(parcelRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(99L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Parcel not found");
     }
 
@@ -175,7 +175,7 @@ class ParcelServiceImplTest {
         when(parcelRepository.findByCode("NOEXISTE")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.getByCode("NOEXISTE"))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Parcel not found");
     }
 
@@ -231,7 +231,7 @@ class ParcelServiceImplTest {
         ParcelUpdateRequest req = mock(ParcelUpdateRequest.class);
 
         assertThatThrownBy(() -> service.update(88L, req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Parcel not found");
     }
 
@@ -253,7 +253,7 @@ class ParcelServiceImplTest {
         when(parcelRepository.findById(1000L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(1000L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Parcel not found");
     }
 }

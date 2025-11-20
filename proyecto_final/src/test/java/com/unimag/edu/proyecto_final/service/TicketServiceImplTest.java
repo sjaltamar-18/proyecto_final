@@ -5,9 +5,10 @@ import com.unimag.edu.proyecto_final.domine.entities.*;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusTicket;
 import com.unimag.edu.proyecto_final.domine.repository.*;
 
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
+import com.unimag.edu.proyecto_final.service.mappers.SeatHoldMapper;
 import com.unimag.edu.proyecto_final.service.mappers.TicketMapper;
 
-import jakarta.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.List;
 
@@ -32,6 +34,8 @@ class TicketServicelmplTest {
     @Mock private UserRepository userRepository;
     @Mock private StopRepository stopRepository;
     @Mock private TicketMapper ticketMapper;
+    @Mock private SeatHoldMapper seatHoldMapper;
+    @Mock private SeatHoldRepository seatHoldRepository;
 
     @InjectMocks
     private TicketServicelmpl service;
@@ -49,7 +53,9 @@ class TicketServicelmplTest {
         when(req.toStopId()).thenReturn(4L);
         when(req.seatNumber()).thenReturn("15B");
 
-        Trip trip = Trip.builder().id(1L).build();
+        Bus bus = Bus.builder().id(10L).capacity(50).build();
+        Trip trip = Trip.builder().id(1L).bus(bus).departureAt(LocalDateTime.of(2025, 11, 19, 8, 0))  // fecha de salida
+                .arrivalAt(LocalDateTime.of(2025, 11, 19, 12, 0)).build();
         User passenger = User.builder().id(20L).build();
         Stop fromStop = Stop.builder().id(3L).stopOrder(1).build();
         Stop toStop = Stop.builder().id(4L).stopOrder(5).build();
@@ -93,7 +99,7 @@ class TicketServicelmplTest {
         when(tripRepository.findById(999L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("trip not found");
     }
 
@@ -107,7 +113,7 @@ class TicketServicelmplTest {
         when(userRepository.findById(50L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("passenger not found");
     }
 
@@ -123,7 +129,7 @@ class TicketServicelmplTest {
         when(stopRepository.findById(777L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("stop not found");
     }
 
@@ -135,13 +141,19 @@ class TicketServicelmplTest {
         when(req.fromStopId()).thenReturn(3L);
         when(req.toStopId()).thenReturn(888L);
 
-        when(tripRepository.findById(1L)).thenReturn(Optional.of(new Trip()));
+        Trip trip = Trip.builder()
+                .id(1L)
+                .bus(Bus.builder().capacity(40).build())
+                .departureAt(LocalDateTime.now().plusHours(2))
+                .build();
+
+        when(tripRepository.findById(1L)).thenReturn(Optional.of(trip));
         when(userRepository.findById(2L)).thenReturn(Optional.of(new User()));
         when(stopRepository.findById(3L)).thenReturn(Optional.of(new Stop()));
         when(stopRepository.findById(888L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("stop not found");
     }
 
@@ -155,13 +167,19 @@ class TicketServicelmplTest {
         when(req.toStopId()).thenReturn(4L);
         when(req.seatNumber()).thenReturn("10C");
 
-        when(tripRepository.findById(1L)).thenReturn(Optional.of(new Trip()));
+        Trip trip = Trip.builder()
+                .id(1L)
+                .bus(Bus.builder().capacity(40).build())
+                .departureAt(LocalDateTime.now().plusHours(2))
+                .build();
+
+        when(tripRepository.findById(1L)).thenReturn(Optional.of(trip));
         when(userRepository.findById(2L)).thenReturn(Optional.of(new User()));
         when(stopRepository.findById(3L)).thenReturn(Optional.of(Stop.builder().stopOrder(1).build()));
         when(stopRepository.findById(4L)).thenReturn(Optional.of(Stop.builder().stopOrder(5).build()));
 
-        when(ticketRepository.isSeatOccupied(isNull(), eq("10C"), eq(1), eq(5))).thenReturn(true);
-
+        when(ticketRepository.isSeatOccupied(1L, "10C", 1, 5)).thenReturn(true);
+        when(seatHoldRepository.isSeatOnHoldByTramo(1L, "10C", 1, 5)).thenReturn(false);
         assertThatThrownBy(() -> service.create(req))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("already occupied");
@@ -187,7 +205,7 @@ class TicketServicelmplTest {
         when(ticketRepository.findById(404L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(404L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("ticket not found");
     }
 
@@ -251,7 +269,7 @@ class TicketServicelmplTest {
         TicketUpdateRequest req = mock(TicketUpdateRequest.class);
 
         assertThatThrownBy(() -> service.update(999L, req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("ticket not found");
     }
 
@@ -270,7 +288,7 @@ class TicketServicelmplTest {
         when(ticketRepository.existsById(88L)).thenReturn(false);
 
         assertThatThrownBy(() -> service.cancel(88L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("ticket not found");
     }
 
@@ -294,7 +312,7 @@ class TicketServicelmplTest {
         when(ticketRepository.findByQrCode(anyString())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.getByQrCode("INVALID"))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("QR not found");
     }
 }

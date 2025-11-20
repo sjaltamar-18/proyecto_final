@@ -5,8 +5,9 @@ import com.unimag.edu.proyecto_final.domine.entities.Baggage;
 import com.unimag.edu.proyecto_final.domine.entities.Ticket;
 import com.unimag.edu.proyecto_final.domine.repository.BaggageRepository;
 import com.unimag.edu.proyecto_final.domine.repository.TicketRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.BaggageMapper;
-import jakarta.persistence.EntityNotFoundException;
+
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,7 +82,7 @@ class BaggageServiceImplTest {
         when(ticketRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.register(req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("ticket not found");
     }
 
@@ -106,7 +107,7 @@ class BaggageServiceImplTest {
         when(baggageRepository.findById(888L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(888L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("baggage not found");
     }
 
@@ -158,7 +159,7 @@ class BaggageServiceImplTest {
         BaggageUpdateRequest req = mock(BaggageUpdateRequest.class);
 
         assertThatThrownBy(() -> service.update(404L, req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("baggage not found");
     }
 
@@ -180,7 +181,7 @@ class BaggageServiceImplTest {
         when(baggageRepository.findById(777L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(777L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("baggage not found");
     }
 }

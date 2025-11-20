@@ -3,8 +3,8 @@ package com.unimag.edu.proyecto_final.service;
 import com.unimag.edu.proyecto_final.api.dto.RouteDtos;
 import com.unimag.edu.proyecto_final.domine.entities.Route;
 import com.unimag.edu.proyecto_final.domine.repository.RouteRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.RouteMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,7 +49,7 @@ public class RouteServicelmpl implements RouteService{
     @Transactional(readOnly = true)
     public RouteDtos.RouteResponse get(Long id) {
         Route route = routeRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("route not found"));
+                .orElseThrow(()-> new NotFoundException("route not found"));
         return routeMapper.toResponse(route);
     }
 
@@ -72,7 +72,7 @@ public class RouteServicelmpl implements RouteService{
     @Override
     public RouteDtos.RouteResponse update(Long id, RouteDtos.RouteUpdateRequest request) {
         Route route = routeRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("route not found"));
+                .orElseThrow(()-> new NotFoundException("route not found"));
 
         routeMapper.updateEntityFromDto(request, route);
 
@@ -89,7 +89,7 @@ public class RouteServicelmpl implements RouteService{
     @Override
     public void delete(Long id) {
         Route route = routeRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("route not found"));
+                .orElseThrow(()-> new NotFoundException("route not found"));
 
         routeRepository.delete(route);
     }

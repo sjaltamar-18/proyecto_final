@@ -5,11 +5,9 @@ import com.unimag.edu.proyecto_final.domine.entities.Route;
 import com.unimag.edu.proyecto_final.domine.entities.Stop;
 import com.unimag.edu.proyecto_final.domine.repository.RouteRepository;
 import com.unimag.edu.proyecto_final.domine.repository.StopRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.StopMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +25,7 @@ public class StopServicelmpl implements StopService {
     @Override
     public StopDtos.StopResponse create(Long routeId, StopDtos.StopCreateRequest request) {
        Route route = routeRepository.findById(routeId)
-               .orElseThrow(()-> new EntityNotFoundException("route not found"));
+               .orElseThrow(()-> new NotFoundException("route not found"));
 
         if (stopRepository.findByRouteAndName(routeId, request.name()).isPresent()) {
             throw new IllegalArgumentException("Stop already exists for this route");
@@ -49,7 +47,7 @@ public class StopServicelmpl implements StopService {
     @Transactional(readOnly = true)
     public StopDtos.StopResponse get(Long id) {
         Stop stop = stopRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("stop not found"));
+                .orElseThrow(()-> new NotFoundException("stop not found"));
 
         return stopMapper.toResponse(stop);
     }
@@ -64,7 +62,7 @@ public class StopServicelmpl implements StopService {
     @Override
     public StopDtos.StopResponse update(Long id, StopDtos.StopUpdateRequest request) {
        Stop stop = stopRepository.findById(id)
-               .orElseThrow(()-> new EntityNotFoundException("stop not found"));
+               .orElseThrow(()-> new NotFoundException("stop not found"));
 
        stopMapper.updateEntityFromDto(request,stop);
        Stop update = stopRepository.save(stop);
@@ -74,7 +72,7 @@ public class StopServicelmpl implements StopService {
     @Override
     public void delete(Long id) {
         Stop stop = stopRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("stop not found"));
+                .orElseThrow(()-> new NotFoundException("stop not found"));
         stopRepository.delete(stop);
 
     }

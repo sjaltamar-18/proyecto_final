@@ -4,10 +4,11 @@ import com.unimag.edu.proyecto_final.api.dto.BusDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.Bus;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusBus;
 import com.unimag.edu.proyecto_final.domine.repository.BusRepository;
+import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.BusMapper;
 
 import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
+
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,7 +76,7 @@ class BusServiceImplTest {
         when(busRepository.existsByPlate("ZZZ999")).thenReturn(true);
 
         assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(EntityExistsException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("plate already exists");
     }
 
@@ -100,7 +101,7 @@ class BusServiceImplTest {
         when(busRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(99L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("bus not found");
     }
 
@@ -154,7 +155,7 @@ class BusServiceImplTest {
         BusUpdateRequest req = mock(BusUpdateRequest.class);
 
         assertThatThrownBy(() -> service.update(44L, req))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("bus not found");
     }
 
@@ -176,7 +177,7 @@ class BusServiceImplTest {
         when(busRepository.findById(123L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(123L))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("bus not found");
     }
 }
