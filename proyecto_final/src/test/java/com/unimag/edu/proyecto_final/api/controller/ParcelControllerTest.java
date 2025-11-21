@@ -22,8 +22,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -127,26 +126,54 @@ class ParcelControllerTest {
     }
 
     @Test
-    void update_shouldReturn200() throws Exception {
-        ParcelUpdateRequest request = new ParcelUpdateRequest("DELIVERED");
+    void updateStatus_shouldReturn200() throws Exception {
 
-        ParcelResponse response = new ParcelResponse(
-                1L, "P001", "Carlos", "3001234567",
-                "Maria", "3119876543",
-                1L, 2L, BigDecimal.valueOf(15000.0),
-                "DELIVERED", null, null
+        String code = "PKG123";
+
+        ParcelResponse byCode = new ParcelResponse(
+                10L,
+                code,
+                "Juan", "300123", "Maria", "310222",
+                1L, 2L,
+                new BigDecimal("15000"),
+                "IN_TRANSIT",
+                null,
+                null
         );
 
-       when(parcelService.update(eq(1L), any(ParcelUpdateRequest.class)))
-                .thenReturn(response);
+        ParcelResponse updated = new ParcelResponse(
+                10L,
+                code,
+                "Juan", "300123", "Maria", "310222",
+                1L, 2L,
+                new BigDecimal("15000"),
+                "DELIVERED",
+                "foto.jpg",
+                "1234"
+        );
 
-        mockMvc.perform(put("/api/parcels/1")
+        ParcelUpdateRequest request = new ParcelUpdateRequest(
+                "DELIVERED"
+        );
+
+        // MOCKEO
+        when(parcelService.getByCode(code)).thenReturn(byCode);
+        when(parcelService.update(10L, request)).thenReturn(updated);
+
+        // EJECUTAR
+        mockMvc.perform(post("/api/parcels/{code}/status", code)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(10))
+                .andExpect(jsonPath("$.code").value(code))
                 .andExpect(jsonPath("$.status").value("DELIVERED"));
-    }
 
+
+        // VERIFICACIONES
+        verify(parcelService).getByCode(code);
+        verify(parcelService).update(10L, request);
+    }
     @Test
     void delete_shouldReturn204() throws Exception {
    doNothing().when(parcelService).delete(1L);

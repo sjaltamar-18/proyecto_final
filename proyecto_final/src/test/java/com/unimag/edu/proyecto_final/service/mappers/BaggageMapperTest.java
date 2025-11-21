@@ -17,7 +17,7 @@ class BaggageMapperTest {
     @Test
     void toEntity_shouldMapCreateRequest() {
         // given
-        var request = new BaggageCreateRequest(1L, 15.5, 5000.0, "TAG001");
+        var request = new BaggageCreateRequest(1L, 15.5, new BigDecimal("5000.0"), "TAG001");
 
         // when
         Baggage entity = mapper.toEntity(request);
@@ -25,7 +25,7 @@ class BaggageMapperTest {
         // then
         assertThat(entity).isNotNull();
         assertThat(entity.getWeight()).isEqualTo(15.5);
-        assertThat(entity.getFee()).isEqualTo(5000.0);
+        assertThat(entity.getFee()).isEqualTo(new BigDecimal("5000.0"));
         assertThat(entity.getTagCode()).isEqualTo("TAG001");
     }
 
@@ -65,7 +65,7 @@ class BaggageMapperTest {
                 .tagCode("TAG123")
                 .build();
 
-        var update = new BaggageUpdateRequest(12.5, 6000.0);
+        var update = new BaggageUpdateRequest(12.5, new BigDecimal("6000.0"));
 
 
         mapper.updateEntityFromDto(update, entity);

@@ -116,11 +116,30 @@ class TicketControllerTest {
     }
 
     @Test
-    void deleteTicket_shouldReturn204() throws Exception {
-        mockMvc.perform(delete("/api/tickets/9"))
-                .andExpect(status().isNoContent());
+    void cancelTicket_shouldReturn200() throws Exception {
 
-        verify(ticketService).cancel(9L);
+        TicketResponse response = new TicketResponse(
+                10L,
+                5L,               // tripId
+                3L,               // passengerId
+                "A12",            // seatNumber
+                1L,               // fromStopId
+                2L,               // toStopId
+                120000.0,         // price
+                "CARD",           // paymentMethod
+                "CANCELLED",      // status
+                "QR-123456"       // qrCode
+        );
+
+        when(ticketService.cancel(10L)).thenReturn(response);
+
+        mockMvc.perform(post("/api/tickets/10/cancel"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(10L))
+                .andExpect(jsonPath("$.status").value("CANCELLED"))
+                .andExpect(jsonPath("$.seatNumber").value("A12"))
+                .andExpect(jsonPath("$.paymentMethod").value("CARD"))
+                .andExpect(jsonPath("$.qrCode").value("QR-123456"));
     }
 
     @Test

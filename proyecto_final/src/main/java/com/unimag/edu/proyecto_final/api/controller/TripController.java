@@ -27,6 +27,14 @@ public class TripController {
         TripResponse created = tripService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+    @PostMapping("/{id}/depart")
+    public ResponseEntity<TripResponse> authorizeDeparture(
+            @PathVariable Long id,
+            @RequestParam Long driverId
+    ) {
+        TripResponse response = tripService.authorizeDeparture(id, driverId);
+        return ResponseEntity.ok(response);
+    }
     @GetMapping("/{id}")
     public ResponseEntity<TripResponse> get(@PathVariable Long id)
     {

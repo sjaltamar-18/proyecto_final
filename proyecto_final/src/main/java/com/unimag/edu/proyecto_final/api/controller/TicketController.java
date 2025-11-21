@@ -39,10 +39,10 @@ public class TicketController {
     public ResponseEntity<TicketResponse> update(@PathVariable Long id, @Valid@RequestBody TicketUpdateRequest request){
         return ResponseEntity.ok(ticketService.update(id, request));
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<TicketResponse> delete(@PathVariable Long id){
-        ticketService.cancel(id);
-        return ResponseEntity.noContent().build();
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<TicketResponse> cancel(@PathVariable Long id) {
+        TicketResponse response = ticketService.cancel(id);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/qr/qrCode")

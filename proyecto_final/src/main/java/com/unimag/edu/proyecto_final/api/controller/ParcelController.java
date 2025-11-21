@@ -37,8 +37,9 @@ public class ParcelController {
         return ResponseEntity.ok(parcelService.listByStatus(status, pageable));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ParcelResponse> update(@PathVariable Long id, @Valid @RequestBody ParcelUpdateRequest request){
+    @PostMapping("/{code}/status")
+    public ResponseEntity<ParcelResponse> update(@PathVariable String code, @RequestBody ParcelUpdateRequest request) {
+        Long id = parcelService.getByCode(code).id();
         return ResponseEntity.ok(parcelService.update(id, request));
     }
 

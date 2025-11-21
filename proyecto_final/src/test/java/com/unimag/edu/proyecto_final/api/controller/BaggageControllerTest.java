@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,10 +42,10 @@ class BaggageControllerTest {
     @Test
     void register_shouldReturn201() throws Exception {
         BaggageCreateRequest request =
-                new BaggageCreateRequest(8L, 22.5, 15.0, "TAG987");
+                new BaggageCreateRequest(8L, 22.5, new BigDecimal("15.0"), "TAG987");
 
         BaggageResponse response =
-                new BaggageResponse(1L, 8L, 22.5, 15.0, "TAG987");
+                new BaggageResponse(1L, 8L, 22.5, new BigDecimal("15.0"), "TAG987");
 
         when(baggageService.register(request)).thenReturn(response);
 
@@ -55,14 +56,14 @@ class BaggageControllerTest {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.ticketId").value(8))
                 .andExpect(jsonPath("$.weightKg").value(22.5))
-                .andExpect(jsonPath("$.fee").value(15.0))
+                .andExpect(jsonPath("$.fee").value(new BigDecimal("15.0")))
                 .andExpect(jsonPath("$.tagCode").value("TAG987"));
     }
 
     @Test
     void get_shouldReturn200() throws Exception  {
         BaggageResponse response =
-                new BaggageResponse(2L, 3L, 10.0, 5.5, "TAG111");
+                new BaggageResponse(2L, 3L, 10.0, new BigDecimal("5.5"), "TAG111");
 
         when(baggageService.get(2L)).thenReturn(response);
 
@@ -71,14 +72,14 @@ class BaggageControllerTest {
                 .andExpect(jsonPath("$.id").value(2))
                 .andExpect(jsonPath("$.ticketId").value(3))
                 .andExpect(jsonPath("$.weightKg").value(10.0))
-                .andExpect(jsonPath("$.fee").value(5.5))
+                .andExpect(jsonPath("$.fee").value(new BigDecimal("5.5")))
                 .andExpect(jsonPath("$.tagCode").value("TAG111"));
     }
 
     @Test
     void getTickets_shouldReturn200() throws Exception  {
         BaggageResponse bag =
-                new BaggageResponse(4L, 99L, 18.0, 12.0, "TAG777");
+                new BaggageResponse(4L, 99L, 18.0, new BigDecimal("12.0"), "TAG777");
 
         Page<BaggageResponse> page =
                 new PageImpl<>(List.of(bag));
@@ -96,10 +97,10 @@ class BaggageControllerTest {
     void update_shouldReturn200() throws Exception  {
 
         BaggageUpdateRequest request =
-                new BaggageUpdateRequest(25.0, 18.0);
+                new BaggageUpdateRequest(25.0, new BigDecimal("18.0"));
 
         BaggageResponse response =
-                new BaggageResponse(7L, 44L, 25.0, 18.0, "TAG555");
+                new BaggageResponse(7L, 44L, 25.0, new BigDecimal("18.0"), "TAG555");
 
         when(baggageService.update(7L, request)).thenReturn(response);
 
