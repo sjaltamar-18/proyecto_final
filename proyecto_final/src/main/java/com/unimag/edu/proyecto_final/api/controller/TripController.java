@@ -66,10 +66,9 @@ public class TripController {
             @PathVariable Long id,
             @RequestBody AssignmentDtos.AssignmentCreateRequest request) {
 
-        // 🚨 IMPORTANTE:
-        // Como tu DTO tiene un tripId interno, lo sobreescribimos para evitar inconsistencias
+
         AssignmentDtos.AssignmentCreateRequest fixedRequest = new AssignmentDtos.AssignmentCreateRequest(
-                id,                      // forzamos el tripId correcto
+                id,
                 request.driverId(),
                 request.dispatcherId(),
                 request.checklistOk()
