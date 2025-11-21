@@ -17,7 +17,7 @@ public interface StopMapper {
     Stop toEntity(StopCreateRequest request);
 
 
-    @Mapping(source = "route.id", target = "routeId")
+    @Mapping(target = "routeId", expression = "java(stop.getRoute().getId())")
     @Mapping(source = "stopName", target = "name")
     @Mapping(source = "stopOrder", target = "order")
     @Mapping(source = "latitude", target = "lat")

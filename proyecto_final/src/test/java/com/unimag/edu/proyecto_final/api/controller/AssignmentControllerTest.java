@@ -1,6 +1,7 @@
 package com.unimag.edu.proyecto_final.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.unimag.edu.proyecto_final.api.dto.AssignmentDtos;
 import com.unimag.edu.proyecto_final.api.dto.AssignmentDtos.*;
 import com.unimag.edu.proyecto_final.service.AssignmentService;
 import org.apache.catalina.security.SecurityConfig;
@@ -37,24 +38,58 @@ class AssignmentControllerTest {
 
     @MockitoBean
     AssignmentService service;
-
+    @Autowired
+    private AssignmentService assignmentService;
 
 
     @Test
-    void createAssignment_shouldReturn201() throws Exception {
-        AssignmentCreateRequest request = new AssignmentCreateRequest(10L,5L,3L,true);
+    void assignTrip_debe_retornar_200_y_assignmentResponse() throws Exception {
 
-        AssignmentResponse response = new AssignmentResponse(1L,10L,5L,3L,true,
-                LocalDateTime.now());
+        Long tripId = 1L;
 
-        when(service.create(any())).thenReturn(response);
+        // Body enviado por el cliente (tripId será ignorado y reemplazado por el del path)
+        AssignmentDtos.AssignmentCreateRequest request =
+                new AssignmentDtos.AssignmentCreateRequest(
+                        999L,      // valor incorrecto (no importa)
+                        10L,
+                        20L,
+                        true
+                );
 
-        mockMvc.perform(post("/api/assignments")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.tripId").value(10));
+        // Respuesta esperada del servicio
+        AssignmentDtos.AssignmentResponse response =
+                new AssignmentDtos.AssignmentResponse(
+                        100L,
+                        tripId,
+                        10L,
+                        20L,
+                        true,
+                        LocalDateTime.now()
+                );
+
+        // Mock del servicio (se espera que reciba tripId = 1 y un fixedRequest)
+        AssignmentDtos.AssignmentCreateRequest fixedRequest =
+                new AssignmentDtos.AssignmentCreateRequest(
+                        tripId,    // siempre debe venir del path
+                        10L,
+                        20L,
+                        true
+                );
+
+        when(assignmentService.assign(tripId, fixedRequest))
+                .thenReturn(response);
+
+        mockMvc.perform(
+                        post("/api/trips/{id}/assign", tripId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(100))
+                .andExpect(jsonPath("$.tripId").value(1))
+                .andExpect(jsonPath("$.driverId").value(10))
+                .andExpect(jsonPath("$.dispatcherId").value(20))
+                .andExpect(jsonPath("$.checklistOk").value(true));
     }
 
     @Test

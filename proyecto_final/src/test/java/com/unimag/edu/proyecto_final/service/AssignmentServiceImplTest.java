@@ -49,127 +49,184 @@ class AssignmentServiceImplTest {
     @Mock
     private AssignmentMapper mapper;
 
+    @Mock private AssignmentMapper assignmentMapper;
+
     @InjectMocks
     private AssignmentServicelmpl service;
+
+
 
     @BeforeEach
     void setUp() {}
 
 
     @Test
-    void create_debe_crear_assignment_correctamente() {
-        // DTO mock (record → se mockean sus métodos)
-        AssignmentCreateRequest req = mock(AssignmentCreateRequest.class);
-        when(req.tripId()).thenReturn(10L);
-        when(req.driverId()).thenReturn(20L);
-        when(req.dispatcherId()).thenReturn(30L);
-        when(req.checklistOk()).thenReturn(true);
+    void assign_debe_asignar_correctamente() {
 
-        // Trip existente y con status SCHEDULED
-        Trip trip = Trip.builder()
-                .id(10L)
-                .statusTrip(StatusTrip.SCHEDULED)
-                .build();
+        Trip trip = new Trip();
+        trip.setId(1L);
 
-        User driver = User.builder()
-                .id(20L)
-                .role(Role.DRIVER)
-                .build();
+        User driver = new User();
+        driver.setId(10L);
+        driver.setRole(Role.DRIVER);
 
-        User dispatcher = User.builder()
-                .id(30L)
-                .role(Role.DISPATCHER)
-                .build();
+        User dispatcher = new User();
+        dispatcher.setId(20L);
+        dispatcher.setRole(Role.DISPATCHER);
 
-        Assignment savedAssignment = Assignment.builder()
-                .id(100L)
-                .trip(trip)
-                .driver(driver)
-                .dispatcher(dispatcher)
-                .assignedDate(LocalDateTime.now())
-                .checklistOk(true)
-                .build();
+        AssignmentCreateRequest request =
+                new AssignmentCreateRequest(
+                        1L,               // tripId (aunque no se usa)
+                        10L,              // driverId
+                        20L,              // dispatcherId
+                        true              // checklistOk
+                );
 
-        when(tripRepository.findById(10L)).thenReturn(Optional.of(trip));
-        when(userRepository.findById(20L)).thenReturn(Optional.of(driver));
-        when(userRepository.findById(30L)).thenReturn(Optional.of(dispatcher));
-        when(assignmentRepository.save(any(Assignment.class))).thenReturn(savedAssignment);
+        Assignment saved = new Assignment();
+        saved.setId(100L);
+        saved.setTrip(trip);
+        saved.setDriver(driver);
+        saved.setDispatcher(dispatcher);
+        saved.setChecklistOk(true);
+        saved.setAssignedDate(LocalDateTime.now());
 
-        AssignmentResponse mappedResponse = mock(AssignmentResponse.class);
-        when(mapper.toResponse(any())).thenReturn(mappedResponse);
+        AssignmentResponse dto = new AssignmentResponse(
+                saved.getId(),
+                trip.getId(),
+                driver.getId(),
+                dispatcher.getId(),
+                true,
+                saved.getAssignedDate()
+        );
 
-        var result = service.create(req);
+        when(tripRepository.findById(1L)).thenReturn(Optional.of(trip));
+        when(userRepository.findById(driver.getId())).thenReturn(Optional.of(driver));
+        when(userRepository.findById(dispatcher.getId())).thenReturn(Optional.of(dispatcher));
+        when(assignmentRepository.findByTripId(1L)).thenReturn(Optional.empty());
+        when(assignmentRepository.save(any())).thenReturn(saved);
+        when(assignmentMapper.toResponse(saved)).thenReturn(dto);
 
-        assertThat(result).isNotNull();
-        verify(tripRepository).save(trip); // El viaje cambia a BOARDING
-        assertThat(trip.getStatusTrip()).isEqualTo(StatusTrip.BOARDING);
+        AssignmentResponse result = service.assign(1L, request);
 
-        verify(assignmentRepository).save(any(Assignment.class));
-        verify(mapper).toResponse(any(Assignment.class));
+        assertThat(result.id()).isEqualTo(100L);
+        assertThat(result.tripId()).isEqualTo(1L);
+        assertThat(result.driverId()).isEqualTo(10L);
+        assertThat(result.dispatcherId()).isEqualTo(20L);
     }
 
+    // ============================================================
+    // 2. Trip no existe
+    // ============================================================
     @Test
-    void create_debe_fallar_si_trip_no_existe() {
-        AssignmentCreateRequest req = mock(AssignmentCreateRequest.class);
-        when(req.tripId()).thenReturn(10L);
+    void assign_debe_fallar_si_trip_no_existe() {
 
-        when(tripRepository.findById(10L)).thenReturn(Optional.empty());
+        AssignmentCreateRequest req =
+                new AssignmentCreateRequest(1L, 10L, 20L, true);
 
-        assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessageContaining("Trip not found");
+        when(tripRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.assign(1L, req))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Trip not found");
     }
 
+    // ============================================================
+    // 3. Driver no existe
+    // ============================================================
     @Test
-    void create_debe_fallar_si_trip_no_esta_scheduled() {
-        AssignmentCreateRequest req = mock(AssignmentCreateRequest.class);
-        when(req.tripId()).thenReturn(10L);
+    void assign_debe_fallar_si_driver_no_existe() {
 
-        Trip trip = Trip.builder().id(10L).statusTrip(StatusTrip.DEPARTED).build();
-        when(tripRepository.findById(10L)).thenReturn(Optional.of(trip));
+        Trip trip = new Trip();
+        trip.setId(1L);
 
-        assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Trip is already scheduled");
+        AssignmentCreateRequest req =
+                new AssignmentCreateRequest(1L, 10L, 20L, true);
+
+        when(tripRepository.findById(1L)).thenReturn(Optional.of(trip));
+        when(userRepository.findById(10L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.assign(1L, req))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Driver not found");
     }
 
+    // ============================================================
+    // 4. Driver rol incorrecto
+    // ============================================================
     @Test
-    void create_debe_fallar_si_driver_no_es_driver() {
-        AssignmentCreateRequest req = mock(AssignmentCreateRequest.class);
-        when(req.tripId()).thenReturn(10L);
-        when(req.driverId()).thenReturn(20L);
+    void assign_debe_fallar_si_usuario_no_es_driver() {
 
-        Trip trip = Trip.builder().id(10L).statusTrip(StatusTrip.SCHEDULED).build();
-        when(tripRepository.findById(10L)).thenReturn(Optional.of(trip));
+        Trip trip = new Trip();
+        trip.setId(1L);
 
-        User invalid = User.builder().id(20L).role(Role.PASSENGER).build();
-        when(userRepository.findById(20L)).thenReturn(Optional.of(invalid));
+        User wrongDriver = new User();
+        wrongDriver.setId(10L);
+        wrongDriver.setRole(Role.CLERK);
 
-        assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Driver is not a driver");
+        AssignmentCreateRequest req =
+                new AssignmentCreateRequest(1L, 10L, 20L, true);
+
+        when(tripRepository.findById(1L)).thenReturn(Optional.of(trip));
+        when(userRepository.findById(10L)).thenReturn(Optional.of(wrongDriver));
+
+        assertThatThrownBy(() -> service.assign(1L, req))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("User is not a driver");
     }
 
+    // ============================================================
+    // 5. Dispatcher no existe
+    // ============================================================
     @Test
-    void create_debe_fallar_si_dispatcher_no_es_dispatcher() {
-        AssignmentCreateRequest req = mock(AssignmentCreateRequest.class);
-        when(req.tripId()).thenReturn(10L);
-        when(req.driverId()).thenReturn(20L);
-        when(req.dispatcherId()).thenReturn(30L);
+    void assign_debe_fallar_si_dispatcher_no_existe() {
 
-        Trip trip = Trip.builder().id(10L).statusTrip(StatusTrip.SCHEDULED).build();
-        User driver = User.builder().id(20L).role(Role.DRIVER).build();
-        User invalidDispatcher = User.builder().id(30L).role(Role.ADMIN).build();
+        Trip trip = new Trip();
+        trip.setId(1L);
 
-        when(tripRepository.findById(10L)).thenReturn(Optional.of(trip));
-        when(userRepository.findById(20L)).thenReturn(Optional.of(driver));
-        when(userRepository.findById(30L)).thenReturn(Optional.of(invalidDispatcher));
+        User driver = new User();
+        driver.setId(10L);
+        driver.setRole(Role.DRIVER);
 
-        assertThatThrownBy(() -> service.create(req))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Dispatcher is not a dispatcher");
+        AssignmentCreateRequest req =
+                new AssignmentCreateRequest(1L, 10L, 20L, true);
+
+        when(tripRepository.findById(1L)).thenReturn(Optional.of(trip));
+        when(userRepository.findById(10L)).thenReturn(Optional.of(driver));
+        when(userRepository.findById(20L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.assign(1L, req))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Dispatcher not found");
     }
 
+    // ============================================================
+    // 6. Dispatcher rol incorrecto
+    // ============================================================
+    @Test
+    void assign_debe_fallar_si_usuario_no_es_dispatcher() {
+
+        Trip trip = new Trip();
+        trip.setId(1L);
+
+        User driver = new User();
+        driver.setId(10L);
+        driver.setRole(Role.DRIVER);
+
+        User wrongDispatcher = new User();
+        wrongDispatcher.setId(20L);
+        wrongDispatcher.setRole(Role.DRIVER);
+
+        AssignmentCreateRequest req =
+                new AssignmentCreateRequest(1L, 10L, 20L, true);
+
+        when(tripRepository.findById(1L)).thenReturn(Optional.of(trip));
+        when(userRepository.findById(10L)).thenReturn(Optional.of(driver));
+        when(userRepository.findById(20L)).thenReturn(Optional.of(wrongDispatcher));
+
+        assertThatThrownBy(() -> service.assign(1L, req))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("User is not a dispatcher");
+    }
 
     @Test
     void get_debe_devolver_response_si_existe() {

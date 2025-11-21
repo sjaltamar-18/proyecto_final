@@ -1,7 +1,9 @@
 package com.unimag.edu.proyecto_final.api.controller;
 
 import com.unimag.edu.proyecto_final.api.dto.RouteDtos.*;
+import com.unimag.edu.proyecto_final.api.dto.StopDtos;
 import com.unimag.edu.proyecto_final.service.RouteService;
+import com.unimag.edu.proyecto_final.service.StopService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,7 @@ import java.util.List;
 public class RouteController {
 
     private final RouteService routeService;
+    private final StopService stopService;
 
     @PostMapping
     public ResponseEntity<RouteResponse> create(@Valid@RequestBody RouteCreateRequest routeCreateRequest) {
@@ -48,5 +51,11 @@ public class RouteController {
     public ResponseEntity<RouteResponse> delete(@PathVariable Long id) {
         routeService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/stops")
+    public ResponseEntity<List<StopDtos.StopResponse>> getStopsByRoute(@PathVariable Long id) {
+        List<StopDtos.StopResponse> stops = routeService.getStopsByRoute(id);
+        return ResponseEntity.ok(stops);
     }
 }

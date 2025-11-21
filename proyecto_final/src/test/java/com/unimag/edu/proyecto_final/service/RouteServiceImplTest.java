@@ -1,13 +1,15 @@
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.RouteDtos.*;
+import com.unimag.edu.proyecto_final.api.dto.StopDtos;
 import com.unimag.edu.proyecto_final.domine.entities.Route;
+import com.unimag.edu.proyecto_final.domine.entities.Stop;
 import com.unimag.edu.proyecto_final.domine.repository.RouteRepository;
 import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.RouteMapper;
 
 
-
+import com.unimag.edu.proyecto_final.service.mappers.StopMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.*;
 
 import java.util.Optional;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -33,6 +36,10 @@ class RouteServicelmplTest {
 
     @Mock
     private RouteMapper routeMapper;
+
+    @Mock
+    private StopMapper stopMapper;
+
 
     @InjectMocks
     private RouteServicelmpl service;
@@ -245,5 +252,53 @@ class RouteServicelmplTest {
         assertThatThrownBy(() -> service.delete(888L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("route not found");
+    }
+    @Test
+    void getStopsByRoute_debe_retornar_stops_en_orden_correcto() {
+        // Arrange
+        Long routeId = 1L;
+
+        Stop stop1 = new Stop();
+        stop1.setId(10L);
+        stop1.setStopOrder(2);
+
+        Stop stop2 = new Stop();
+        stop2.setId(20L);
+        stop2.setStopOrder(1);
+
+        Set<Stop> stops = Set.of(stop1, stop2);
+
+        Route route = new Route();
+        route.setId(routeId);
+        route.setStops(stops);
+
+        when(routeRepository.findById(routeId)).thenReturn(Optional.of(route));
+
+        // Mock de mapeo Stop -> DTO
+        StopDtos.StopResponse dto2 = new StopDtos.StopResponse(20L, routeId, "A", 1, 1.0, 1.0);
+        StopDtos.StopResponse dto1 = new StopDtos.StopResponse(10L, routeId, "B", 2, 2.0, 2.0);
+
+        when(stopMapper.toResponse(stop2)).thenReturn(dto2); // orden 1
+        when(stopMapper.toResponse(stop1)).thenReturn(dto1); // orden 2
+
+        // Act
+        List<StopDtos.StopResponse> result = service.getStopsByRoute(routeId);
+
+        // Assert
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).id()).isEqualTo(20L); // primero el stopOrder = 1
+        assertThat(result.get(1).id()).isEqualTo(10L); // luego el stopOrder = 2
+    }
+
+    @Test
+    void getStopsByRoute_debe_lanzar_excepcion_si_route_no_existe() {
+        // Arrange
+        Long routeId = 999L;
+        when(routeRepository.findById(routeId)).thenReturn(Optional.empty());
+
+        // Act + Assert
+        assertThatThrownBy(() -> service.getStopsByRoute(routeId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Route not found");
     }
 }
