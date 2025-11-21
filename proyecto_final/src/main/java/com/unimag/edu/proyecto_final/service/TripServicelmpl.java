@@ -1,14 +1,10 @@
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.TripDtos;
-import com.unimag.edu.proyecto_final.domine.entities.Bus;
-import com.unimag.edu.proyecto_final.domine.entities.Route;
-import com.unimag.edu.proyecto_final.domine.entities.Trip;
+import com.unimag.edu.proyecto_final.domine.entities.*;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusBus;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusTrip;
-import com.unimag.edu.proyecto_final.domine.repository.BusRepository;
-import com.unimag.edu.proyecto_final.domine.repository.RouteRepository;
-import com.unimag.edu.proyecto_final.domine.repository.TripRepository;
+import com.unimag.edu.proyecto_final.domine.repository.*;
 import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.TripMapper;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +25,8 @@ public class TripServicelmpl implements  TripService {
     private final RouteRepository routeRepository;
     private final BusRepository busRepository;
     private final TripMapper tripMapper;
+    private final AssignmentRepository assignmentRepository;
+    private final UserRepository userRepository;
 
     @Override
     public TripDtos.TripResponse create(TripDtos.TripCreateRequest request) {
@@ -117,4 +115,52 @@ public class TripServicelmpl implements  TripService {
         tripRepository.delete(trip);
 
     }
+    @Override
+    @Transactional
+    public TripDtos.TripResponse authorizeDeparture(Long tripId, Long driverId) {
+
+        // 1. Buscar el trip
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new NotFoundException("trip not found"));
+
+        // 2. Evitar doble salida
+        if (trip.getDepartureReal() != null) {
+            throw new IllegalStateException("Trip already departed");
+        }
+
+        // 3. Obtener assignment del viaje
+        Assignment assignment = assignmentRepository.findByTripId(tripId)
+                .orElseThrow(() -> new NotFoundException("assignment not found"));
+
+        // 4. Validar driver existente
+        User driver = userRepository.findById(driverId)
+                .orElseThrow(() -> new NotFoundException("driver not found"));
+
+        // 5. Validar que es el driver asignado
+        if (!driver.getId().equals(assignment.getDriver().getId())) {
+            throw new IllegalStateException("Driver not assigned to this trip");
+        }
+
+        // 6. Validar documentos del bus
+        Bus bus = assignment.getTrip().getBus();
+        LocalDate today = LocalDate.now();
+
+        if (bus.getSoatExp() == null || bus.getSoatExp().isBefore(today)) {
+            throw new IllegalStateException("SOAT expired");
+        }
+
+        if (bus.getRevisionExp() == null || bus.getRevisionExp().isBefore(today)) {
+            throw new IllegalStateException("Technical inspection expired");
+        }
+
+        // 7. Marcar salida real
+        trip.setDepartureReal(LocalDateTime.now());
+        trip.setStatusTrip(StatusTrip.DEPARTED);
+
+        Trip saved = tripRepository.save(trip);
+
+        return tripMapper.toResponse(saved);
+    }
+
+
 }

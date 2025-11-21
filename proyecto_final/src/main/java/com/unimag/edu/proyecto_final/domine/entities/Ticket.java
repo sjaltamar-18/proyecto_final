@@ -5,6 +5,8 @@ import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusTicket;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -33,7 +35,8 @@ public class Ticket {
     @JoinColumn(name = "to_stop_id")
     private Stop toStop;
     private Double price;
-
+    private BigDecimal refundAmount;
+    private LocalDateTime cancelledAt;
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 

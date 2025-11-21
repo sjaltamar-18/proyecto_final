@@ -13,8 +13,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.data.domain.*;
@@ -36,6 +38,7 @@ class IncidentServiceImplTest {
     private IncidentMapper incidentMapper;
 
     @InjectMocks
+    @Spy
     private IncidentServicelmpl service;
 
     @BeforeEach
@@ -266,5 +269,36 @@ class IncidentServiceImplTest {
 
         assertThat(count).isEqualTo(7);
         verify(incidentRepository).deleteOlderThan(any(LocalDateTime.class));
+    }
+
+    @Test
+    void createDeliveryFailureIncident_debe_crear_incidente_correctamente() {
+        Long parcelId = 99L;
+        String reason = "OTP incorrecto";
+
+        IncidentResponse expected = mock(IncidentResponse.class);
+
+        // PREVENIR ejecución real del método create()
+        doReturn(expected)
+                .when(service)
+                .create(any(IncidentCreateRequest.class));
+
+        // Ejecutar
+        IncidentResponse result = service.createDeliveryFailureIncident(parcelId, reason);
+
+        assertThat(result).isEqualTo(expected);
+
+        // Capturar los argumentos enviados al método create()
+        ArgumentCaptor<IncidentCreateRequest> captor =
+                ArgumentCaptor.forClass(IncidentCreateRequest.class);
+
+        verify(service).create(captor.capture());
+
+        IncidentCreateRequest sent = captor.getValue();
+
+        assertThat(sent.type()).isEqualTo("PARCEL");
+        assertThat(sent.entityId()).isEqualTo(parcelId);
+        assertThat(sent.entityType()).isEqualTo("DELIVERY_FAILURE");
+        assertThat(sent.note()).isEqualTo(reason);
     }
 }

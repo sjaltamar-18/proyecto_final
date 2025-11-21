@@ -8,9 +8,10 @@ import org.mapstruct.*;
 public interface BaggageMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "ticket.id", source = "ticketId")
+    @Mapping(target = "ticket", ignore = true)
+    @Mapping(target = "fee", ignore = true)
+    @Mapping(target = "tagCode", ignore = true)
     @Mapping(source = "weightKg", target = "weight")
-
     Baggage toEntity(BaggageCreateRequest request);
 
     @Mapping(source = "ticket.id", target = "ticketId")
