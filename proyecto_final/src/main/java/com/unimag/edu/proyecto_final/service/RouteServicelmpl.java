@@ -39,7 +39,7 @@ public class RouteServicelmpl implements RouteService{
         route.setOriginName(request.origin());
         route.setDestinationName(request.destination());
         route.setDistance(request.distanceKm());
-        route.setTime(request.durationMin() != null ? request.durationMin() / 60: null);
+        route.setTime(request.durationMin());
        
 
         Route saved = routeRepository.save(route);
@@ -81,7 +81,7 @@ public class RouteServicelmpl implements RouteService{
         if (request.origin() != null) route.setOriginName(request.origin());
         if (request.destination() != null) route.setDestinationName(request.destination());
         if (request.distanceKm() != null) route.setDistance(request.distanceKm());
-        if (request.durationMin() != null) route.setTime(request.durationMin() / 60);
+        if (request.durationMin() != null) route.setTime(request.durationMin());
 
         Route updated = routeRepository.save(route);
         return routeMapper.toResponse(updated);

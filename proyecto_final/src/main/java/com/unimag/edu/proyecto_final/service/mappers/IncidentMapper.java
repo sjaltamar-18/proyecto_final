@@ -10,13 +10,9 @@ import org.mapstruct.*;
 public interface IncidentMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "entityType", expression = "java(mapEntityType(request.entityType()))")
-    @Mapping(target = "type", expression = "java(mapType(request.type()))")
     @Mapping(target = "creationDate", expression = "java(java.time.LocalDateTime.now())")
     Incident toEntity(IncidentCreateRequest request);
 
-    @Mapping(target = "entityType", expression = "java(incident.getEntityType() != null ? incident.getEntityType().name() : null)")
-    @Mapping(target = "type", expression = "java(incident.getType() != null ? incident.getType().name() : null)")
     @Mapping(source = "creationDate", target = "createdAt")
     IncidentResponse toResponse(Incident incident);
 

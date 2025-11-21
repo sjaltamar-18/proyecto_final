@@ -4,5 +4,6 @@ public enum Type {
     SECURITY,
     OVERBOOK,
     VEHICLE,
-    DELIVERY_FAIL
+    DELIVERY_FAIL,
+
 }

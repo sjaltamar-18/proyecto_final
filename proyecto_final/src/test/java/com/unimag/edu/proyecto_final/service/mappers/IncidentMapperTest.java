@@ -19,9 +19,9 @@ class IncidentMapperTest {
     void toEntity_shouldMapCreateRequest() {
         // given
         var request = new IncidentCreateRequest(
-                "TRIP",              // entityType
+                EntityType.TICKET,              // entityType
                 1L,                  // entityId
-                "DELIVERY_FAIL",     // type
+                Type.DELIVERY_FAIL,     // type
                 "El paquete no fue entregado por error de dirección" // note
         );
 
@@ -89,22 +89,5 @@ class IncidentMapperTest {
         assertThat(entity.getCreationDate()).isBeforeOrEqualTo(LocalDateTime.now());
     }
 
-    @Test
-    void toEntity_shouldHandleInvalidEnumValuesGracefully() {
-        // given
-        var request = new IncidentCreateRequest(
-                "INVALID_TYPE",  // no existe en EntityType
-                100L,
-                "UNKNOWN_TYPE",  // no existe en Type
-                "Error genérico desconocido"
-        );
 
-        // when
-        Incident entity = mapper.toEntity(request);
-
-        // then
-        // valores por defecto definidos en los métodos mapEntityType y mapType
-        assertThat(entity.getEntityType()).isEqualTo(EntityType.TRIP);
-        assertThat(entity.getType()).isEqualTo(Type.SECURITY);
-    }
 }

@@ -3,6 +3,7 @@ package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.IncidentDtos;
 import com.unimag.edu.proyecto_final.domine.entities.Incident;
+import com.unimag.edu.proyecto_final.domine.entities.enumera.EntityType;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.Type;
 import com.unimag.edu.proyecto_final.domine.repository.IncidentRepository;
 import com.unimag.edu.proyecto_final.exception.NotFoundException;
@@ -102,9 +103,9 @@ public class IncidentServicelmpl  implements IncidentService{
     public IncidentDtos.IncidentResponse createDeliveryFailureIncident(Long parcelId, String reason) {
 
         IncidentDtos.IncidentCreateRequest req = new IncidentDtos.IncidentCreateRequest(
-                "DELIVERY_FAILURE",
+                EntityType.PARCEL,
                 parcelId,
-                "PARCEL",
+                Type.DELIVERY_FAIL,
                 reason
         );
 

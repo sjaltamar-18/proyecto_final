@@ -2,6 +2,8 @@ package com.unimag.edu.proyecto_final.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unimag.edu.proyecto_final.api.dto.IncidentDtos.*;
+import com.unimag.edu.proyecto_final.domine.entities.enumera.EntityType;
+import com.unimag.edu.proyecto_final.domine.entities.enumera.Type;
 import com.unimag.edu.proyecto_final.service.IncidentService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
@@ -44,11 +46,11 @@ class IncidentControllerTest {
     @Test
     void createIncident_shouldReturn201() throws Exception {
         IncidentCreateRequest request = new IncidentCreateRequest(
-                "BUS", 5L, "MECHANICAL", "Motor noise"
+                EntityType.TRIP, 5L, Type.VEHICLE, "Motor noise"
         );
 
         IncidentResponse response = new IncidentResponse(
-                1L, "BUS", 5L, "MECHANICAL", "Motor noise", LocalDateTime.now()
+                1L, EntityType.TRIP, 5L, Type.VEHICLE, "Motor noise", LocalDateTime.now()
         );
 
         when(incidentService.create(any(IncidentCreateRequest.class)))
@@ -59,14 +61,14 @@ class IncidentControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.type").value("MECHANICAL"));
+                .andExpect(jsonPath("$.type").value("VEHICLE"));
 
     }
 
     @Test
     void getIncidentById_shoulReturn200() throws Exception {
         IncidentResponse response = new IncidentResponse(
-                1L, "BUS", 5L, "MECHANICAL", "Motor noise", LocalDateTime.now()
+                1L, EntityType.TRIP, 5L, Type.VEHICLE, "Motor noise", LocalDateTime.now()
         );
 
         when(incidentService.get(1L)).thenReturn(response);
@@ -79,7 +81,7 @@ class IncidentControllerTest {
     @Test
     void listIncidents_shouldReturn200() throws Exception {
         IncidentResponse incident = new IncidentResponse(
-                1L, "BUS", 5L, "MECHANICAL", "Note", LocalDateTime.now()
+                1L, EntityType.TRIP, 5L, Type.VEHICLE, "Note", LocalDateTime.now()
         );
 
         Page<IncidentResponse> page = new PageImpl<>(
@@ -99,7 +101,7 @@ class IncidentControllerTest {
     @Test
     void listByType_shouldReturn200() throws Exception {
         IncidentResponse response = new IncidentResponse(
-                2L, "BUS", 7L, "ACCIDENT", "Crash", LocalDateTime.now()
+                2L, EntityType.TRIP, 7L, Type.VEHICLE, "Crash", LocalDateTime.now()
         );
 
         when(incidentService.listByType("ACCIDENT"))
@@ -107,20 +109,20 @@ class IncidentControllerTest {
 
         mockMvc.perform(get("/api/incidents/type/ACCIDENT"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].type").value("ACCIDENT"));
+                .andExpect(jsonPath("$[0].type").value("VEHICLE"));
     }
 
     @Test
     void listByEntity_shouldReturn200() throws Exception {
         IncidentResponse response = new IncidentResponse(
-                3L, "USER", 10L, "REPORT", "User complaint", LocalDateTime.now()
+                3L, EntityType.TICKET, 10L, Type.SECURITY, "User complaint", LocalDateTime.now()
         );
 
-        when(incidentService.listByEntity("USER", 10L))
+        when(incidentService.listByEntity("TICKET", 10L))
                 .thenReturn(List.of(response));
 
         mockMvc.perform(get("/api/incidents/entity")
-                        .param("entityType", "USER")
+                        .param("entityType", "TICKET")
                         .param("entityId", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].entityId").value(10));
@@ -132,7 +134,7 @@ class IncidentControllerTest {
         LocalDateTime end = LocalDateTime.now();
 
         IncidentResponse response = new IncidentResponse(
-                4L, "BUS", 2L, "MECHANICAL", "Oil leak", LocalDateTime.now().minusDays(1)
+                4L, EntityType.TRIP, 2L, Type.VEHICLE, "Oil leak", LocalDateTime.now().minusDays(1)
         );
 
         when(incidentService.listBetweenDates(any(), any()))
@@ -150,7 +152,7 @@ class IncidentControllerTest {
         IncidentUpdateRequest request = new IncidentUpdateRequest("Updated note", "MECHANICAL");
 
         IncidentResponse response = new IncidentResponse(
-                1L, "BUS", 5L, "MECHANICAL", "Updated note", LocalDateTime.now()
+                1L, EntityType.TRIP, 5L, Type.VEHICLE, "Updated note", LocalDateTime.now()
         );
 
         when(incidentService.update(eq(1L), any(IncidentUpdateRequest.class)))
