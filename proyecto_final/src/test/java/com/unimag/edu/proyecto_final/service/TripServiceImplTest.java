@@ -1,5 +1,6 @@
 package com.unimag.edu.proyecto_final.service;
 
+import com.unimag.edu.proyecto_final.api.dto.TripDtos;
 import com.unimag.edu.proyecto_final.api.dto.TripDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.*;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.*;
@@ -33,7 +34,11 @@ class TripServicelmplTest {
     @Mock private RouteRepository routeRepository;
     @Mock private BusRepository busRepository;
     @Mock private TripMapper tripMapper;
+    @Mock
+    private AssignmentRepository assignmentRepository;
 
+    @Mock
+    private UserRepository userRepository;
     @InjectMocks
     private TripServicelmpl service;
 
@@ -273,4 +278,62 @@ class TripServicelmplTest {
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Trip not found");
     }
+    @Test
+    void authorizeDeparture_debe_autorizar_salida_correctamente() {
+
+        Long tripId = 10L;
+        Long driverId = 5L;
+
+
+        Trip trip = Trip.builder()
+                .id(tripId)
+                .departureReal(null) // no ha salido
+                .statusTrip(StatusTrip.SCHEDULED)
+                .build();
+
+        Bus bus = Bus.builder()
+                .id(2L)
+                .soatExp(LocalDate.now().plusDays(10))
+                .revisionExp(LocalDate.now().plusDays(10))
+                .build();
+
+
+        User driver = User.builder()
+                .id(driverId)
+                .build();
+
+
+        Assignment assignment = Assignment.builder()
+                .id(99L)
+                .driver(driver)
+                .trip(trip)
+                .build();
+
+
+        trip.setBus(bus);
+
+        TripDtos.TripResponse mappedResponse = mock(TripDtos.TripResponse.class);
+
+        when(tripRepository.findById(tripId)).thenReturn(Optional.of(trip));
+        when(assignmentRepository.findByTripId(tripId)).thenReturn(Optional.of(assignment));
+        when(userRepository.findById(driverId)).thenReturn(Optional.of(driver));
+        when(tripRepository.save(any(Trip.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(tripMapper.toResponse(any(Trip.class))).thenReturn(mappedResponse);
+
+
+        TripDtos.TripResponse result = service.authorizeDeparture(tripId, driverId);
+
+
+        assertThat(result).isEqualTo(mappedResponse);
+        assertThat(trip.getDepartureReal()).isNotNull();
+        assertThat(trip.getStatusTrip()).isEqualTo(StatusTrip.DEPARTED);
+
+
+        verify(tripRepository).findById(tripId);
+        verify(assignmentRepository).findByTripId(tripId);
+        verify(userRepository).findById(driverId);
+        verify(tripRepository).save(trip);
+        verify(tripMapper).toResponse(trip);
+    }
+
 }

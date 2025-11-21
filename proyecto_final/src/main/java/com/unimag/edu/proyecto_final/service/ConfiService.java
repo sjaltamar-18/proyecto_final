@@ -14,5 +14,15 @@ public interface ConfiService {
 
     ConfigResponse update(String key, ConfigUpdateRequest request);
 
+    String getValue(String key);
+
+    double getDouble(String key);
+
+    int getInt(String key);
+
+    boolean getBoolean(String key);
+
+    void setValue(String key, Object value);
+
     void delete(String key);
 }

@@ -6,6 +6,7 @@ import com.unimag.edu.proyecto_final.domine.entities.Stop;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusParcel;
 import com.unimag.edu.proyecto_final.domine.repository.ParcelRepository;
 import com.unimag.edu.proyecto_final.domine.repository.StopRepository;
+import com.unimag.edu.proyecto_final.exception.BadRequestException;
 import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.ParcelMapper;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class ParcelServicelmpl implements  ParcelService{
     private final ParcelRepository parcelRepository;
     private final StopRepository stopRepository;
     private final ParcelMapper parcelMapper;
+    private final IncidentService incidentService;
 
     @Override
     public ParcelDtos.ParcelResponse create(ParcelDtos.ParcelCreateRequest request) {
@@ -76,13 +78,37 @@ public class ParcelServicelmpl implements  ParcelService{
     }
 
     @Override
+    @Transactional
     public ParcelDtos.ParcelResponse update(Long id, ParcelDtos.ParcelUpdateRequest request) {
+
         Parcel parcel = parcelRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Parcel not found"));
-        parcelMapper.updateEntityFromStatusRequest(request, parcel);
-        Parcel updated = parcelRepository.save(parcel);
-        return parcelMapper.toResponse(updated);
+                .orElseThrow(() -> new NotFoundException("parcel not found"));
+
+        String newStatus = request.status();
+
+        if ("COMPLETED".equalsIgnoreCase(newStatus)) {
+            parcel.setStatusParcel(StatusParcel.COMPLETED);
+        }
+
+        else if ("FAILED".equalsIgnoreCase(newStatus)) {
+            parcel.setStatusParcel(StatusParcel.FAILED);
+
+            incidentService.createDeliveryFailureIncident(
+                    parcel.getId(),
+                    "Entrega fallida reportada para el paquete con código " + parcel.getCode()
+            );
+        }
+
+        else {
+            parcel.setStatusParcel(StatusParcel.valueOf(newStatus));
+        }
+
+        parcel = parcelRepository.save(parcel);
+
+        return parcelMapper.toResponse(parcel);
     }
+
+
 
     @Override
     public void delete(Long id) {

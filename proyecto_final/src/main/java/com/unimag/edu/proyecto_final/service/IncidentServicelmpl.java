@@ -97,5 +97,17 @@ public class IncidentServicelmpl  implements IncidentService{
         return incidentRepository.deleteOlderThan(threshold);
     }
 
+    @Override
+    public IncidentDtos.IncidentResponse createDeliveryFailureIncident(Long parcelId, String reason) {
+
+        IncidentDtos.IncidentCreateRequest req = new IncidentDtos.IncidentCreateRequest(
+                "DELIVERY_FAILURE",
+                parcelId,
+                "PARCEL",
+                reason
+        );
+
+        return this.create(req);
+    }
 
 }
