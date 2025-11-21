@@ -3,6 +3,7 @@ package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.TripDtos;
 import com.unimag.edu.proyecto_final.domine.entities.*;
+import com.unimag.edu.proyecto_final.domine.entities.enumera.BoardingStatus;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusBus;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusTrip;
 import com.unimag.edu.proyecto_final.domine.repository.*;
@@ -66,6 +67,38 @@ public class TripServicelmpl implements  TripService {
         Trip trip =  tripRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Trip not found"));
         return tripMapper.toResponse(trip);
+    }
+
+    @Override
+    @Transactional
+    public TripDtos.TripResponse openBoarding(Long tripId) {
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new NotFoundException("Trip not found"));
+
+        if (trip.getBoardingStatus() == BoardingStatus.BOARDING_OPEN) {
+            throw new IllegalStateException("Boarding already open");
+        }
+
+        trip.setBoardingStatus(BoardingStatus.BOARDING_OPEN);
+        Trip saved = tripRepository.save(trip);
+
+        return tripMapper.toResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    public TripDtos.TripResponse closeBoarding(Long tripId) {
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new NotFoundException("Trip not found"));
+
+        if (trip.getBoardingStatus() == BoardingStatus.BOARDING_CLOSED) {
+            throw new IllegalStateException("Boarding already closed");
+        }
+
+        trip.setBoardingStatus(BoardingStatus.BOARDING_CLOSED);
+        Trip saved = tripRepository.save(trip);
+
+        return tripMapper.toResponse(saved);
     }
 
     @Override

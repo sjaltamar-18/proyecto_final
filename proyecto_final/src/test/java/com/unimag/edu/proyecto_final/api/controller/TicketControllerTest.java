@@ -39,66 +39,75 @@ class TicketControllerTest {
     TicketService ticketService;
 
     @Test
-    void createTicket_shouldReturn201() throws  Exception {
-        TicketCreateRequest request = new TicketCreateRequest(1L,2L,"A1",12L,3L,20.0,"CARD",true);
+    void createTicket_shouldReturn201() throws Exception {
 
-        TicketResponse response = new TicketResponse(100L,1L,2L,"A1",12L,3L,20.0,"CARD","CREATED","QR123");
+        TicketCreateRequest request = new TicketCreateRequest(
+                1L, 2L, "A1", 12L, 3L, 20.0, "CARD", true
+        );
+
+        TicketResponse response = new TicketResponse(
+                100L, 1L, 2L, "A1", 12L, 3L, 20.0, "CARD", "CREATED", "QR123"
+        );
 
         when(ticketService.create(any())).thenReturn(response);
 
-        mockMvc.perform(post("/api/tickets").contentType(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(request)))
+        mockMvc.perform(
+                        post("/api/trips/1/tickets")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(request))
+                )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(100L));
     }
 
     @Test
-    void getTicket_shouldReturn200() throws  Exception {
-        TicketResponse response = new TicketResponse(5L,1L,2L,"A2",10L,20L,20.0,"CASH","OK","QR123");
+    void getTicket_shouldReturn200() throws Exception {
+
+        TicketResponse response = new TicketResponse(
+                5L, 1L, 2L, "A2", 10L, 20L, 20.0, "CASH", "OK", "QR123"
+        );
 
         when(ticketService.get(5L)).thenReturn(response);
 
-        mockMvc.perform(get("/api/tickets/5").contentType(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/trips/tickets/5"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(5L));
     }
 
     @Test
-    void listByTrip_shouldReturn200() throws  Exception {
+    void listByTrip_shouldReturn200() throws Exception {
 
         TicketResponse t1 = new TicketResponse(
                 1L, 10L, 99L, "A1", 1L, 2L, 15.0, "CASH", "CREATED", "QR1"
         );
 
-        List<TicketResponse> list = List.of(t1);
+        when(ticketService.listByTrip(10L)).thenReturn(List.of(t1));
 
-        when(ticketService.listByTrip(10L)).thenReturn(list);
-
-        mockMvc.perform(get("/api/tickets/trip/10"))
+        mockMvc.perform(get("/api/trips/10/tickets"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1L))
                 .andExpect(jsonPath("$[0].tripId").value(10L));
     }
 
     @Test
-    void listByPassenger_shouldReturn200() throws  Exception {
+    void listByPassenger_shouldReturn200() throws Exception {
+
         TicketResponse t1 = new TicketResponse(
                 3L, 20L, 100L, "A4", 1L, 2L, 15.0, "CASH", "CREATED", "QR3"
         );
 
-        List<TicketResponse> list = List.of(t1);
+        when(ticketService.listByPassenger(100L)).thenReturn(List.of(t1));
 
-        when(ticketService.listByPassenger(100L)).thenReturn(list);
-
-        mockMvc.perform(get("/api/tickets/passenger/100"))
+        mockMvc.perform(get("/api/trips/passenger/100/tickets"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(3L))
                 .andExpect(jsonPath("$[0].passengerId").value(100L));
-
     }
 
     @Test
-    void updateTicket_shouldReturn200() throws  Exception {
-        TicketUpdateRequest request = new TicketUpdateRequest(
+    void updateTicket_shouldReturn200() throws Exception {
+
+        TicketUpdateRequest req = new TicketUpdateRequest(
                 "APPROVED", "CARD"
         );
 
@@ -108,9 +117,11 @@ class TicketControllerTest {
 
         when(ticketService.update(eq(15L), any())).thenReturn(updated);
 
-        mockMvc.perform(put("/api/tickets/15")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
+        mockMvc.perform(
+                        put("/api/trips/tickets/15")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(req))
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("APPROVED"));
     }
@@ -119,21 +130,13 @@ class TicketControllerTest {
     void cancelTicket_shouldReturn200() throws Exception {
 
         TicketResponse response = new TicketResponse(
-                10L,
-                5L,               // tripId
-                3L,               // passengerId
-                "A12",            // seatNumber
-                1L,               // fromStopId
-                2L,               // toStopId
-                120000.0,         // price
-                "CARD",           // paymentMethod
-                "CANCELLED",      // status
-                "QR-123456"       // qrCode
+                10L, 5L, 3L, "A12", 1L, 2L, 120000.0,
+                "CARD", "CANCELLED", "QR-123456"
         );
 
         when(ticketService.cancel(10L)).thenReturn(response);
 
-        mockMvc.perform(post("/api/tickets/10/cancel"))
+        mockMvc.perform(post("/api/trips/tickets/10/cancel"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(10L))
                 .andExpect(jsonPath("$.status").value("CANCELLED"))
@@ -151,8 +154,10 @@ class TicketControllerTest {
 
         when(ticketService.getByQrCode("ABC123")).thenReturn(response);
 
-        mockMvc.perform(get("/api/tickets/qr/qrCode")
-                        .param("ticketCode", "ABC123"))
+        mockMvc.perform(
+                        get("/api/trips/tickets/qr/qrCode")
+                                .param("ticketCode", "ABC123")
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(77L));
     }

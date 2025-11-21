@@ -38,6 +38,8 @@ class SeatHoldControllerTest {
 
     @MockitoBean
     SeatHoldService service;
+    @Autowired
+    private SeatHoldService seatHoldService;
 
 
     @Test
@@ -99,7 +101,7 @@ class SeatHoldControllerTest {
 
         when(service.update(eq(1L), any())).thenReturn(response);
 
-        mockMvc.perform(put("/api/seat-holds/1")
+        mockMvc.perform(patch("/api/seat-holds/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -132,5 +134,31 @@ class SeatHoldControllerTest {
 
         mockMvc.perform(delete("/api/seat-holds/9"))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void getActiveSeatHoldsByTripId_shouldReturn200() throws Exception{
+
+
+        SeatHoldResponse seat1 = new SeatHoldResponse(
+                1L,1L,"A1",2L, LocalDateTime.now(),"EXPIRED",3L, 4L
+        );
+
+        SeatHoldResponse seat2 = new SeatHoldResponse(
+          11L,1L,"A2",3L, LocalDateTime.now(),"EXPIRED",3L, 4L
+        );
+
+        List<SeatHoldResponse> list = List.of(seat1,seat2);
+
+        when(seatHoldService.listActiveByTrip(1L)).thenReturn(list);
+
+        mockMvc.perform(get("/api/seat-holds/trip/{tripId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].seatNumber").value("A1"))
+                .andExpect(jsonPath("$[1].id").value(11L))
+                .andExpect(jsonPath("$[1].seatNumber").value("A2"));
     }
 }
