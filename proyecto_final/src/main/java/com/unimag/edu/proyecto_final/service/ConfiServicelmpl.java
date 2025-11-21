@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.ConfiDtos;
@@ -46,12 +47,12 @@ public class ConfiServicelmpl implements ConfiService {
 
     @Override
     public ConfiDtos.ConfigResponse update(String key, ConfiDtos.ConfigUpdateRequest request) {
-       Confi confi = confiRepository.findByKey(key)
+        Confi confi = confiRepository.findByKey(key)
                 .orElseThrow(() -> new NotFoundException("config not found"));
-       confiMapper.updateEntityFromDto(request,confi);
-       confiRepository.save(confi);
+        confiMapper.updateEntityFromDto(request,confi);
+        confiRepository.save(confi);
 
-       return confiMapper.toResponse(confi);
+        return confiMapper.toResponse(confi);
     }
 
     @Override

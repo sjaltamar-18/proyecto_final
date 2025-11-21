@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.TripDtos;
@@ -104,7 +105,7 @@ public class TripServicelmpl implements  TripService {
                 .orElseThrow(()-> new NotFoundException("Trip not found"));
 
         if (trip.getStatusTrip() == StatusTrip.DEPARTED ||
-        trip.getStatusTrip() == StatusTrip.ARRIVED){
+                trip.getStatusTrip() == StatusTrip.ARRIVED){
             throw new IllegalStateException("Trip has already been departed");
         }
 

@@ -65,7 +65,7 @@ class BaggageRepositoryTest extends AbstractRepositoryIT {
 
         List<Baggage> result = baggageRepository.findByTicketId(ticket.getId());
 
-        // Validaciones
+
         assertThat(result).isNotEmpty();
         assertThat(result.get(0).getTicket().getId()).isEqualTo(ticket.getId());
         assertThat(result.get(0).getTagCode()).isEqualTo("VGO001");

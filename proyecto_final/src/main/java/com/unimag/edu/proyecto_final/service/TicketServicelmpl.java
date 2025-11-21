@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.TicketDtos;
@@ -210,10 +211,10 @@ public class TicketServicelmpl implements TicketService {
 
         LocalDateTime limit = trip.getDepartureAt().minusMinutes(5);
 
-       return ticketRepository.findNoShowTickets(
-               tripId, StatusTicket.SOLD,
-               limit
-       );
+        return ticketRepository.findNoShowTickets(
+                tripId, StatusTicket.SOLD,
+                limit
+        );
     }
 
     @Override

@@ -42,7 +42,7 @@ public class Ticket {
 
     @Enumerated(EnumType.STRING)
     private StatusTicket statusTicket;
-     private String qrCode;
+    private String qrCode;
     @OneToMany(mappedBy = "ticket")
     private Set<Baggage> baggages;
     @Column(nullable = false, updatable = false)
