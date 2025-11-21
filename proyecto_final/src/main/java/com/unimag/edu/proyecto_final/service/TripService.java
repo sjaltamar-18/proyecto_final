@@ -21,5 +21,6 @@ public interface TripService {
 
     TripResponse update(Long id, TripUpdateRequest request);
 
+    TripResponse authorizeDeparture(Long tripId, Long driverId);
     void delete(Long id);
 }

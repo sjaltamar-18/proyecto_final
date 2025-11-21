@@ -29,6 +29,7 @@ public class Trip {
     private LocalDate date;
     private LocalDateTime departureAt;
     private LocalDateTime arrivalAt;
+    private LocalDateTime departureReal;
     @Enumerated(EnumType.STRING)
     private StatusTrip statusTrip;
 
