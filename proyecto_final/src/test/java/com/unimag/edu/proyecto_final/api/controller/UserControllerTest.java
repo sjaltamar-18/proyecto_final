@@ -23,9 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
-@Import(SecurityConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
-class UserControllerTest {
+class UserControllerTest extends TestBase {
 
     @Autowired
     private MockMvc mockMvc;

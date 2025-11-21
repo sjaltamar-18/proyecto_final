@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unimag.edu.proyecto_final.api.dto.AssignmentDtos;
 import com.unimag.edu.proyecto_final.api.dto.AssignmentDtos.*;
 import com.unimag.edu.proyecto_final.service.AssignmentService;
-import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,11 +24,11 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 @WebMvcTest(AssignmentController.class)
-@Import(SecurityConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
-class AssignmentControllerTest {
+
+class AssignmentControllerTest extends TestBase {
+
+
     @Autowired
     MockMvc mockMvc;
 

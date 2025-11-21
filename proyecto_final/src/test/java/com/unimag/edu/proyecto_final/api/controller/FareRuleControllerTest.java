@@ -26,10 +26,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Import(SecurityConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
+
 @WebMvcTest(FareRuleController.class)
-class FareRuleControllerTest {
+class FareRuleControllerTest  extends TestBase{
     @Autowired
     MockMvc mockMvc;
 

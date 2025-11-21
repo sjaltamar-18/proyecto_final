@@ -29,10 +29,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Import(SecurityConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
+
 @WebMvcTest(RouteController.class)
-class RouteControllerTest {
+class RouteControllerTest extends TestBase {
     @Autowired
     MockMvc mockMvc;
 

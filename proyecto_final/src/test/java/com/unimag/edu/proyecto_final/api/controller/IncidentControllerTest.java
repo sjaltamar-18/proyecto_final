@@ -27,11 +27,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Import(SecurityConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
+
 @WebMvcTest(IncidentController.class)
 
-class IncidentControllerTest {
+class IncidentControllerTest extends TestBase {
     @Autowired
     MockMvc mockMvc;
 

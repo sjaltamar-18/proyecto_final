@@ -26,10 +26,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Import(SecurityConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
+
 @WebMvcTest(TripController.class)
-class TripControllerTest {
+class TripControllerTest  extends TestBase{
 
     @Autowired
     MockMvc mockMvc;

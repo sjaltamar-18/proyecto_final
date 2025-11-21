@@ -24,10 +24,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@Import(SecurityConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
+
 @WebMvcTest(StopController.class)
-class StopControllerTest {
+class StopControllerTest  extends TestBase{
 
     @Autowired
     MockMvc mockMvc;

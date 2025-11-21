@@ -25,11 +25,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@Import(SecurityConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(SeatHoldController.class)
 
-class SeatHoldControllerTest {
+class SeatHoldControllerTest extends TestBase {
     @Autowired
     MockMvc mockMvc;
 

@@ -26,11 +26,10 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Import(SecurityConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
+
 @WebMvcTest(ParcelController.class)
 
-class ParcelControllerTest {
+class ParcelControllerTest extends TestBase {
 
     @Autowired
     MockMvc mockMvc;

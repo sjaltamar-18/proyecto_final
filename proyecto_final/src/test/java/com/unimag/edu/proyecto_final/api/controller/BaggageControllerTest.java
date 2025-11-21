@@ -25,10 +25,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Import(SecurityConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
+
 @WebMvcTest(BaggageController.class)
-class BaggageControllerTest {
+class BaggageControllerTest extends TestBase {
+
     @Autowired
     MockMvc mockMvc;
 

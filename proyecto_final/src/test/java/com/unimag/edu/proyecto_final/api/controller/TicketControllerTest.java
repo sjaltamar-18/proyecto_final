@@ -24,11 +24,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@Import(SecurityConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
+
 @WebMvcTest(TicketController.class)
 
-class TicketControllerTest {
+class TicketControllerTest  extends TestBase{
     @Autowired
     private MockMvc mockMvc;
 
