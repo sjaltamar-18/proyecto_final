@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service.mappers;
 
 import com.unimag.edu.proyecto_final.api.dto.StopDtos.*;
@@ -14,19 +15,19 @@ class StopMapperTest {
 
     @Test
     void toEntity_shouldMapCreateRequest() {
-        // given
+
         var request = new StopCreateRequest(
-                1L,         // routeId
+                1L,
                 "Terminal Norte",
-                1,          // order
-                4.7110,     // lat
-                -74.0721    // lng
+                1,
+                4.7110,
+                -74.0721
         );
 
-        // when
+
         Stop entity = mapper.toEntity(request);
 
-        // then
+
         assertThat(entity).isNotNull();
         assertThat(entity.getId()).isNull(); // Ignorado por el mapper
         assertThat(entity.getRoute()).isNull();

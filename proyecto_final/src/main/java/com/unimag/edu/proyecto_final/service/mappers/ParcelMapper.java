@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service.mappers;
 
 import com.unimag.edu.proyecto_final.api.dto.ParcelDtos.*;
@@ -29,7 +30,7 @@ public interface ParcelMapper {
         try {
             return StatusParcel.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException ex) {
-            return StatusParcel.CREATED; // Valor por defecto
+            return StatusParcel.CREATED;
         }
     }
 }

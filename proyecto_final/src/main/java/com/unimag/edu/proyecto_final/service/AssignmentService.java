@@ -7,13 +7,14 @@ import org.springframework.data.domain.Pageable;
 
 public interface AssignmentService {
 
-    AssignmentResponse create(AssignmentCreateRequest request);
+    AssignmentResponse assign(Long tripid, AssignmentCreateRequest request);
 
     AssignmentResponse get(Long id);
 
     Page<AssignmentResponse> list(Pageable pageable);
 
     AssignmentResponse update(Long id, AssignmentUpdateRequest request);
+
 
     void delete(Long id);
 }

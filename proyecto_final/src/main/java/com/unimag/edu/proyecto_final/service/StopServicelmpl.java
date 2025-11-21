@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.StopDtos;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -24,8 +26,8 @@ public class StopServicelmpl implements StopService {
 
     @Override
     public StopDtos.StopResponse create(Long routeId, StopDtos.StopCreateRequest request) {
-       Route route = routeRepository.findById(routeId)
-               .orElseThrow(()-> new NotFoundException("route not found"));
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(()-> new NotFoundException("route not found"));
 
         if (stopRepository.findByRouteAndName(routeId, request.name()).isPresent()) {
             throw new IllegalArgumentException("Stop already exists for this route");
@@ -61,12 +63,12 @@ public class StopServicelmpl implements StopService {
 
     @Override
     public StopDtos.StopResponse update(Long id, StopDtos.StopUpdateRequest request) {
-       Stop stop = stopRepository.findById(id)
-               .orElseThrow(()-> new NotFoundException("stop not found"));
+        Stop stop = stopRepository.findById(id)
+                .orElseThrow(()-> new NotFoundException("stop not found"));
 
-       stopMapper.updateEntityFromDto(request,stop);
-       Stop update = stopRepository.save(stop);
-       return stopMapper.toResponse(update);
+        stopMapper.updateEntityFromDto(request,stop);
+        Stop update = stopRepository.save(stop);
+        return stopMapper.toResponse(update);
     }
 
     @Override

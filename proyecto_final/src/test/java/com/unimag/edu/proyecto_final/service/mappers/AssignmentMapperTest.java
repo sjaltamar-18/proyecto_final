@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service.mappers;
 
 import com.unimag.edu.proyecto_final.api.dto.AssignmentDtos.*;
@@ -18,13 +19,12 @@ class AssignmentMapperTest {
 
     @Test
     void toEntity_shouldMapCreateRequest() {
-        // given
+
         var request = new AssignmentCreateRequest(1L, 2L, 3L, true);
 
-        // when
+
         Assignment entity = (Assignment) mapper.toEntity(request);
 
-        // then
         assertThat(entity.getTrip()).isNotNull();
         assertThat(entity.getTrip().getId()).isEqualTo(1L);
 
@@ -42,7 +42,7 @@ class AssignmentMapperTest {
 
     @Test
     void toResponse_shouldMapEntity() {
-        // given
+
         var trip = Trip.builder().id(1L).build();
         var driver = User.builder().id(2L).build();
         var dispatcher = User.builder().id(3L).build();
@@ -55,10 +55,9 @@ class AssignmentMapperTest {
                 .assignedDate(LocalDateTime.now())
                 .build();
 
-        // when
+
         AssignmentResponse dto = mapper.toResponse(entity);
 
-        // then
         assertThat(dto).isNotNull();
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.tripId()).isEqualTo(1L);
@@ -70,7 +69,7 @@ class AssignmentMapperTest {
 
     @Test
     void updateEntityFromDto_shouldUpdateNonNullFields() {
-        // given
+
         var trip = Trip.builder().id(1L).build();
         var driver = User.builder().id(2L).build();
         var dispatcher = User.builder().id(3L).build();
@@ -86,10 +85,9 @@ class AssignmentMapperTest {
 
         var update = new AssignmentUpdateRequest(true);
 
-        // when
         mapper.updateEntityFromDto(update, entity);
 
-        // then
+
         assertThat(entity.getChecklistOk()).isTrue(); // debe actualizarse
         assertThat(entity.getId()).isEqualTo(10L); // no debe cambiar
         assertThat(entity.getTrip()).isNotNull(); // sigue existiendo

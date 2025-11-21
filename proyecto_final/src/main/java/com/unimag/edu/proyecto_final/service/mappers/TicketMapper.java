@@ -57,7 +57,7 @@ public interface TicketMapper {
     @Mapping(target = "statusTicket", expression = "java(request.status() != null ? mapStatus(request.status()) : ticket.getStatusTicket())")
     void updateEntityFromStatusRequest(TicketUpdateRequest request, @MappingTarget Ticket ticket);
 
-    // Métodos auxiliares
+
     default PaymentMethod mapPaymentMethod(String value) {
         if (value == null) return null;
         try {

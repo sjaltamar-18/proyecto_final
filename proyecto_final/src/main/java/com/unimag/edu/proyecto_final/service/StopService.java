@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.StopDtos.*;
@@ -17,4 +18,6 @@ public interface StopService {
     StopResponse update(Long id, StopUpdateRequest request);
 
     void delete(Long id);
+
+
 }

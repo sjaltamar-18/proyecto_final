@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.AssignmentDtos.*;
@@ -33,36 +34,43 @@ public class AssignmentServicelmpl implements AssignmentService {
 
 
     @Override
-    public AssignmentResponse create(AssignmentCreateRequest request) {
-        Trip trip = tripRepository.findById(request.tripId())
-                .orElseThrow(() -> new NotFoundException("Trip not found"));
-        if (trip.getStatusTrip() != StatusTrip.SCHEDULED){
-            throw new IllegalStateException("Trip is already scheduled");
+    public AssignmentResponse assign(Long tripId, AssignmentCreateRequest request) {
+
+
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new IllegalArgumentException("Trip not found"));
+
+
+        User driver = userRepository.findById(request.driverId())
+                .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
+
+        if (driver.getRole() != Role.DRIVER) {
+            throw new IllegalArgumentException("User is not a driver");
         }
 
-        User driver  = userRepository.findById(request.driverId())
-                .orElseThrow(() -> new NotFoundException("Driver not found"));
-        if (driver.getRole() != Role.DRIVER){
-            throw new IllegalStateException("Driver is not a driver");
-        }
+
         User dispatcher = userRepository.findById(request.dispatcherId())
-                .orElseThrow(() -> new NotFoundException("Dispatcher not found"));
-        if (dispatcher.getRole() != Role.DISPATCHER){
-            throw new IllegalStateException("Dispatcher is not a dispatcher");
+                .orElseThrow(() -> new IllegalArgumentException("Dispatcher not found"));
+
+        if (dispatcher.getRole() != Role.DISPATCHER) {
+            throw new IllegalArgumentException("User is not a dispatcher");
         }
-        Assignment assignment = Assignment.builder()
-                .trip(trip)
-                .driver(driver)
-                .checklistOk(request.checklistOk())
-                .assignedDate(LocalDateTime.now())
-                .build();
 
-        trip.setStatusTrip(StatusTrip.BOARDING);
-        tripRepository.save(trip);
 
-        assignmentRepository.save(assignment);
+        Assignment assignment = assignmentRepository.findByTripId(tripId)
+                .orElse(new Assignment());
 
-        return assignmentMapper.toResponse(assignment);
+
+        assignment.setTrip(trip);
+        assignment.setDriver(driver);
+        assignment.setDispatcher(dispatcher);
+        assignment.setChecklistOk(request.checklistOk());
+        assignment.setAssignedDate(LocalDateTime.now());
+
+
+        Assignment saved = assignmentRepository.save(assignment);
+
+        return assignmentMapper.toResponse(saved);
     }
 
     @Override

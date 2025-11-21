@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.UserDtos.*;
@@ -33,9 +34,7 @@ class UserServicelmplTest {
     @InjectMocks
     private UserServicelmpl service;
 
-    // ==========================================================================
-    // CREATE
-    // ==========================================================================
+
     @Test
     void create_debe_crear_usuario_correctamente_con_profile() {
 
@@ -111,9 +110,7 @@ class UserServicelmplTest {
                 .hasMessageContaining("User already exists");
     }
 
-    // ==========================================================================
-    // GET
-    // ==========================================================================
+
     @Test
     void get_retorna_usuario_mapeado() {
         User user = new User();
@@ -136,9 +133,7 @@ class UserServicelmplTest {
                 .hasMessageContaining("User not found");
     }
 
-    // ==========================================================================
-    // GET BY EMAIL
-    // ==========================================================================
+
     @Test
     void getByEmail_retorna_usuario() {
 
@@ -162,9 +157,7 @@ class UserServicelmplTest {
                 .isInstanceOf(NotFoundException.class);
     }
 
-    // ==========================================================================
-    // LIST BY ROLE
-    // ==========================================================================
+
     @Test
     void listByRole_ok() {
 
@@ -181,9 +174,7 @@ class UserServicelmplTest {
         assertThat(result).containsExactly(mapped);
     }
 
-    // ==========================================================================
-    // LIST PAGEABLE
-    // ==========================================================================
+
     @Test
     void list_pageable_ok() {
 
@@ -199,9 +190,7 @@ class UserServicelmplTest {
         assertThat(result.getContent()).hasSize(1);
     }
 
-    // ==========================================================================
-    // UPDATE
-    // ==========================================================================
+
     @Test
     void update_ok_con_profile() {
 
@@ -246,9 +235,7 @@ class UserServicelmplTest {
                 .hasMessage("User already exists");
     }
 
-    // ==========================================================================
-    // DELETE (soft delete)
-    // ==========================================================================
+
     @Test
     void delete_cambia_a_INACTIVE() {
 

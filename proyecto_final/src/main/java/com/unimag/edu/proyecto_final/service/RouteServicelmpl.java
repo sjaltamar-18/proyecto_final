@@ -1,16 +1,21 @@
+
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.RouteDtos;
+import com.unimag.edu.proyecto_final.api.dto.StopDtos;
 import com.unimag.edu.proyecto_final.domine.entities.Route;
+import com.unimag.edu.proyecto_final.domine.entities.Stop;
 import com.unimag.edu.proyecto_final.domine.repository.RouteRepository;
 import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.RouteMapper;
+import com.unimag.edu.proyecto_final.service.mappers.StopMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -21,6 +26,7 @@ public class RouteServicelmpl implements RouteService{
 
     private final RouteRepository routeRepository;
     private final RouteMapper routeMapper;
+    private final StopMapper stopMapper;
 
     @Override
     public RouteDtos.RouteResponse create(RouteDtos.RouteCreateRequest request) {
@@ -40,7 +46,7 @@ public class RouteServicelmpl implements RouteService{
         route.setDestinationName(request.destination());
         route.setDistance(request.distanceKm());
         route.setTime(request.durationMin() != null ? request.durationMin() / 60: null);
-       
+
 
         Route saved = routeRepository.save(route);
         return routeMapper.toResponse(saved);
@@ -93,5 +99,17 @@ public class RouteServicelmpl implements RouteService{
                 .orElseThrow(()-> new NotFoundException("route not found"));
 
         routeRepository.delete(route);
+    }
+    @Override
+    public List<StopDtos.StopResponse> getStopsByRoute(Long routeId) {
+
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new IllegalArgumentException("Route not found"));
+
+        return route.getStops()
+                .stream()
+                .sorted(Comparator.comparing(Stop::getStopOrder))
+                .map(stopMapper::toResponse)
+                .toList();
     }
 }

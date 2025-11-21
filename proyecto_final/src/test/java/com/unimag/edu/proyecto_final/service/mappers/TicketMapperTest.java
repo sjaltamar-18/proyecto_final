@@ -17,22 +17,22 @@ class TicketMapperTest {
     private final TicketMapper mapper = Mappers.getMapper(TicketMapper.class);
     @Test
     void toEntity_shouldMapCreateRequest() {
-        // given
+
         var request = new TicketCreateRequest(
-                1L,             // tripId
-                2L,             // passengerId
-                "A5",           // seatNumber
-                10L,            // fromStopId
-                20L,            // toStopId
-                60000.0,        // price
+                1L,
+                2L,
+                "A5",
+                10L,
+                20L,
+                60000.0,
                 "CARD",
-                true// paymentMethod
+                true
         );
 
-        // when
+
         Ticket entity = mapper.toEntity(request);
 
-        // then
+
         assertThat(entity).isNotNull();
         assertThat(entity.getTrip().getId()).isEqualTo(1L);
         assertThat(entity.getPassenger().getId()).isEqualTo(2L);
@@ -46,7 +46,7 @@ class TicketMapperTest {
 
     @Test
     void toResponse_shouldMapEntity() {
-        // given
+
         var trip = Trip.builder().id(1l).build();
         var user = User.builder().id(2l).build();
         var stop = Stop.builder().id(3l).build();
@@ -63,10 +63,10 @@ class TicketMapperTest {
                 .statusTicket(StatusTicket.SOLD)
                 .build();
 
-        // when
+
         TicketResponse dto = mapper.toResponse(entity);
 
-        // then
+
         assertThat(dto).isNotNull();
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.tripId()).isEqualTo(1L);
@@ -82,7 +82,7 @@ class TicketMapperTest {
 
     @Test
     void updateEntityFromStatusRequest_shouldUpdateStatusAndPaymentMethod() {
-        // given
+
         var trip = Trip.builder().id(1l).build();
         var user = User.builder().id(2l).build();
         var entity = Ticket.builder()
@@ -100,10 +100,10 @@ class TicketMapperTest {
                 "CASH"
         );
 
-        // when
+
         mapper.updateEntityFromStatusRequest(update, entity);
 
-        // then
+
         assertThat(entity.getId()).isEqualTo(15L);
         assertThat(entity.getStatusTicket()).isEqualTo(StatusTicket.CANCELLED);
         assertThat(entity.getPaymentMethod()).isEqualTo(PaymentMethod.CASH);
@@ -123,11 +123,9 @@ class TicketMapperTest {
                 "INVALID_METHOD"
         );
 
-        // when
+
         mapper.updateEntityFromStatusRequest(update, entity);
 
-        // then
-        // mapStatus y mapPaymentMethod devuelven valores por defecto
         assertThat(entity.getStatusTicket()).isEqualTo(StatusTicket.SOLD);
         assertThat(entity.getPaymentMethod()).isEqualTo(PaymentMethod.CASH);
     }

@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service.mappers;
 
 import com.unimag.edu.proyecto_final.api.dto.TripDtos.*;
@@ -34,7 +35,7 @@ public interface TripMapper {
         try {
             return StatusTrip.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException ex) {
-            return StatusTrip.SCHEDULED; // valor por defecto
+            return StatusTrip.SCHEDULED;
         }
     }
     default Route toRoute(Long id) {

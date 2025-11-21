@@ -1,3 +1,5 @@
+
+
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.TripDtos;
@@ -24,6 +26,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.*;
 
@@ -74,6 +78,98 @@ class TripServicelmplTest {
         verify(busRepository).save(bus);
         assertThat(bus.getStatus()).isEqualTo(StatusBus.ACTIVE);
     }
+    @Test
+    void openBoarding_success() {
+        Trip trip = new Trip();
+        trip.setId(10L);
+        trip.setBoardingStatus(BoardingStatus.BOARDING_CLOSED);
+
+        Trip savedTrip = new Trip();
+        savedTrip.setId(10L);
+        savedTrip.setBoardingStatus(BoardingStatus.BOARDING_OPEN);
+
+        TripDtos.TripResponse response = new TripDtos.TripResponse(
+                10L, null, null, null, null, null,
+                null, null, BoardingStatus.BOARDING_OPEN
+        );
+
+        when(tripRepository.findById(10L)).thenReturn(Optional.of(trip));
+        when(tripRepository.save(trip)).thenReturn(savedTrip);
+        when(tripMapper.toResponse(savedTrip)).thenReturn(response);
+
+        TripDtos.TripResponse result = service.openBoarding(10L);
+
+        assertEquals(BoardingStatus.BOARDING_OPEN, result.boardingStatus());
+        verify(tripRepository).save(trip);
+    }
+
+    @Test
+    void openBoarding_shouldThrowIfAlreadyOpen() {
+        Trip trip = new Trip();
+        trip.setId(5L);
+        trip.setBoardingStatus(BoardingStatus.BOARDING_OPEN);
+
+        when(tripRepository.findById(5L)).thenReturn(Optional.of(trip));
+
+        assertThrows(IllegalStateException.class,
+                () -> service.openBoarding(5L));
+    }
+
+    @Test
+    void openBoarding_notFound() {
+        when(tripRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class,
+                () -> service.openBoarding(99L));
+
+
+    }
+
+    @Test
+    void closeBoarding_success() {
+        Trip trip = new Trip();
+        trip.setId(20L);
+        trip.setBoardingStatus(BoardingStatus.BOARDING_OPEN);
+
+        Trip savedTrip = new Trip();
+        savedTrip.setId(20L);
+        savedTrip.setBoardingStatus(BoardingStatus.BOARDING_CLOSED);
+
+        TripDtos.TripResponse response = new TripDtos.TripResponse(
+                20L, null, null, null, null, null,
+                null, null, BoardingStatus.BOARDING_CLOSED
+        );
+
+        when(tripRepository.findById(20L)).thenReturn(Optional.of(trip));
+        when(tripRepository.save(trip)).thenReturn(savedTrip);
+        when(tripMapper.toResponse(savedTrip)).thenReturn(response);
+
+        TripDtos.TripResponse result = service.closeBoarding(20L);
+
+        assertEquals(BoardingStatus.BOARDING_CLOSED, result.boardingStatus());
+        verify(tripRepository).save(trip);
+    }
+
+    @Test
+    void closeBoarding_shouldThrowWhenAlreadyClosed() {
+        Trip trip = new Trip();
+        trip.setId(7L);
+        trip.setBoardingStatus(BoardingStatus.BOARDING_CLOSED);
+
+        when(tripRepository.findById(7L)).thenReturn(Optional.of(trip));
+
+        assertThrows(IllegalStateException.class,
+                () -> service.closeBoarding(7L));
+    }
+
+    @Test
+    void closeBoarding_notFound() {
+        when(tripRepository.findById(88L)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class,
+                () -> service.closeBoarding(88L));
+    }
+
 
     @Test
     void create_falla_si_route_no_existe() {

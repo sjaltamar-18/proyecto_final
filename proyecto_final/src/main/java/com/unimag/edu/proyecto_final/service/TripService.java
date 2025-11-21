@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.TripDtos.*;
@@ -13,6 +14,10 @@ public interface TripService {
 
     TripResponse get(Long id);
 
+    TripResponse openBoarding(Long tripId);
+
+    TripResponse closeBoarding(Long tripId);
+
     List<TripResponse> listByRoute(Long routeId, LocalDate date);
 
     List<TripResponse> listUpcoming();
@@ -22,5 +27,6 @@ public interface TripService {
     TripResponse update(Long id, TripUpdateRequest request);
 
     TripResponse authorizeDeparture(Long tripId, Long driverId);
+
     void delete(Long id);
 }

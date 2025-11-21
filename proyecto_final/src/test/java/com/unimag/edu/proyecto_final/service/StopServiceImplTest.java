@@ -43,9 +43,7 @@ class StopServicelmplTest {
     @BeforeEach
     void setUp() {}
 
-    // ==========================================================================
-    // CREATE
-    // ==========================================================================
+
     @Test
     void create_debe_crear_stop_correctamente() {
         Long routeId = 10L;
@@ -107,9 +105,7 @@ class StopServicelmplTest {
                 .hasMessageContaining("already exists");
     }
 
-    // ==========================================================================
-    // GET
-    // ==========================================================================
+
     @Test
     void get_debe_retornar_stop_si_existe() {
         Stop stop = Stop.builder().id(20L).build();
@@ -133,9 +129,6 @@ class StopServicelmplTest {
                 .hasMessageContaining("stop not found");
     }
 
-    // ==========================================================================
-    // LIST BY ROUTE
-    // ==========================================================================
     @Test
     void listByRoute_debe_retornar_lista_mapeada() {
         Stop a = Stop.builder().id(1L).build();
@@ -153,9 +146,7 @@ class StopServicelmplTest {
         verify(stopRepository).findByRouteIdOrderByStopOrderAsc(10L);
     }
 
-    // ==========================================================================
-    // UPDATE
-    // ==========================================================================
+
     @Test
     void update_debe_actualizar_y_guardar() {
         Stop stop = Stop.builder().id(30L).build();
@@ -187,9 +178,6 @@ class StopServicelmplTest {
                 .hasMessageContaining("stop not found");
     }
 
-    // ==========================================================================
-    // DELETE
-    // ==========================================================================
     @Test
     void delete_debe_eliminar_si_existe() {
         Stop stop = Stop.builder().id(44L).build();
