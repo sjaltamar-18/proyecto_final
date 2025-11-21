@@ -108,7 +108,7 @@ public class UserServicelmpl implements UserService {
         userRepository.save(user);
     }
 
-    // Metodos auxiliares
+
 
     private String encryptPassword(String plainPassword) {
         return "{hashed}" + plainPassword;

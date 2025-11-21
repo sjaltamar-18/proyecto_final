@@ -55,9 +55,7 @@ class SeatHoldServicelmplTest {
     @BeforeEach
     void setUp() {}
 
-    // ==========================================================================
-    // CREATE
-    // ==========================================================================
+
     @Test
     void create_debe_crear_seathold_correctamente() {
         SeatHoldCreateRequest req = mock(SeatHoldCreateRequest.class);
@@ -173,9 +171,7 @@ class SeatHoldServicelmplTest {
                 .hasMessageContaining("Seat is temporarily hold in this tramo");
     }
 
-    // ==========================================================================
-    // GET
-    // ==========================================================================
+
     @Test
     void get_debe_retornar_seathold_si_existe() {
         SeatHold seatHold = SeatHold.builder().id(5L).build();
@@ -199,9 +195,7 @@ class SeatHoldServicelmplTest {
                 .hasMessageContaining("seatHold not found");
     }
 
-    // ==========================================================================
-    // LISTS
-    // ==========================================================================
+
     @Test
     void listActiveByTrip_debe_retornar_holds() {
         SeatHold sh = SeatHold.builder().id(1L).status(StatusSeatHold.HOLD).build();

@@ -53,23 +53,22 @@ class BaggageServiceImplTest {
     void init() {}
     @Test
     void register_debe_crear_baggage_correctamente() {
-        // Mock DTO
+
         BaggageCreateRequest req = mock(BaggageCreateRequest.class);
         when(req.ticketId()).thenReturn(55L);
         when(req.weightKg()).thenReturn(25.0);
 
-        // Ticket SOLD
+
         Ticket ticket = Ticket.builder()
                 .id(55L)
                 .statusTicket(StatusTicket.SOLD)
                 .build();
         when(ticketRepository.findById(55L)).thenReturn(Optional.of(ticket));
 
-        // Configuración para la regla 6
         when(confiService.getDouble("BAGGAGE_WEIGHT_LIMIT_KG")).thenReturn(20.0);
         when(confiService.getDouble("BAGGAGE_EXCESS_FEE_PER_KG")).thenReturn(3000.0);
 
-        // Mapper
+
         Baggage baggage = new Baggage();
         when(mapper.toEntity(any())).thenAnswer(inv -> {
             baggage.setWeight(req.weightKg());  // ← SOLUCIÓN FINAL
@@ -78,10 +77,10 @@ class BaggageServiceImplTest {
 
         when(mapper.toResponse(any())).thenReturn(mock(BaggageResponse.class));
 
-        // Repository
+
         when(baggageRepository.save(any())).thenReturn(baggage);
 
-        // Ejecutar
+
         BaggageResponse result = service.register(req);
 
         assertThat(result).isNotNull();

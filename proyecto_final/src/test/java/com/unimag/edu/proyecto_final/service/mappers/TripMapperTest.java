@@ -20,7 +20,7 @@ class TripMapperTest {
 
     @Test
     void toEntity_shouldMapCreateRequest() {
-        // given
+
         var request = new TripCreateRequest(
                 1L, // routeId
                 2L, // busId
@@ -30,10 +30,9 @@ class TripMapperTest {
                 BoardingStatus.BOARDING_OPEN
         );
 
-        // when
         Trip entity = mapper.toEntity(request);
 
-        // then
+
         assertThat(entity).isNotNull();
         assertThat(entity.getId()).isNull();   // ignored by mapper
 
@@ -52,7 +51,7 @@ class TripMapperTest {
 
     @Test
     void toResponse_shouldMapEntity() {
-        // given
+
         var route = Route.builder().id(1L).build();
         var bus = Bus.builder().id(2L).build();
         var entity = Trip.builder()
@@ -65,10 +64,10 @@ class TripMapperTest {
                 .statusTrip(StatusTrip.DEPARTED)
                 .build();
 
-        // when
+
         TripResponse dto = mapper.toResponse(entity);
 
-        // then
+
         assertThat(dto).isNotNull();
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.routeId()).isEqualTo(1L);
@@ -84,7 +83,7 @@ class TripMapperTest {
 
         var route = Route.builder().id(20L).build();
         var bus = Bus.builder().id(8L).build();
-        // given
+
         var entity = Trip.builder()
                 .id(20L)
                 .route(route)
@@ -97,10 +96,9 @@ class TripMapperTest {
 
         var update = new TripUpdateRequest(LocalDateTime.of(2025, 5, 20, 9, 0),LocalDateTime.of(2025, 5, 20, 13, 30),"CANCELLED");
 
-        // when
+
         mapper.updateEntityFromStatusRequest(update, entity);
 
-        // then
         assertThat(entity.getStatusTrip()).isEqualTo(StatusTrip.CANCELLED);
         assertThat(entity.getId()).isEqualTo(20L);
         assertThat(entity.getRoute().getId()).isEqualTo(20L);
@@ -109,7 +107,7 @@ class TripMapperTest {
 
     @Test
     void updateEntityFromStatusRequest_shouldHandleInvalidStatusGracefully() {
-        // given
+
         var entity = Trip.builder()
                 .id(25L)
                 .departureAt(LocalDateTime.of(2025, 5, 20, 9, 0))

@@ -35,11 +35,11 @@ public class AssignmentServicelmpl implements AssignmentService {
     @Override
     public AssignmentResponse assign(Long tripId, AssignmentCreateRequest request) {
 
-        // 1. Validar que el trip exista
+
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new IllegalArgumentException("Trip not found"));
 
-        // 2. Validar que el driver exista y tenga rol DRIVER
+
         User driver = userRepository.findById(request.driverId())
                 .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
 
@@ -47,7 +47,7 @@ public class AssignmentServicelmpl implements AssignmentService {
             throw new IllegalArgumentException("User is not a driver");
         }
 
-        // 3. Validar que el dispatcher exista y tenga rol DISPATCHER
+
         User dispatcher = userRepository.findById(request.dispatcherId())
                 .orElseThrow(() -> new IllegalArgumentException("Dispatcher not found"));
 
@@ -55,21 +55,20 @@ public class AssignmentServicelmpl implements AssignmentService {
             throw new IllegalArgumentException("User is not a dispatcher");
         }
 
-        // 4. Ver si ya existe una asignación previa
+
         Assignment assignment = assignmentRepository.findByTripId(tripId)
                 .orElse(new Assignment());
 
-        // 5. Asignar campos
+
         assignment.setTrip(trip);
         assignment.setDriver(driver);
         assignment.setDispatcher(dispatcher);
         assignment.setChecklistOk(request.checklistOk());
         assignment.setAssignedDate(LocalDateTime.now());
 
-        // 6. Guardar
+
         Assignment saved = assignmentRepository.save(assignment);
 
-        // 7. Responder con el mapper
         return assignmentMapper.toResponse(saved);
     }
 

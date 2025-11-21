@@ -9,7 +9,7 @@ public interface StopMapper {
 
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "route", ignore = true)   // evitar cargar entidad
+    @Mapping(target = "route", ignore = true)
     @Mapping(source = "name", target = "stopName")
     @Mapping(source = "order", target = "stopOrder")
     @Mapping(source = "lat", target = "latitude")

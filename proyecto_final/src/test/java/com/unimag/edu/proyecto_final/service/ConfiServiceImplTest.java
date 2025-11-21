@@ -34,9 +34,7 @@ class ConfiServicelmplTest {
         service = new ConfiServicelmpl(confiRepository, confiMapper);
     }
 
-    // ---------------------------------------------------------
-    // CREATE
-    // ---------------------------------------------------------
+
     @Test
     void create_debe_crear_config_correctamente() {
         ConfigCreateRequest req = new ConfigCreateRequest("LIMIT", "20");
@@ -68,9 +66,7 @@ class ConfiServicelmplTest {
                 .hasMessageContaining("config already exists");
     }
 
-    // ---------------------------------------------------------
-    // GET
-    // ---------------------------------------------------------
+
     @Test
     void get_debe_retornar_config() {
         Confi confi = new Confi(1L, "LIMIT", "20");
@@ -93,9 +89,7 @@ class ConfiServicelmplTest {
                 .hasMessageContaining("config not found");
     }
 
-    // ---------------------------------------------------------
-    // LIST
-    // ---------------------------------------------------------
+
     @Test
     void list_debe_retornar_paginado() {
         Pageable pageable = PageRequest.of(0, 10);

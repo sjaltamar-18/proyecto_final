@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FareRuleRepository extends JpaRepository<FareRule,Long> {
-    //Buscar tarifa base para un tramo específico (from → to)
+
     @Query("""
            SELECT f FROM FareRule f
            WHERE f.route.id = :routeId
@@ -20,7 +20,7 @@ public interface FareRuleRepository extends JpaRepository<FareRule,Long> {
                                                 @Param("fromId") Long fromId,
                                                 @Param("toId") Long toId);
 
-    // Listar todas las reglas de una ruta (para panel administrativo)
+
     @Query("""
            SELECT f FROM FareRule f
            WHERE f.route.id = :routeId
@@ -28,14 +28,14 @@ public interface FareRuleRepository extends JpaRepository<FareRule,Long> {
            """)
     List<FareRule> findByRoute_Id(@Param("routeId") Long routeId);
 
-    // Buscar tarifas con precios dinámicos habilitados
+
     @Query("""
            SELECT f FROM FareRule f
            WHERE f.route.id = :routeId AND f.dynamicPricing = 'ON'
            """)
     List<FareRule> findDynamicPricingRules(@Param("routeId") Long routeId);
 
-    // Buscar tarifas con descuentos configurados (niños, estudiante, etc.)
+
     @Query(value = """
    SELECT * FROM fare_rules f
    WHERE f.route_id = :routeId
@@ -43,7 +43,7 @@ public interface FareRuleRepository extends JpaRepository<FareRule,Long> {
    """, nativeQuery = true)
     List<FareRule> findWithDiscounts(@Param("routeId") Long routeId);
 
-    // Buscar todos los tramos válidos entre dos paradas de una ruta
+
     @Query("""
            SELECT f FROM FareRule f
            WHERE f.route.id = :routeId

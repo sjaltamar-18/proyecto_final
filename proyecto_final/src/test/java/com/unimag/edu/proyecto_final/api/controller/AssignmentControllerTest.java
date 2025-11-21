@@ -47,10 +47,10 @@ class AssignmentControllerTest {
 
         Long tripId = 1L;
 
-        // Body enviado por el cliente (tripId será ignorado y reemplazado por el del path)
+
         AssignmentDtos.AssignmentCreateRequest request =
                 new AssignmentDtos.AssignmentCreateRequest(
-                        999L,      // valor incorrecto (no importa)
+                        999L,
                         10L,
                         20L,
                         true
@@ -67,10 +67,9 @@ class AssignmentControllerTest {
                         LocalDateTime.now()
                 );
 
-        // Mock del servicio (se espera que reciba tripId = 1 y un fixedRequest)
         AssignmentDtos.AssignmentCreateRequest fixedRequest =
                 new AssignmentDtos.AssignmentCreateRequest(
-                        tripId,    // siempre debe venir del path
+                        tripId,
                         10L,
                         20L,
                         true

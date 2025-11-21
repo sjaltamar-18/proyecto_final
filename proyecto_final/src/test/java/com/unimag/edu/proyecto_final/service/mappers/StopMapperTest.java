@@ -14,7 +14,7 @@ class StopMapperTest {
 
     @Test
     void toEntity_shouldMapCreateRequest() {
-        // given
+
         var request = new StopCreateRequest(
                 1L,         // routeId
                 "Terminal Norte",
@@ -23,10 +23,10 @@ class StopMapperTest {
                 -74.0721    // lng
         );
 
-        // when
+
         Stop entity = mapper.toEntity(request);
 
-        // then
+
         assertThat(entity).isNotNull();
         assertThat(entity.getId()).isNull(); // Ignorado por el mapper
         assertThat(entity.getRoute()).isNull();

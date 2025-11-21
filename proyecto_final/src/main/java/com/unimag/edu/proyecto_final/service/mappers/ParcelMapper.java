@@ -29,7 +29,7 @@ public interface ParcelMapper {
         try {
             return StatusParcel.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException ex) {
-            return StatusParcel.CREATED; // Valor por defecto
+            return StatusParcel.CREATED;
         }
     }
 }

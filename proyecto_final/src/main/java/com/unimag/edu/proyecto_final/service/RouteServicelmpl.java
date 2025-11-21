@@ -107,7 +107,7 @@ public class RouteServicelmpl implements RouteService{
 
         return route.getStops()
                 .stream()
-                .sorted(Comparator.comparing(Stop::getStopOrder)) // Ordenar según el campo de orden
+                .sorted(Comparator.comparing(Stop::getStopOrder))
                 .map(stopMapper::toResponse)
                 .toList();
     }

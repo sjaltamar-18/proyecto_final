@@ -17,7 +17,7 @@ class IncidentMapperTest {
 
     @Test
     void toEntity_shouldMapCreateRequest() {
-        // given
+
         var request = new IncidentCreateRequest(
                 "TRIP",              // entityType
                 1L,                  // entityId
@@ -25,10 +25,9 @@ class IncidentMapperTest {
                 "El paquete no fue entregado por error de dirección" // note
         );
 
-        // when
         Incident entity = mapper.toEntity(request);
 
-        // then
+
         assertThat(entity).isNotNull();
         assertThat(entity.getId()).isNull(); // ignored by mapper
         assertThat(entity.getEntityType()).isEqualTo(EntityType.TRIP);
@@ -41,7 +40,7 @@ class IncidentMapperTest {
 
     @Test
     void toResponse_shouldMapEntity() {
-        // given
+
         var entity = Incident.builder()
                 .id(10L)
                 .entityType(EntityType.PARCEL)
@@ -51,10 +50,10 @@ class IncidentMapperTest {
                 .creationDate(LocalDateTime.now().minusHours(2))
                 .build();
 
-        // when
+
         IncidentResponse dto = mapper.toResponse(entity);
 
-        // then
+
         assertThat(dto).isNotNull();
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.entityType()).isEqualTo("PARCEL");

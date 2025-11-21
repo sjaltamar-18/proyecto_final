@@ -132,9 +132,7 @@ class ParcelServiceImplTest {
                 .hasMessageContaining("Stop not found");
     }
 
-    // ==========================================================================
-    // GET
-    // ==========================================================================
+
     @Test
     void get_debe_retornar_parcel_si_existe() {
         Parcel parcel = Parcel.builder().id(5L).build();
@@ -158,9 +156,7 @@ class ParcelServiceImplTest {
                 .hasMessageContaining("Parcel not found");
     }
 
-    // ==========================================================================
-    // GET BY CODE
-    // ==========================================================================
+
     @Test
     void getByCode_debe_retornar_correctamente() {
         Parcel parcel = Parcel.builder().id(7L).build();
@@ -184,9 +180,7 @@ class ParcelServiceImplTest {
                 .hasMessageContaining("Parcel not found");
     }
 
-    // ==========================================================================
-    // LIST BY STATUS
-    // ==========================================================================
+
     @Test
     void listByStatus_debe_listar_correctamente() {
         Pageable pageable = PageRequest.of(0, 10);
@@ -205,9 +199,7 @@ class ParcelServiceImplTest {
         verify(parcelMapper).toResponse(any());
     }
 
-    // ==========================================================================
-    // UPDATE
-    // ==========================================================================
+
     @Test
     void update_debe_modificar_y_guardar() {
         Parcel parcel = Parcel.builder().id(50L).build();
@@ -232,9 +224,7 @@ class ParcelServiceImplTest {
 
 
 
-    // ==========================================================================
-    // DELETE
-    // ==========================================================================
+
     @Test
     void delete_debe_eliminar_si_existe() {
         Parcel parcel = Parcel.builder().id(33L).build();

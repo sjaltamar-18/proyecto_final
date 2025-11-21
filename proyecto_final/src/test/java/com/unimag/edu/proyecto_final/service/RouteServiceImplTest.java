@@ -47,9 +47,7 @@ class RouteServicelmplTest {
     @BeforeEach
     void setup() {}
 
-    // ==========================================================================
-    // CREATE
-    // ==========================================================================
+
     @Test
     void create_debe_crear_route_correctamente() {
         RouteCreateRequest req = mock(RouteCreateRequest.class);

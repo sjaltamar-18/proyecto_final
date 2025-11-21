@@ -76,10 +76,10 @@ class AssignmentServiceImplTest {
 
         AssignmentCreateRequest request =
                 new AssignmentCreateRequest(
-                        1L,               // tripId (aunque no se usa)
-                        10L,              // driverId
-                        20L,              // dispatcherId
-                        true              // checklistOk
+                        1L,
+                        10L,
+                        20L,
+                        true
                 );
 
         Assignment saved = new Assignment();
@@ -114,9 +114,7 @@ class AssignmentServiceImplTest {
         assertThat(result.dispatcherId()).isEqualTo(20L);
     }
 
-    // ============================================================
-    // 2. Trip no existe
-    // ============================================================
+
     @Test
     void assign_debe_fallar_si_trip_no_existe() {
 
@@ -130,9 +128,7 @@ class AssignmentServiceImplTest {
                 .hasMessage("Trip not found");
     }
 
-    // ============================================================
-    // 3. Driver no existe
-    // ============================================================
+
     @Test
     void assign_debe_fallar_si_driver_no_existe() {
 
@@ -150,9 +146,7 @@ class AssignmentServiceImplTest {
                 .hasMessage("Driver not found");
     }
 
-    // ============================================================
-    // 4. Driver rol incorrecto
-    // ============================================================
+
     @Test
     void assign_debe_fallar_si_usuario_no_es_driver() {
 
@@ -174,9 +168,7 @@ class AssignmentServiceImplTest {
                 .hasMessage("User is not a driver");
     }
 
-    // ============================================================
-    // 5. Dispatcher no existe
-    // ============================================================
+
     @Test
     void assign_debe_fallar_si_dispatcher_no_existe() {
 
@@ -199,9 +191,6 @@ class AssignmentServiceImplTest {
                 .hasMessage("Dispatcher not found");
     }
 
-    // ============================================================
-    // 6. Dispatcher rol incorrecto
-    // ============================================================
     @Test
     void assign_debe_fallar_si_usuario_no_es_dispatcher() {
 

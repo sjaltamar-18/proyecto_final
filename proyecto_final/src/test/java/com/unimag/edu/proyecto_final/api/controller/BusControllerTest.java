@@ -37,9 +37,6 @@ class BusControllerTest {
     @MockitoBean
     BusService busService;
 
-    // ------------------------------------------------------------
-    // CREATE
-    // ------------------------------------------------------------
     @Test
     void createBus_shouldReturn201() throws Exception {
         BusCreateRequest request = new BusCreateRequest("AAA111", 40, "AC,TV");
@@ -69,9 +66,7 @@ class BusControllerTest {
                 .andExpect(jsonPath("$.revisionExp").exists());
     }
 
-    // ------------------------------------------------------------
-    // GET BY ID
-    // ------------------------------------------------------------
+
     @Test
     void getBus_shouldReturn200() throws Exception {
         BusResponse response = new BusResponse(
@@ -94,9 +89,6 @@ class BusControllerTest {
                 .andExpect(jsonPath("$.revisionExp").exists());
     }
 
-    // ------------------------------------------------------------
-    // LIST
-    // ------------------------------------------------------------
     @Test
     void listBuses_shouldReturn200() throws Exception {
 
@@ -122,9 +114,7 @@ class BusControllerTest {
     }
 
 
-    // ------------------------------------------------------------
-    // UPDATE
-    // ------------------------------------------------------------
+
     @Test
     void updateBus_shouldReturn200() throws Exception {
         BusUpdateRequest request = new BusUpdateRequest(45, "WiFi,AC", "ACTIVE");
@@ -151,9 +141,7 @@ class BusControllerTest {
                 .andExpect(jsonPath("$.revisionExp").exists());
     }
 
-    // ------------------------------------------------------------
-    // DELETE
-    // ------------------------------------------------------------
+
     @Test
     void deleteBus_shouldReturn204() throws Exception {
         doNothing().when(busService).delete(10L);

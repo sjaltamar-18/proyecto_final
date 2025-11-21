@@ -45,9 +45,7 @@ class IncidentServiceImplTest {
     @BeforeEach
     void setup() {}
 
-    // ==========================================================================
-    // CREATE
-    // ==========================================================================
+
     @Test
     void create_debe_crear_incident_correctamente() {
         IncidentCreateRequest req = mock(IncidentCreateRequest.class);
@@ -101,9 +99,7 @@ class IncidentServiceImplTest {
                 .hasMessageContaining("Incident type not found");
     }
 
-    // ==========================================================================
-    // GET
-    // ==========================================================================
+
     @Test
     void get_debe_retornar_incident_si_existe() {
         Incident incident = Incident.builder().id(10L).build();
@@ -127,9 +123,7 @@ class IncidentServiceImplTest {
                 .hasMessageContaining("Incident not found");
     }
 
-    // ==========================================================================
-    // LIST
-    // ==========================================================================
+
     @Test
     void list_debe_devolver_pagina_mapeada() {
         Pageable pageable = PageRequest.of(0, 10);
@@ -149,9 +143,7 @@ class IncidentServiceImplTest {
         verify(incidentMapper, times(2)).toResponse(any());
     }
 
-    // ==========================================================================
-    // LIST BY ENTITY
-    // ==========================================================================
+
     @Test
     void listByEntity_debe_filtrar_por_type() {
         when(incidentRepository.findByType(Type.DELIVERY_FAIL))
@@ -166,9 +158,7 @@ class IncidentServiceImplTest {
         verify(incidentRepository).findByType(Type.DELIVERY_FAIL);
     }
 
-    // ==========================================================================
-    // LIST BY TYPE
-    // ==========================================================================
+
     @Test
     void listByType_debe_filtrar_correctamente() {
         when(incidentRepository.findByType(Type.OVERBOOK))
@@ -183,9 +173,7 @@ class IncidentServiceImplTest {
         verify(incidentRepository).findByType(Type.OVERBOOK);
     }
 
-    // ==========================================================================
-    // LIST BETWEEN DATES
-    // ==========================================================================
+
     @Test
     void listBetweenDates_debe_devolver_incidents_mapeados() {
         LocalDateTime start = LocalDateTime.now().minusDays(5);
@@ -202,9 +190,7 @@ class IncidentServiceImplTest {
         verify(incidentRepository).findBetweenDates(start, end);
     }
 
-    // ==========================================================================
-    // UPDATE
-    // ==========================================================================
+
     @Test
     void update_debe_modificar_y_guardar() {
         Incident existing = Incident.builder().id(40L).build();
@@ -237,9 +223,7 @@ class IncidentServiceImplTest {
                 .hasMessageContaining("Incident not found");
     }
 
-    // ==========================================================================
-    // DELETE
-    // ==========================================================================
+
     @Test
     void delete_debe_eliminar_si_existe() {
         Incident inc = Incident.builder().id(33L).build();
@@ -259,9 +243,6 @@ class IncidentServiceImplTest {
                 .hasMessageContaining("Incident not found");
     }
 
-    // ==========================================================================
-    // DELETE OLDER THAN
-    // ==========================================================================
     @Test
     void deleteOlderThan_debe_retorna_cantidad_de_eliminados() {
         when(incidentRepository.deleteOlderThan(any(LocalDateTime.class))).thenReturn(7);
@@ -279,17 +260,17 @@ class IncidentServiceImplTest {
 
         IncidentResponse expected = mock(IncidentResponse.class);
 
-        // PREVENIR ejecución real del método create()
+
         doReturn(expected)
                 .when(service)
                 .create(any(IncidentCreateRequest.class));
 
-        // Ejecutar
+
         IncidentResponse result = service.createDeliveryFailureIncident(parcelId, reason);
 
         assertThat(result).isEqualTo(expected);
 
-        // Capturar los argumentos enviados al método create()
+
         ArgumentCaptor<IncidentCreateRequest> captor =
                 ArgumentCaptor.forClass(IncidentCreateRequest.class);
 

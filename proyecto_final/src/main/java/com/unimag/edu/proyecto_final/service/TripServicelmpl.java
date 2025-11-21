@@ -153,29 +153,26 @@ public class TripServicelmpl implements  TripService {
     @Transactional
     public TripDtos.TripResponse authorizeDeparture(Long tripId, Long driverId) {
 
-        // 1. Buscar el trip
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new NotFoundException("trip not found"));
 
-        // 2. Evitar doble salida
+
         if (trip.getDepartureReal() != null) {
             throw new IllegalStateException("Trip already departed");
         }
 
-        // 3. Obtener assignment del viaje
         Assignment assignment = assignmentRepository.findByTripId(tripId)
                 .orElseThrow(() -> new NotFoundException("assignment not found"));
 
-        // 4. Validar driver existente
+
         User driver = userRepository.findById(driverId)
                 .orElseThrow(() -> new NotFoundException("driver not found"));
 
-        // 5. Validar que es el driver asignado
         if (!driver.getId().equals(assignment.getDriver().getId())) {
             throw new IllegalStateException("Driver not assigned to this trip");
         }
 
-        // 6. Validar documentos del bus
+
         Bus bus = assignment.getTrip().getBus();
         LocalDate today = LocalDate.now();
 
@@ -187,7 +184,6 @@ public class TripServicelmpl implements  TripService {
             throw new IllegalStateException("Technical inspection expired");
         }
 
-        // 7. Marcar salida real
         trip.setDepartureReal(LocalDateTime.now());
         trip.setStatusTrip(StatusTrip.DEPARTED);
 

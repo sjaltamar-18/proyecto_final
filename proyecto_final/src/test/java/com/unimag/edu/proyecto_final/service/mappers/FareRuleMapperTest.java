@@ -19,7 +19,7 @@ class FareRuleMapperTest {
 
     @Test
     void toEntity_shouldMapCreateRequest() {
-        // given
+
         var request = new FareRuleCreateRequest(
                 1L,
                 2L,
@@ -30,10 +30,10 @@ class FareRuleMapperTest {
         );
 
 
-        // when
+
         FareRule entity = mapper.toEntity(request);
 
-        // then
+
         assertThat(entity).isNotNull();
         assertThat(entity.getId()).isNull(); // ignored by mapper
         assertThat(entity.getBasePrice()).isEqualByComparingTo(25000.00);
@@ -47,7 +47,7 @@ class FareRuleMapperTest {
 
     @Test
     void toResponse_shouldMapEntity() {
-        // given
+
         var route = Route.builder().id(1L).build();
         var fromStop = Stop.builder().id(2L).stopName("Bogotá").build();
         var toStop = Stop.builder().id(3L).stopName("Tunja").build();
@@ -62,10 +62,10 @@ class FareRuleMapperTest {
                 .dynamicPricing(DynamicPricing.OFF)
                 .build();
 
-        // when
+
         FareRuleResponse dto = mapper.toResponse(entity);
 
-        // then
+
         assertThat(dto).isNotNull();
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.routeId()).isEqualTo(1L);
@@ -78,7 +78,7 @@ class FareRuleMapperTest {
 
     @Test
     void updateEntityFromDto_shouldUpdateNonNullFields() {
-        // given
+
         var route = Route.builder().id(1L).build();
         var fromStop = Stop.builder().id(2L).build();
         var toStop = Stop.builder().id(3L).build();
@@ -99,10 +99,9 @@ class FareRuleMapperTest {
                 true // dynamicPricing → ON
         );
 
-        // when
+
         mapper.updateEntityFromDto(update, entity);
 
-        // then
         assertThat(entity.getBasePrice()).isEqualByComparingTo(22000.00);
         assertThat(entity.getDiscountPrice()).isEqualTo("\"student\":0.15");
         assertThat(entity.getDynamicPricing()).isEqualTo(DynamicPricing.ON);
