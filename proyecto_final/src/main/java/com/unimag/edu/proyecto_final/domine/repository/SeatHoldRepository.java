@@ -14,9 +14,9 @@ import java.util.Optional;
 
 public interface SeatHoldRepository extends JpaRepository<SeatHold,Long> {
 
-//Busca los puestos ocupados activos dentro de un viaje, con el objetivo de mostrar su disponibilidad
+
     List<SeatHold> findByTripIdAndStatus(Long tripId, StatusSeatHold status);
-//verifica si la silla se encuentra en un hold activo en el viaje
+
     @Query("""
            SELECT COUNT(s) > 0 FROM SeatHold s
            WHERE s.trip.id = :tripId
@@ -25,20 +25,20 @@ public interface SeatHoldRepository extends JpaRepository<SeatHold,Long> {
            AND s.expirationDate > CURRENT_TIMESTAMP
            """)
     boolean isSeatOnHold(@Param("tripId") Long tripId, @Param("seat") String seat);
-// obtiene una ocupa especifica para que pase a un ticket
+
     Optional<SeatHold> findByTripIdAndSeatNumberAndStatus(Long tripId, String seatNumber, StatusSeatHold status);
-// expira los asientos ocupados vencidos
+
     @Transactional
     @Modifying
     @Query("UPDATE SeatHold s SET s.status = 'EXPIRED' WHERE s.expirationDate < CURRENT_TIMESTAMP AND s.status = 'HOLD'")
     int expireHolds();
-// limpia ocupados antiguos
+
     @Transactional
     @Modifying
     @Query("DELETE FROM SeatHold s WHERE s.status = 'EXPIRED' AND s.expirationDate < :limit")
     int deleteExpiredOlderThan(@Param("limit") LocalDateTime limit);
-// encuentra hold por usuaario
-List<SeatHold> findByUserIdAndStatus(Long userId, StatusSeatHold status);
+
+    List<SeatHold> findByUserIdAndStatus(Long userId, StatusSeatHold status);
     @Query("""
     SELECT CASE WHEN COUNT(sh) > 0 THEN TRUE ELSE FALSE END
     FROM SeatHold sh

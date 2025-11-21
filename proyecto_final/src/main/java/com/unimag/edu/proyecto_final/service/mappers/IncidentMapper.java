@@ -27,7 +27,7 @@ public interface IncidentMapper {
         try {
             return EntityType.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException ex) {
-            return EntityType.TRIP; // valor por defecto
+            return EntityType.TRIP;
         }
     }
 
@@ -36,7 +36,7 @@ public interface IncidentMapper {
         try {
             return Type.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException ex) {
-            return Type.SECURITY; // valor por defecto
+            return Type.SECURITY;
         }
     }
 }

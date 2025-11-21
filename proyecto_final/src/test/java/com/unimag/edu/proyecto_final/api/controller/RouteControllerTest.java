@@ -2,7 +2,9 @@ package com.unimag.edu.proyecto_final.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unimag.edu.proyecto_final.api.dto.RouteDtos.*;
+import com.unimag.edu.proyecto_final.api.dto.StopDtos;
 import com.unimag.edu.proyecto_final.service.RouteService;
+import com.unimag.edu.proyecto_final.service.StopService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,8 @@ class RouteControllerTest {
 
     @MockitoBean
     RouteService routeService;
+    @MockitoBean
+    private StopService stopService;
 
     @Test
     void create_shouldReturn201() throws Exception {
@@ -131,5 +135,43 @@ class RouteControllerTest {
 
         mockMvc.perform(delete("/api/routes/7"))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void getStopsByRoute_debe_retornar_lista_de_stops() throws Exception {
+
+        Long routeId = 1L;
+
+        StopDtos.StopResponse stop1 =
+                new StopDtos.StopResponse(10L, 1L, "A", 1, 1.1, 1.2);
+
+        StopDtos.StopResponse stop2 =
+                new StopDtos.StopResponse(20L, 1L, "B", 2, 2.1, 2.2);
+
+        when(routeService.getStopsByRoute(routeId))
+                .thenReturn(List.of(stop1, stop2));
+
+        mockMvc.perform(get("/api/routes/{id}/stops", routeId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(2))
+                .andExpect(jsonPath("$[0].id").value(10))
+                .andExpect(jsonPath("$[0].routeId").value(1))
+                .andExpect(jsonPath("$[0].name").value("A"))
+                .andExpect(jsonPath("$[1].id").value(20))
+                .andExpect(jsonPath("$[1].order").value(2));
+    }
+
+    @Test
+    void getStopsByRoute_debe_retornar_404_si_no_existe_la_ruta() throws Exception {
+
+        Long routeId = 999L;
+
+        when(routeService.getStopsByRoute(routeId))
+                .thenThrow(new IllegalArgumentException("Route not found"));
+
+        mockMvc.perform(get("/api/routes/{id}/stops", routeId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest()); // o .isNotFound() si usas @ControllerAdvice
     }
 }

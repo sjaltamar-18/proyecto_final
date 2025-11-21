@@ -22,14 +22,14 @@ public class BusServicelmpl  implements BusService
 
     @Override
     public BusDtos.BusResponse create(BusDtos.BusCreateRequest request) {
-       if (busRepository.existsByPlate(request.plate())){
-           throw new NotFoundException("plate already exists");
-       }
+        if (busRepository.existsByPlate(request.plate())){
+            throw new NotFoundException("plate already exists");
+        }
         Bus bus = busMapper.toEntity(request);
-       bus.setStatus(StatusBus.AVAILABLE);
-       busRepository.save(bus);
+        bus.setStatus(StatusBus.AVAILABLE);
+        busRepository.save(bus);
 
-       return busMapper.toResponse(bus);
+        return busMapper.toResponse(bus);
 
     }
 

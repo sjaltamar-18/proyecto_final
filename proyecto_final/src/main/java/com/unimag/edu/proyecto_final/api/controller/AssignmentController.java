@@ -19,8 +19,10 @@ public class AssignmentController {
     private final AssignmentService service;
 
     @PostMapping
-    public ResponseEntity<AssignmentResponse> create(@Valid @RequestBody AssignmentCreateRequest request) {
-        AssignmentResponse response = service.create(request);
+    public ResponseEntity<AssignmentResponse> create(
+            @Valid @RequestBody AssignmentCreateRequest request
+    ) {
+        AssignmentResponse response = service.assign(request.tripId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

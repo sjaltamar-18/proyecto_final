@@ -17,7 +17,7 @@ class ParcelMapperTest {
 
     @Test
     void toEntity_shouldMapCreateRequest() {
-        // given
+
         var request = new ParcelCreateRequest(
                 "PKG001",
                 "Juan Pérez",
@@ -29,10 +29,10 @@ class ParcelMapperTest {
                 new BigDecimal("25000.00")
         );
 
-        // when
+
         Parcel entity = mapper.toEntity(request);
 
-        // then
+
         assertThat(entity).isNotNull();
         assertThat(entity.getId()).isNull(); // ignored by mapper
         assertThat(entity.getCode()).isEqualTo("PKG001");
@@ -48,7 +48,7 @@ class ParcelMapperTest {
 
     @Test
     void toResponse_shouldMapEntity() {
-        // given
+
         var fromStop = Stop.builder().id(1L).stopName("Bogotá").build();
         var toStop = Stop.builder().id(2L).stopName("Tunja").build();
 
@@ -65,10 +65,10 @@ class ParcelMapperTest {
                 .toStop(toStop)
                 .build();
 
-        // when
+
         ParcelResponse dto = mapper.toResponse(entity);
 
-        // then
+
         assertThat(dto).isNotNull();
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.code()).isEqualTo("PKG999");
@@ -82,7 +82,7 @@ class ParcelMapperTest {
 
     @Test
     void updateEntityFromStatusRequest_shouldUpdateOnlyStatus() {
-        // given
+
         var fromStop = Stop.builder().id(1L).build();
         var toStop = Stop.builder().id(2L).build();
 
@@ -99,10 +99,10 @@ class ParcelMapperTest {
 
         var update = new ParcelUpdateRequest("COMPLETED");
 
-        // when
+
         mapper.updateEntityFromStatusRequest(update, entity);
 
-        // then
+
         assertThat(entity.getStatusParcel()).isEqualTo(StatusParcel.COMPLETED);
         assertThat(entity.getId()).isEqualTo(15L);
         assertThat(entity.getCode()).isEqualTo("PKG555");
@@ -111,7 +111,7 @@ class ParcelMapperTest {
 
     @Test
     void updateEntityFromStatusRequest_shouldHandleInvalidEnumValuesGracefully() {
-        // given
+
         var entity = Parcel.builder()
                 .id(20L)
                 .statusParcel(StatusParcel.IN_PROGRESS)
@@ -119,11 +119,9 @@ class ParcelMapperTest {
 
         var update = new ParcelUpdateRequest("FAILED");
 
-        // when
         mapper.updateEntityFromStatusRequest(update, entity);
 
-        // then
-        // valor por defecto definido en mapStatus → CREATED
+
         assertThat(entity.getStatusParcel()).isEqualTo(StatusParcel.FAILED);
     }
 }

@@ -1,7 +1,9 @@
 package com.unimag.edu.proyecto_final.api.controller;
 
+import com.unimag.edu.proyecto_final.api.dto.AssignmentDtos;
 import com.unimag.edu.proyecto_final.api.dto.TripDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.Trip;
+import com.unimag.edu.proyecto_final.service.AssignmentService;
 import com.unimag.edu.proyecto_final.service.TripService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -20,12 +23,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TripController {
     private final TripService tripService;
+    private final AssignmentService assignmentService;
 
     @PostMapping
     public ResponseEntity<TripResponse> createTrip(@Valid@RequestBody TripCreateRequest request )
     {
         TripResponse created = tripService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+    @PostMapping("/{id}/boarding/open")
+    public ResponseEntity<TripResponse> openBoarding(@PathVariable Long id) {
+        return ResponseEntity.ok(tripService.openBoarding(id));
+    }
+
+    @PostMapping("/{id}/boarding/close")
+    public ResponseEntity<TripResponse> closeBoarding(@PathVariable Long id) {
+        return ResponseEntity.ok(tripService.closeBoarding(id));
     }
     @PostMapping("/{id}/depart")
     public ResponseEntity<TripResponse> authorizeDeparture(
@@ -47,7 +60,23 @@ public class TripController {
     {
         return ResponseEntity.ok(tripService.listByRoute(routeId, date));
     }
+    @PreAuthorize("hasRole('DISPATCHER')")
+    @PostMapping("/{id}/assign")
+    public ResponseEntity<AssignmentDtos.AssignmentResponse> assignTrip(
+            @PathVariable Long id,
+            @RequestBody AssignmentDtos.AssignmentCreateRequest request) {
 
+
+        AssignmentDtos.AssignmentCreateRequest fixedRequest = new AssignmentDtos.AssignmentCreateRequest(
+                id,
+                request.driverId(),
+                request.dispatcherId(),
+                request.checklistOk()
+        );
+
+        AssignmentDtos.AssignmentResponse response = assignmentService.assign(id, fixedRequest);
+        return ResponseEntity.ok(response);
+    }
     @GetMapping("/upcoming")
     public ResponseEntity<List<TripResponse>> listUpcoming()
     {

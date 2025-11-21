@@ -70,12 +70,12 @@ public class FareRuleServicelmpl  implements FareRuleService{
 
     @Override
     public FareRuleDtos.FareRuleResponse update(Long id, FareRuleDtos.FareRuleUpdateRequest request) {
-       FareRule fareRule = fareRuleRepository.findById(id)
+        FareRule fareRule = fareRuleRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("FareRule not found"));
 
-       fareRuleMapper.updateEntityFromDto(request,fareRule);
-       FareRule result = fareRuleRepository.save(fareRule);
-       return fareRuleMapper.toResponse(result);
+        fareRuleMapper.updateEntityFromDto(request,fareRule);
+        FareRule result = fareRuleRepository.save(fareRule);
+        return fareRuleMapper.toResponse(result);
     }
 
     @Override

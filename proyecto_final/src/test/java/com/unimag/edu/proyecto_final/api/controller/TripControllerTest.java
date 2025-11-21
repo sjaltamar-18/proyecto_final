@@ -2,6 +2,8 @@ package com.unimag.edu.proyecto_final.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unimag.edu.proyecto_final.api.dto.TripDtos.*;
+import com.unimag.edu.proyecto_final.domine.entities.enumera.BoardingStatus;
+import com.unimag.edu.proyecto_final.service.AssignmentService;
 import com.unimag.edu.proyecto_final.service.TripService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
@@ -39,6 +41,9 @@ class TripControllerTest {
     @MockitoBean
     TripService tripService;
 
+    @MockitoBean
+    AssignmentService assignmentService;
+
     private final LocalDateTime departureReal = LocalDateTime.of(2025, 1, 1, 8, 0);
 
 
@@ -49,7 +54,8 @@ class TripControllerTest {
                 2L, 1L,
                 LocalDate.now(),
                 LocalDateTime.now().plusHours(3),
-                LocalDateTime.now().plusHours(6)
+                LocalDateTime.now().plusHours(6),
+                BoardingStatus.BOARDING_OPEN
         );
 
         TripResponse response = new TripResponse(
@@ -60,7 +66,8 @@ class TripControllerTest {
                 tripCreateRequest.departureAt(),
                 tripCreateRequest.arrivalEta(),
                 departureReal,
-                "SCHEDULED"
+                "SCHEDULED",
+                BoardingStatus.BOARDING_OPEN
         );
 
         when(tripService.create(any())).thenReturn(response);
@@ -86,7 +93,8 @@ class TripControllerTest {
                 LocalDateTime.now(),
                 LocalDateTime.now().plusHours(6),
                 departureReal,
-                "SCHEDULED"
+                "SCHEDULED",
+                BoardingStatus.BOARDING_OPEN
         );
 
         when(tripService.get(10L)).thenReturn(response);
@@ -111,7 +119,8 @@ class TripControllerTest {
                         LocalDateTime.now(),
                         LocalDateTime.now().plusHours(1),
                         departureReal,
-                        "DEPARTED"
+                        "DEPARTED",
+                        BoardingStatus.BOARDING_OPEN
                 )
         );
 
@@ -123,7 +132,51 @@ class TripControllerTest {
                 .andExpect(jsonPath("[0].departureReal").value("2025-01-01T08:00:00"));
     }
 
+    @Test
+    void openBoarding_shouldReturn200() throws Exception {
 
+        TripResponse response = new TripResponse(
+                10L,
+                2L,
+                1L,
+                LocalDate.now(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(2),
+                departureReal,
+                "SCHEDULED",
+                BoardingStatus.BOARDING_OPEN
+        );
+
+        when(tripService.openBoarding(10L)).thenReturn(response);
+
+        mockMvc.perform(post("/api/trips/10/boarding/open"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(10L))
+                .andExpect(jsonPath("$.boardingStatus").value("BOARDING_OPEN"));
+    }
+
+    @Test
+    void closeBoarding_shouldReturn200() throws Exception {
+
+        TripResponse response = new TripResponse(
+                10L,
+                2L,
+                1L,
+                LocalDate.now(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(2),
+                departureReal,
+                "SCHEDULED",
+                BoardingStatus.BOARDING_CLOSED
+        );
+
+        when(tripService.closeBoarding(10L)).thenReturn(response);
+
+        mockMvc.perform(post("/api/trips/10/boarding/close"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(10L))
+                .andExpect(jsonPath("$.boardingStatus").value("BOARDING_CLOSED"));
+    }
     @Test
     void listUpcoming_shouldReturn200() throws Exception {
 
@@ -136,7 +189,8 @@ class TripControllerTest {
                         LocalDateTime.now().plusHours(2),
                         LocalDateTime.now().plusHours(4),
                         departureReal,
-                        "SCHEDULED"
+                        "SCHEDULED",
+                        BoardingStatus.BOARDING_OPEN
                 )
         );
 
@@ -165,7 +219,8 @@ class TripControllerTest {
                         start.plusHours(1),
                         start.plusHours(3),
                         departureReal,
-                        "SCHEDULED"
+                        "SCHEDULED",
+                        BoardingStatus.BOARDING_OPEN
                 )
         );
 
@@ -197,7 +252,8 @@ class TripControllerTest {
                 request.departureAt(),
                 request.arrivalEta(),
                 departureReal,
-                "UPDATED"
+                "UPDATED",
+                BoardingStatus.BOARDING_OPEN
         );
 
         when(tripService.update(eq(1L), any())).thenReturn(response);
@@ -213,14 +269,15 @@ class TripControllerTest {
     void authorizeDeparture_shouldReturn200() throws Exception {
 
         TripResponse response = new TripResponse(
-                10L,                   // id
-                3L,                    // routeId
-                5L,                    // busId
-                LocalDate.now(),       // date
-                LocalDateTime.now(),   // departureAt
-                LocalDateTime.now().plusHours(2), // arrivalEta
-                LocalDateTime.now(),   // departureReal
-                "DEPARTED"             // status
+                10L,
+                3L,
+                5L,
+                LocalDate.now(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(2),
+                LocalDateTime.now(),
+                "DEPARTED",
+                BoardingStatus.BOARDING_OPEN
         );
 
         when(tripService.authorizeDeparture(10L, 99L)).thenReturn(response);

@@ -1,6 +1,7 @@
 package com.unimag.edu.proyecto_final.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.unimag.edu.proyecto_final.api.dto.AssignmentDtos;
 import com.unimag.edu.proyecto_final.api.dto.AssignmentDtos.*;
 import com.unimag.edu.proyecto_final.service.AssignmentService;
 import org.apache.catalina.security.SecurityConfig;
@@ -41,20 +42,52 @@ class AssignmentControllerTest {
 
 
     @Test
-    void createAssignment_shouldReturn201() throws Exception {
-        AssignmentCreateRequest request = new AssignmentCreateRequest(10L,5L,3L,true);
+    void assignTrip_debe_retornar_200_y_assignmentResponse() throws Exception {
 
-        AssignmentResponse response = new AssignmentResponse(1L,10L,5L,3L,true,
-                LocalDateTime.now());
+        Long tripId = 1L;
 
-        when(service.create(any())).thenReturn(response);
 
-        mockMvc.perform(post("/api/assignments")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+        AssignmentDtos.AssignmentCreateRequest request =
+                new AssignmentDtos.AssignmentCreateRequest(
+                        tripId,
+                        10L,
+                        20L,
+                        true
+                );
+
+        // Respuesta esperada del servicio
+        AssignmentDtos.AssignmentResponse response =
+                new AssignmentDtos.AssignmentResponse(
+                        100L,
+                        tripId,
+                        10L,
+                        20L,
+                        true,
+                        LocalDateTime.now()
+                );
+
+        AssignmentDtos.AssignmentCreateRequest fixedRequest =
+                new AssignmentDtos.AssignmentCreateRequest(
+                        tripId,
+                        10L,
+                        20L,
+                        true
+                );
+
+        when(service.assign(anyLong(), any(AssignmentCreateRequest.class))).thenReturn(response);
+
+
+        mockMvc.perform(
+                        post("/api/assignments", tripId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.tripId").value(10));
+                .andExpect(jsonPath("$.id").value(100))
+                .andExpect(jsonPath("$.tripId").value(1))
+                .andExpect(jsonPath("$.driverId").value(10))
+                .andExpect(jsonPath("$.dispatcherId").value(20))
+                .andExpect(jsonPath("$.checklistOk").value(true));
     }
 
     @Test

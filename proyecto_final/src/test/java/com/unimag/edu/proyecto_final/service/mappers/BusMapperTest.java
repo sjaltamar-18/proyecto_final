@@ -17,7 +17,7 @@ class BusMapperTest {
 
     @Test
     void toEntity_shouldMapCreateRequest() {
-        // given
+
         var request = new BusCreateRequest(
                 "ABC123",     // plate
                 40,           // capacity
@@ -25,10 +25,8 @@ class BusMapperTest {
 
         );
 
-        // when
         Bus entity = mapper.toEntity(request);
 
-        // then
         assertThat(entity).isNotNull();
         assertThat(entity.getPlate()).isEqualTo("ABC123");
         assertThat(entity.getCapacity()).isEqualTo(40);
@@ -38,7 +36,7 @@ class BusMapperTest {
 
     @Test
     void toResponse_shouldMapEntity() {
-        // given
+
         var entity = Bus.builder()
                 .id(10L)
                 .plate("XYZ789")
@@ -47,10 +45,10 @@ class BusMapperTest {
                 .status(ACTIVE)
                 .build();
 
-        // when
+
         BusResponse dto = mapper.toResponse(entity);
 
-        // then
+
         assertThat(dto).isNotNull();
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.plate()).isEqualTo("XYZ789");
@@ -62,7 +60,7 @@ class BusMapperTest {
 
     @Test
     void updateEntityFromDto_shouldUpdateNonNullFields() {
-        // given
+
         var entity = Bus.builder()
                 .id(5L)
                 .plate("NEW456")
@@ -79,7 +77,7 @@ class BusMapperTest {
         );        // when
         mapper.updateEntityFromDto(update, entity);
 
-        // then
+
         assertThat(entity.getPlate()).isEqualTo("NEW456");
         assertThat(entity.getCapacity()).isEqualTo(35);
         assertThat(entity.getAmenities()).contains("\"wifi\":true");

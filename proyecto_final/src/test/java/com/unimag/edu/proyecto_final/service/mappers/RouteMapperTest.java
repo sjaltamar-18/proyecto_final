@@ -13,7 +13,7 @@ class RouteMapperTest {
 
     @Test
     void toEntity_shouldMapCreateRequest() {
-        // given
+
         var request = new RouteCreateRequest(
                 "R001",           // code
                 "Bogotá - Tunja", // name
@@ -23,10 +23,10 @@ class RouteMapperTest {
                 150               // durationMin
         );
 
-        // when
+
         Route entity = mapper.toEntity(request);
 
-        // then
+
         assertThat(entity).isNotNull();
         assertThat(entity.getRouteCode()).isEqualTo("R001");
         assertThat(entity.getRouteName()).isEqualTo("Bogotá - Tunja");
@@ -38,7 +38,7 @@ class RouteMapperTest {
 
     @Test
     void toResponse_shouldMapEntity() {
-        // given
+
         var entity = Route.builder()
                 .id(10L)
                 .routeCode("R002")
@@ -49,10 +49,10 @@ class RouteMapperTest {
                 .time(60)
                 .build();
 
-        // when
+
         RouteResponse dto = mapper.toResponse(entity);
 
-        // then
+
         assertThat(dto).isNotNull();
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.code()).isEqualTo("R002");
@@ -65,7 +65,7 @@ class RouteMapperTest {
 
     @Test
     void updateEntityFromDto_shouldUpdateNonNullFields() {
-        // given
+
         var entity = Route.builder()
                 .id(5L)
                 .routeCode("R003")
@@ -84,10 +84,9 @@ class RouteMapperTest {
                 500
         );
 
-        // when
         mapper.updateEntityFromDto(update, entity);
 
-        // then
+
         assertThat(entity.getId()).isEqualTo(5L);
         assertThat(entity.getRouteCode()).isEqualTo("R003"); // key field should remain unchanged
         assertThat(entity.getRouteName()).isEqualTo("Bogotá - Cali");
@@ -95,5 +94,5 @@ class RouteMapperTest {
         assertThat(entity.getDestinationName()).isEqualTo("Cali");
         assertThat(entity.getDistance()).isEqualTo(460.0);
         assertThat(entity.getTime()).isEqualTo(500);
-        }
+    }
 }

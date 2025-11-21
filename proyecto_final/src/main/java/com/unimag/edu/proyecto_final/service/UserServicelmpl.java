@@ -26,9 +26,9 @@ public class UserServicelmpl implements UserService {
 
     @Override
     public UserDtos.UserResponse create(UserDtos.UserCreateRequest request) {
-       if (userRepository.existsByEmail(request.email())){
-           throw new IllegalArgumentException("User already exists");
-       }
+        if (userRepository.existsByEmail(request.email())){
+            throw new IllegalArgumentException("User already exists");
+        }
         User user = userMapper.toEntity(request);
         if (request.profile() != null) {
             user.setPhone(request.profile().phone());
@@ -108,7 +108,7 @@ public class UserServicelmpl implements UserService {
         userRepository.save(user);
     }
 
-    // Metodos auxiliares
+
 
     private String encryptPassword(String plainPassword) {
         return "{hashed}" + plainPassword;

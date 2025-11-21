@@ -1,5 +1,7 @@
 package com.unimag.edu.proyecto_final.api.dto;
 
+import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusParcel;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 

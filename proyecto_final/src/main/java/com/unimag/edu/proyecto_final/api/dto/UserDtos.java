@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.api.dto;
 
 import java.io.Serializable;

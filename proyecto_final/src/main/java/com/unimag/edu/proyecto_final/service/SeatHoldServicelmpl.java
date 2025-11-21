@@ -110,7 +110,7 @@ public class SeatHoldServicelmpl implements  SeatHoldService {
     public int expireHolds() {
         int expired = seatHoldRepository.expireHolds();
         if (expired > 0) log.info("Expired {} seat holds", expired);
-        return seatHoldRepository.expireHolds();
+        return expired;
     }
 
     @Override

@@ -34,9 +34,7 @@ class ConfiServicelmplTest {
         service = new ConfiServicelmpl(confiRepository, confiMapper);
     }
 
-    // ---------------------------------------------------------
-    // CREATE
-    // ---------------------------------------------------------
+
     @Test
     void create_debe_crear_config_correctamente() {
         ConfigCreateRequest req = new ConfigCreateRequest("LIMIT", "20");
@@ -68,9 +66,7 @@ class ConfiServicelmplTest {
                 .hasMessageContaining("config already exists");
     }
 
-    // ---------------------------------------------------------
-    // GET
-    // ---------------------------------------------------------
+
     @Test
     void get_debe_retornar_config() {
         Confi confi = new Confi(1L, "LIMIT", "20");
@@ -93,9 +89,7 @@ class ConfiServicelmplTest {
                 .hasMessageContaining("config not found");
     }
 
-    // ---------------------------------------------------------
-    // LIST
-    // ---------------------------------------------------------
+
     @Test
     void list_debe_retornar_paginado() {
         Pageable pageable = PageRequest.of(0, 10);
@@ -112,9 +106,6 @@ class ConfiServicelmplTest {
         assertThat(result.getContent()).containsExactly(res);
     }
 
-    // ---------------------------------------------------------
-    // UPDATE
-    // ---------------------------------------------------------
     @Test
     void update_debe_actualizar_correctamente() {
         Confi confi = new Confi(1L, "LIMIT", "20");
@@ -147,9 +138,6 @@ class ConfiServicelmplTest {
                 .isInstanceOf(NotFoundException.class);
     }
 
-    // ---------------------------------------------------------
-    // DELETE
-    // ---------------------------------------------------------
     @Test
     void delete_debe_eliminar_correctamente() {
         Confi confi = new Confi(1L, "LIMIT", "20");
@@ -168,9 +156,6 @@ class ConfiServicelmplTest {
                 .isInstanceOf(NotFoundException.class);
     }
 
-    // ---------------------------------------------------------
-    // getValue / getDouble / getInt / getBoolean
-    // ---------------------------------------------------------
     @Test
     void getValue_debe_retornar_valor() {
         Confi confi = new Confi(1L, "LIMIT", "20");
@@ -211,9 +196,6 @@ class ConfiServicelmplTest {
         assertThat(value).isTrue();
     }
 
-    // ---------------------------------------------------------
-    // setValue (crea si no existe)
-    // ---------------------------------------------------------
     @Test
     void setValue_debe_crear_si_no_existe() {
         when(confiRepository.findByKey("LIMIT")).thenReturn(Optional.empty());
@@ -225,10 +207,6 @@ class ConfiServicelmplTest {
                         c.getValue().equals("99")
         ));
     }
-
-    // ---------------------------------------------------------
-    // setValue (actualiza si existe)
-    // ---------------------------------------------------------
     @Test
     void setValue_debe_actualizar_si_existe() {
         Confi confi = new Confi(1L, "LIMIT", "20");

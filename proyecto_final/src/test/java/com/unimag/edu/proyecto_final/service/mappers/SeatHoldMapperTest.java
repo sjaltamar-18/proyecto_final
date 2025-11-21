@@ -18,19 +18,19 @@ class SeatHoldMapperTest {
 
     @Test
     void toEntity_shouldMapCreateRequest() {
-        // given
+
         var request = new SeatHoldCreateRequest(
                 1L,
                 "4B",
                 4L,
-                 2L,
+                2L,
                 3L
         );
 
-        // when
+
         SeatHold entity = mapper.toEntity(request);
 
-        // then
+
         assertThat(entity).isNotNull();
         assertThat(entity.getId()).isNull();
         assertThat(entity.getTrip().getId()).isEqualTo(1L);
@@ -45,7 +45,7 @@ class SeatHoldMapperTest {
 
     @Test
     void toResponse_shouldMapEntity() {
-        // given
+
         var trip = Trip.builder().id(1L).build();
         var user = User.builder().id(2L).build();
 
@@ -58,10 +58,10 @@ class SeatHoldMapperTest {
                 .expirationDate(LocalDateTime.now().plusMinutes(8))
                 .build();
 
-        // when
+
         SeatHoldResponse dto = mapper.toResponse(entity);
 
-        // then
+
         assertThat(dto).isNotNull();
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.tripId()).isEqualTo(1L);
@@ -73,7 +73,7 @@ class SeatHoldMapperTest {
 
     @Test
     void updateEntityFromStatusRequest_shouldUpdateStatusOnly() {
-        // given
+
         var trip = Trip.builder().id(1L).build();
         var user = User.builder().id(2L).build();
 
@@ -88,10 +88,8 @@ class SeatHoldMapperTest {
 
         var update = new SeatHoldUpdateRequest("CONFIRMED");
 
-        // when
         mapper.updateEntityFromStatusRequest(update, entity);
 
-        // then
         assertThat(entity.getStatus()).isEqualTo(StatusSeatHold.HOLD);
         assertThat(entity.getId()).isEqualTo(20L);
         assertThat(entity.getTrip().getId()).isEqualTo(1L);
@@ -100,7 +98,7 @@ class SeatHoldMapperTest {
 
     @Test
     void updateEntityFromStatusRequest_shouldHandleInvalidStatusGracefully() {
-        // given
+
         var entity = SeatHold.builder()
                 .id(25L)
                 .status(StatusSeatHold.EXPIRED)
@@ -108,11 +106,9 @@ class SeatHoldMapperTest {
 
         var update = new SeatHoldUpdateRequest("INVALID_STATUS");
 
-        // when
         mapper.updateEntityFromStatusRequest(update, entity);
 
-        // then
-        // valor por defecto → HOLD (según método mapStatus)
+
         assertThat(entity.getStatus()).isEqualTo(StatusSeatHold.HOLD);
     }
 }

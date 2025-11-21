@@ -9,7 +9,7 @@ public interface StopMapper {
 
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "route", ignore = true)   // evitar cargar entidad
+    @Mapping(target = "route", ignore = true)
     @Mapping(source = "name", target = "stopName")
     @Mapping(source = "order", target = "stopOrder")
     @Mapping(source = "lat", target = "latitude")
@@ -17,7 +17,7 @@ public interface StopMapper {
     Stop toEntity(StopCreateRequest request);
 
 
-    @Mapping(source = "route.id", target = "routeId")
+    @Mapping(target = "routeId", expression = "java(stop.getRoute().getId())")
     @Mapping(source = "stopName", target = "name")
     @Mapping(source = "stopOrder", target = "order")
     @Mapping(source = "latitude", target = "lat")
@@ -33,4 +33,3 @@ public interface StopMapper {
     @Mapping(source = "lng", target = "longitude")
     void updateEntityFromDto(StopUpdateRequest request, @MappingTarget Stop stop);
 }
-

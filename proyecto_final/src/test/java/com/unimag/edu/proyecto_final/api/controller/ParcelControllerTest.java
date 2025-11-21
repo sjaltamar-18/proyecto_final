@@ -117,7 +117,7 @@ class ParcelControllerTest {
                 1
         );
 
-       when(parcelService.listByStatus(eq("PENDING"), any()))
+        when(parcelService.listByStatus(eq("PENDING"), any()))
                 .thenReturn(page);
 
         mockMvc.perform(get("/api/parcels/status/PENDING"))
@@ -156,11 +156,9 @@ class ParcelControllerTest {
                 "DELIVERED"
         );
 
-        // MOCKEO
         when(parcelService.getByCode(code)).thenReturn(byCode);
         when(parcelService.update(10L, request)).thenReturn(updated);
 
-        // EJECUTAR
         mockMvc.perform(post("/api/parcels/{code}/status", code)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -169,14 +167,12 @@ class ParcelControllerTest {
                 .andExpect(jsonPath("$.code").value(code))
                 .andExpect(jsonPath("$.status").value("DELIVERED"));
 
-
-        // VERIFICACIONES
         verify(parcelService).getByCode(code);
         verify(parcelService).update(10L, request);
     }
     @Test
     void delete_shouldReturn204() throws Exception {
-   doNothing().when(parcelService).delete(1L);
+        doNothing().when(parcelService).delete(1L);
 
         mockMvc.perform(delete("/api/parcels/1"))
                 .andExpect(status().isNoContent());

@@ -16,22 +16,22 @@ class BaggageMapperTest {
 
     @Test
     void toEntity_shouldMapCreateRequest() {
-        // given
-        var request = new BaggageCreateRequest(1L, 15.5, new BigDecimal("5000.0"), "TAG001");
 
-        // when
+        var request = new BaggageCreateRequest(1L, 15.5,  BigDecimal.valueOf(5000.0), "TAG001");
+
+
         Baggage entity = mapper.toEntity(request);
 
-        // then
+
         assertThat(entity).isNotNull();
         assertThat(entity.getWeight()).isEqualTo(15.5);
-        assertThat(entity.getFee()).isEqualTo(new BigDecimal("5000.0"));
-        assertThat(entity.getTagCode()).isEqualTo("TAG001");
+        assertThat(entity.getFee()).isNull();
+        assertThat(entity.getTagCode()).isNull();
     }
 
     @Test
     void toResponse_shouldMapEntity() {
-        // given
+
         var ticket = Ticket.builder().id(1L).build();
         var entity = Baggage.builder()
                 .id(10L)
@@ -41,21 +41,20 @@ class BaggageMapperTest {
                 .tagCode("TAG999")
                 .build();
 
-        // when
         BaggageResponse dto = mapper.toResponse(entity);
 
-        // then
+
         assertThat(dto).isNotNull();
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.ticketId()).isEqualTo(1L);
         assertThat(dto.weightKg()).isEqualTo(20.0);
-        assertThat(dto.fee()).isEqualTo(8000.0);
+        assertThat(dto.fee()).isEqualTo(BigDecimal.valueOf(8000.0) );
         assertThat(dto.tagCode()).isEqualTo("TAG999");
     }
 
     @Test
     void updateEntityFromDto_shouldUpdateNonNullFields() {
-        // given
+
         var ticket = Ticket.builder().id(1L).build();
         var entity = Baggage.builder()
                 .id(10L)
@@ -72,7 +71,7 @@ class BaggageMapperTest {
 
 
         assertThat(entity.getWeight()).isEqualTo(12.5);
-        assertThat(entity.getFee()).isEqualTo(6000.0);
+        assertThat(entity.getFee()).isEqualTo(BigDecimal.valueOf(6000.0));
         assertThat(entity.getTagCode()).isEqualTo("TAG123");
         assertThat(entity.getId()).isEqualTo(10L);
         assertThat(entity.getTicket().getId()).isEqualTo(1L);

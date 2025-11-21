@@ -17,7 +17,7 @@ class UserMapperTest {
 
     @Test
     void toEntity_shouldMapCreateRequest() {
-        // given
+
         var profile = new UserProfileDto("3001234567", "DRIVER", "ACTIVE");
         var request = new UserCreateRequest(
                 "Sebastián Altamar",
@@ -26,10 +26,10 @@ class UserMapperTest {
                 profile
         );
 
-        // when
+
         User entity = mapper.toEntity(request);
 
-        // then
+
         assertThat(entity).isNotNull();
         assertThat(entity.getId()).isNull(); // ignorado por mapper
         assertThat(entity.getName()).isEqualTo("Sebastián Altamar");
@@ -42,7 +42,7 @@ class UserMapperTest {
 
     @Test
     void toResponse_shouldMapEntity() {
-        // given
+
         var entity = User.builder()
                 .id(10L)
                 .name("Laura Gómez")
@@ -53,10 +53,9 @@ class UserMapperTest {
                 .status(StatusUser.INACTIVE)
                 .build();
 
-        // when
+
         UserResponse dto = mapper.toResponse(entity);
 
-        // then
         assertThat(dto).isNotNull();
         assertThat(dto.id()).isEqualTo(10L);
         assertThat(dto.name()).isEqualTo("Laura Gómez");
@@ -70,7 +69,7 @@ class UserMapperTest {
 
     @Test
     void updateEntityFromDto_shouldUpdateNonNullFields() {
-        // given
+
         var entity = User.builder()
                 .id(5L)
                 .name("Carlos Torres")
@@ -88,10 +87,10 @@ class UserMapperTest {
                 newProfile
         );
 
-        // when
+
         mapper.updateEntityFromDto(update, entity);
 
-        // then
+
         assertThat(entity.getId()).isEqualTo(5L);
         assertThat(entity.getName()).isEqualTo("Carlos T.");
         assertThat(entity.getEmail()).isEqualTo("carlos@newmail.com");
@@ -102,7 +101,7 @@ class UserMapperTest {
 
     @Test
     void updateEntityFromDto_shouldIgnoreNullFields() {
-        // given
+
         var entity = User.builder()
                 .id(7L)
                 .name("Andrés Pérez")
@@ -118,10 +117,10 @@ class UserMapperTest {
                 new UserProfileDto(null, null, null)
         );
 
-        // when
+
         mapper.updateEntityFromDto(update, entity);
 
-        // then
+
         assertThat(entity.getId()).isEqualTo(7L);
         assertThat(entity.getName()).isEqualTo("Andrés Pérez");
         assertThat(entity.getEmail()).isEqualTo("andres@mail.com");
