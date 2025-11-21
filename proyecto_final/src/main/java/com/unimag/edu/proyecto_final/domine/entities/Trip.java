@@ -1,5 +1,6 @@
 package com.unimag.edu.proyecto_final.domine.entities;
 
+import com.unimag.edu.proyecto_final.domine.entities.enumera.BoardingStatus;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusTrip;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,6 +33,9 @@ public class Trip {
     private LocalDateTime departureReal;
     @Enumerated(EnumType.STRING)
     private StatusTrip statusTrip;
+
+    @Enumerated(EnumType.STRING)
+    private BoardingStatus boardingStatus;
 
     @OneToMany(mappedBy = "trip")
     private Set<Ticket> tickets;

@@ -27,6 +27,15 @@ public class TripController {
         TripResponse created = tripService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+    @PostMapping("/{id}/boarding/open")
+    public ResponseEntity<TripResponse> openBoarding(@PathVariable Long id) {
+        return ResponseEntity.ok(tripService.openBoarding(id));
+    }
+
+    @PostMapping("/{id}/boarding/close")
+    public ResponseEntity<TripResponse> closeBoarding(@PathVariable Long id) {
+        return ResponseEntity.ok(tripService.closeBoarding(id));
+    }
     @PostMapping("/{id}/depart")
     public ResponseEntity<TripResponse> authorizeDeparture(
             @PathVariable Long id,

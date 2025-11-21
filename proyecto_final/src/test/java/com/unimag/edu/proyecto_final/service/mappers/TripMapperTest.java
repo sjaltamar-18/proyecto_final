@@ -4,6 +4,7 @@ import com.unimag.edu.proyecto_final.api.dto.TripDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.Bus;
 import com.unimag.edu.proyecto_final.domine.entities.Route;
 import com.unimag.edu.proyecto_final.domine.entities.Trip;
+import com.unimag.edu.proyecto_final.domine.entities.enumera.BoardingStatus;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusTrip;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -25,7 +26,8 @@ class TripMapperTest {
                 2L, // busId
                 LocalDate.of(2025, 5, 1),
                 LocalDateTime.of(2025, 5, 1, 8, 0),
-                LocalDateTime.of(2025, 5, 1, 12, 0)
+                LocalDateTime.of(2025, 5, 1, 12, 0),
+                BoardingStatus.BOARDING_OPEN
         );
 
         // when

@@ -30,7 +30,13 @@ public class SeatHoldController {
     public ResponseEntity<List<SeatHoldResponse>>  getSeatHoldsByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(seatHoldService.listByUser(userId));
     }
-    @PutMapping("/{id}")
+
+    @GetMapping("/trip/{tripId}")
+    public ResponseEntity<List<SeatHoldResponse>> getActiveSeatHoldsByTripId(@PathVariable Long tripId) {
+        return  ResponseEntity.ok(seatHoldService.listActiveByTrip(tripId));
+    }
+
+    @PatchMapping("/{id}")
     public  ResponseEntity<SeatHoldResponse> updateSeatHold(@PathVariable Long id, @Valid @RequestBody SeatHoldUpdateRequest request ) {
         return ResponseEntity.ok(seatHoldService.update(id, request));
     }
