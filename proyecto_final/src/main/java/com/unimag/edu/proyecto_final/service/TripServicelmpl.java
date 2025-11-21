@@ -145,12 +145,16 @@ public class TripServicelmpl implements  TripService {
         // 6. Validar documentos del bus
         Bus bus = assignment.getTrip().getBus();
         LocalDate today = LocalDate.now();
-
-        if (bus.getSoatExp() == null || bus.getSoatExp().isBefore(today)) {
+        if (bus.getSoatExp() == null){
+            throw new IllegalStateException("SOAT date is required");
+        }
+        if (bus.getSoatExp().isBefore(today)) {
             throw new IllegalStateException("SOAT expired");
         }
-
-        if (bus.getRevisionExp() == null || bus.getRevisionExp().isBefore(today)) {
+         if (bus.getRevisionExp() == null ){
+             throw new IllegalStateException("Revision date  is required");
+         }
+        if ( bus.getRevisionExp().isBefore(today)) {
             throw new IllegalStateException("Technical inspection expired");
         }
 
