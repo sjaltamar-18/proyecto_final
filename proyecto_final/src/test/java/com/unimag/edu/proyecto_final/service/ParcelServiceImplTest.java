@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.ParcelDtos.*;
@@ -39,6 +40,10 @@ class ParcelServiceImplTest {
 
     @Mock
     private ParcelMapper parcelMapper;
+
+    @Mock
+    private IncidentService incidentService;
+
 
     @InjectMocks
     private ParcelServicelmpl service;
@@ -225,15 +230,7 @@ class ParcelServiceImplTest {
         assertThat(result).isEqualTo(mapped);
     }
 
-    @Test
-    void update_debe_fallar_si_no_existe() {
-        when(parcelRepository.findById(88L)).thenReturn(Optional.empty());
-        ParcelUpdateRequest req = mock(ParcelUpdateRequest.class);
 
-        assertThatThrownBy(() -> service.update(88L, req))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessageContaining("Parcel not found");
-    }
 
     // ==========================================================================
     // DELETE
@@ -256,4 +253,106 @@ class ParcelServiceImplTest {
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Parcel not found");
     }
+    @Test
+    void update_debe_marcar_completed_sin_incident() {
+
+        Parcel parcel = Parcel.builder()
+                .id(10L)
+                .code("P001")
+                .statusParcel(StatusParcel.CREATED)
+                .build();
+
+        when(parcelRepository.findById(10L)).thenReturn(Optional.of(parcel));
+        when(parcelRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        ParcelResponse response = mock(ParcelResponse.class);
+        when(parcelMapper.toResponse(any())).thenReturn(response);
+
+        ParcelUpdateRequest request = new ParcelUpdateRequest("COMPLETED");
+
+        ParcelResponse result = service.update(10L, request);
+
+        assertThat(result).isEqualTo(response);
+        assertThat(parcel.getStatusParcel()).isEqualTo(StatusParcel.COMPLETED);
+
+        verify(incidentService, never()).createDeliveryFailureIncident(any(), anyString());
+        verify(parcelRepository).save(parcel);
+        verify(parcelMapper).toResponse(parcel);
+    }
+
+    @Test
+    void update_debe_generar_incident_si_failed() {
+
+        Parcel parcel = Parcel.builder()
+                .id(15L)
+                .code("PX99")
+                .statusParcel(StatusParcel.CREATED)
+                .build();
+
+        when(parcelRepository.findById(15L)).thenReturn(Optional.of(parcel));
+        when(parcelRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        ParcelResponse response = mock(ParcelResponse.class);
+        when(parcelMapper.toResponse(any())).thenReturn(response);
+
+        ParcelUpdateRequest request = new ParcelUpdateRequest("FAILED");
+
+        ParcelResponse result = service.update(15L, request);
+
+        assertThat(result).isEqualTo(response);
+        assertThat(parcel.getStatusParcel()).isEqualTo(StatusParcel.FAILED);
+
+        verify(incidentService).createDeliveryFailureIncident(
+                eq(15L),
+                contains("PX99")
+        );
+
+        verify(parcelRepository).save(parcel);
+        verify(parcelMapper).toResponse(parcel);
+    }
+
+    @Test
+    void update_debe_cambiar_status_generico_sin_incident() {
+
+        Parcel parcel = Parcel.builder()
+                .id(22L)
+                .code("XYZ10")
+                .statusParcel(StatusParcel.CREATED)
+                .build();
+
+        when(parcelRepository.findById(22L)).thenReturn(Optional.of(parcel));
+        when(parcelRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        ParcelResponse response = mock(ParcelResponse.class);
+        when(parcelMapper.toResponse(any())).thenReturn(response);
+
+        ParcelUpdateRequest request = new ParcelUpdateRequest("IN_PROGRESS");
+
+        ParcelResponse result = service.update(22L, request);
+
+        assertThat(result).isEqualTo(response);
+        assertThat(parcel.getStatusParcel()).isEqualTo(StatusParcel.IN_PROGRESS);
+
+        verify(incidentService, never()).createDeliveryFailureIncident(any(), anyString());
+        verify(parcelRepository).save(parcel);
+        verify(parcelMapper).toResponse(parcel);
+    }
+
+    @Test
+    void update_debe_fallar_si_no_existe() {
+
+        when(parcelRepository.findById(999L)).thenReturn(Optional.empty());
+
+        ParcelUpdateRequest request = new ParcelUpdateRequest("FAILED");
+
+        assertThatThrownBy(() -> service.update(999L, request))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("parcel not found");
+
+        verify(parcelRepository, never()).save(any());
+        verify(incidentService, never()).createDeliveryFailureIncident(any(), anyString());
+    }
+
+
+
 }

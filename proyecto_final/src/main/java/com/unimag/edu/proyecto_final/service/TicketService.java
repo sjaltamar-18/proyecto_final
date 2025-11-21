@@ -1,5 +1,7 @@
+
 package com.unimag.edu.proyecto_final.service;
 
+import com.unimag.edu.proyecto_final.api.dto.TicketDtos;
 import com.unimag.edu.proyecto_final.api.dto.TicketDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.Ticket;
 import org.springframework.data.domain.Page;
@@ -19,7 +21,8 @@ public interface TicketService {
 
     TicketResponse update(Long id, TicketUpdateRequest request);
 
-    void cancel(Long id);
+    TicketResponse cancel(Long id);
+
 
     TicketResponse confirmSeatHold(Long holdId);
 

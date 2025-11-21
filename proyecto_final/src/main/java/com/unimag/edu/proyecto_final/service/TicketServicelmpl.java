@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.TicketDtos;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -118,13 +121,43 @@ public class TicketServicelmpl implements TicketService {
     }
 
     @Override
-    public void cancel(Long id) {
-        if (!ticketRepository.existsById(id)) {
-            throw new NotFoundException("ticket not found");
-        }
-        ticketRepository.markAsCancelled(id);
+    @Transactional
+    public TicketDtos.TicketResponse cancel(Long id) {
 
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("ticket not found"));
+
+        if (ticket.getStatusTicket() == StatusTicket.CANCELLED) {
+            throw new IllegalStateException("ticket already cancelled");
+        }
+
+        Trip trip = ticket.getTrip();
+        LocalDateTime departure = trip.getDepartureAt();
+        LocalDateTime now = LocalDateTime.now();
+
+        long hoursBefore = Duration.between(now, departure).toHours();
+
+        BigDecimal refund;
+
+        BigDecimal price = BigDecimal.valueOf(ticket.getPrice());
+
+        if (hoursBefore > 24) {
+            refund = price.multiply(BigDecimal.valueOf(0.90));
+        } else if (hoursBefore >= 12) {
+            refund = price.multiply(BigDecimal.valueOf(0.50));
+        } else {
+            refund = BigDecimal.ZERO;
+        }
+
+        ticket.setStatusTicket(StatusTicket.CANCELLED);
+        ticket.setCancelledAt(now);
+        ticket.setRefundAmount(refund);
+
+        Ticket saved = ticketRepository.save(ticket);
+
+        return ticketMapper.toResponse(saved);
     }
+
 
     @Override
     public TicketDtos.TicketResponse confirmSeatHold(Long holdId) {
@@ -178,10 +211,10 @@ public class TicketServicelmpl implements TicketService {
 
         LocalDateTime limit = trip.getDepartureAt().minusMinutes(5);
 
-       return ticketRepository.findNoShowTickets(
-               tripId, StatusTicket.SOLD,
-               limit
-       );
+        return ticketRepository.findNoShowTickets(
+                tripId, StatusTicket.SOLD,
+                limit
+        );
     }
 
     @Override

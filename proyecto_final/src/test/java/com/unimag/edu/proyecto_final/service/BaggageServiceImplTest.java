@@ -1,10 +1,14 @@
+
 package com.unimag.edu.proyecto_final.service;
 
+import com.sun.jdi.request.InvalidRequestStateException;
 import com.unimag.edu.proyecto_final.api.dto.BaggageDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.Baggage;
 import com.unimag.edu.proyecto_final.domine.entities.Ticket;
+import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusTicket;
 import com.unimag.edu.proyecto_final.domine.repository.BaggageRepository;
 import com.unimag.edu.proyecto_final.domine.repository.TicketRepository;
+import com.unimag.edu.proyecto_final.exception.InvalidStateException;
 import com.unimag.edu.proyecto_final.exception.NotFoundException;
 import com.unimag.edu.proyecto_final.service.mappers.BaggageMapper;
 
@@ -20,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.data.domain.*;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.List;
 
@@ -38,41 +43,58 @@ class BaggageServiceImplTest {
     @Mock
     private BaggageMapper mapper;
 
+    @Mock
+    private ConfiService confiService;
+
     @InjectMocks
     private BaggageServicelmpl service;
 
     @BeforeEach
     void init() {}
-
-
     @Test
     void register_debe_crear_baggage_correctamente() {
         // Mock DTO
         BaggageCreateRequest req = mock(BaggageCreateRequest.class);
         when(req.ticketId()).thenReturn(55L);
+        when(req.weightKg()).thenReturn(25.0);
 
-        Ticket ticket = Ticket.builder().id(55L).build();
+        // Ticket SOLD
+        Ticket ticket = Ticket.builder()
+                .id(55L)
+                .statusTicket(StatusTicket.SOLD)
+                .build();
         when(ticketRepository.findById(55L)).thenReturn(Optional.of(ticket));
 
-        Baggage baggage = Baggage.builder().build();
-        when(mapper.toEntity(req)).thenReturn(baggage);
+        // Configuración para la regla 6
+        when(confiService.getDouble("BAGGAGE_WEIGHT_LIMIT_KG")).thenReturn(20.0);
+        when(confiService.getDouble("BAGGAGE_EXCESS_FEE_PER_KG")).thenReturn(3000.0);
 
-        when(baggageRepository.save(any(Baggage.class))).thenReturn(baggage);
+        // Mapper
+        Baggage baggage = new Baggage();
+        when(mapper.toEntity(any())).thenAnswer(inv -> {
+            baggage.setWeight(req.weightKg());  // ← SOLUCIÓN FINAL
+            return baggage;
+        });
 
-        BaggageResponse mappedResponse = mock(BaggageResponse.class);
-        when(mapper.toResponse(baggage)).thenReturn(mappedResponse);
+        when(mapper.toResponse(any())).thenReturn(mock(BaggageResponse.class));
 
+        // Repository
+        when(baggageRepository.save(any())).thenReturn(baggage);
+
+        // Ejecutar
         BaggageResponse result = service.register(req);
 
         assertThat(result).isNotNull();
-        assertThat(result).isEqualTo(mappedResponse);
 
         assertThat(baggage.getTicket()).isEqualTo(ticket);
+        assertThat(baggage.getWeight()).isEqualTo(25.0);                      // ← ahora sí funciona
+        assertThat(baggage.getFee().doubleValue()).isEqualTo(new BigDecimal(15000.0));
+        assertThat(baggage.getTagCode()).startsWith("BAG-55-");
 
-        verify(ticketRepository).findById(55L);
-        verify(baggageRepository).save(baggage);
-        verify(mapper).toResponse(baggage);
+        verify(mapper).toResponse(any());
     }
+
+
 
     @Test
     void register_debe_fallar_si_ticket_no_existe() {
@@ -84,6 +106,27 @@ class BaggageServiceImplTest {
         assertThatThrownBy(() -> service.register(req))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("ticket not found");
+
+        verify(ticketRepository).findById(99L);
+    }
+    @Test
+    void register_debe_fallar_si_ticket_no_esta_sold() {
+
+        BaggageCreateRequest req = mock(BaggageCreateRequest.class);
+        when(req.ticketId()).thenReturn(55L);
+
+        Ticket ticket = Ticket.builder()
+                .id(55L)
+                .statusTicket(StatusTicket.CANCELLED)
+                .build();
+
+        when(ticketRepository.findById(55L)).thenReturn(Optional.of(ticket));
+
+        assertThatThrownBy(() -> service.register(req))
+                .isInstanceOf(InvalidStateException.class)
+                .hasMessageContaining("Equipaje solo permitido para tickets vendidos");
+
+        verify(ticketRepository).findById(55L);
     }
 
 

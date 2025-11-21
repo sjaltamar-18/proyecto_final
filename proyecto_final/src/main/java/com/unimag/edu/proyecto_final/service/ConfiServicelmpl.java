@@ -1,3 +1,4 @@
+
 package com.unimag.edu.proyecto_final.service;
 
 import com.unimag.edu.proyecto_final.api.dto.ConfiDtos;
@@ -46,12 +47,12 @@ public class ConfiServicelmpl implements ConfiService {
 
     @Override
     public ConfiDtos.ConfigResponse update(String key, ConfiDtos.ConfigUpdateRequest request) {
-       Confi confi = confiRepository.findByKey(key)
+        Confi confi = confiRepository.findByKey(key)
                 .orElseThrow(() -> new NotFoundException("config not found"));
-       confiMapper.updateEntityFromDto(request,confi);
-       confiRepository.save(confi);
+        confiMapper.updateEntityFromDto(request,confi);
+        confiRepository.save(confi);
 
-       return confiMapper.toResponse(confi);
+        return confiMapper.toResponse(confi);
     }
 
     @Override
@@ -59,5 +60,43 @@ public class ConfiServicelmpl implements ConfiService {
         Confi confi = confiRepository.findByKey(key)
                 .orElseThrow(() -> new NotFoundException("config not found"));
         confiRepository.delete(confi);
+    }
+    @Override
+    public String getValue(String key) {
+        return confiRepository.findByKey(key)
+                .orElseThrow(() -> new NotFoundException("config not found"))
+                .getValue();
+    }
+
+    @Override
+    public double getDouble(String key) {
+        return Double.parseDouble(getValue(key));
+    }
+
+    @Override
+    public int getInt(String key) {
+        return Integer.parseInt(getValue(key));
+    }
+
+    @Override
+    public boolean getBoolean(String key) {
+        return Boolean.parseBoolean(getValue(key));
+    }
+
+    @Override
+    @Transactional
+    public void setValue(String key, Object value) {
+        Confi confi = confiRepository.findByKey(key).orElse(null);
+
+        if (confi == null) {
+            confi = Confi.builder()
+                    .key(key)
+                    .value(value.toString())
+                    .build();
+        } else {
+            confi.setValue(value.toString());
+        }
+
+        confiRepository.save(confi);
     }
 }

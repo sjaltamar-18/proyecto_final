@@ -1,5 +1,7 @@
+
 package com.unimag.edu.proyecto_final.service;
 
+import com.unimag.edu.proyecto_final.api.dto.TicketDtos;
 import com.unimag.edu.proyecto_final.api.dto.TicketDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.*;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.StatusTicket;
@@ -18,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.List;
@@ -275,22 +278,111 @@ class TicketServicelmplTest {
 
 
     @Test
-    void cancel_debe_marcar_cancelado_si_existe() {
-        when(ticketRepository.existsById(15L)).thenReturn(true);
+    void cancel_debe_cancelar_y_reembolsar_90_por_ciento_si_falta_mas_de_24_horas() {
 
-        service.cancel(15L);
+        Long ticketId = 10L;
 
-        verify(ticketRepository).markAsCancelled(15L);
+        Ticket ticket = new Ticket();
+        ticket.setId(ticketId);
+        ticket.setPrice(100000.0);
+        ticket.setStatusTicket(StatusTicket.SOLD);
+
+
+        Trip trip = new Trip();
+        trip.setDepartureAt(LocalDateTime.now().plusHours(30));
+
+        ticket.setTrip(trip);
+
+
+        TicketDtos.TicketResponse mappedResponse = mock(TicketDtos.TicketResponse.class);
+
+
+        when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(ticketMapper.toResponse(any(Ticket.class))).thenReturn(mappedResponse);
+
+
+        TicketDtos.TicketResponse result = service.cancel(ticketId);
+
+
+        assertThat(result).isEqualTo(mappedResponse);
+
+
+        assertThat(ticket.getStatusTicket()).isEqualTo(StatusTicket.CANCELLED);
+
+
+        assertThat(ticket.getRefundAmount()).isEqualByComparingTo("90000.0");
+
+
+
+        assertThat(ticket.getCancelledAt()).isNotNull();
+
+
+        verify(ticketRepository).findById(ticketId);
+        verify(ticketRepository).save(ticket);
+        verify(ticketMapper).toResponse(ticket);
     }
-
     @Test
-    void cancel_debe_fallar_si_no_existe() {
-        when(ticketRepository.existsById(88L)).thenReturn(false);
+    void cancel_debe_fallar_si_ticket_ya_esta_cancelado() {
 
-        assertThatThrownBy(() -> service.cancel(88L))
+        Long ticketId = 20L;
+
+        Ticket ticket = new Ticket();
+        ticket.setId(ticketId);
+        ticket.setStatusTicket(StatusTicket.CANCELLED);
+
+        when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
+
+        assertThatThrownBy(() -> service.cancel(ticketId))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("ticket already cancelled");
+
+        verify(ticketRepository, never()).save(any());
+    }
+    @Test
+    void cancel_debe_reembolsar_50_por_ciento_si_falta_entre_12_y_24_horas() {
+
+        Long ticketId = 30L;
+
+        Ticket ticket = new Ticket();
+        ticket.setId(ticketId);
+        ticket.setPrice(200000.0);
+        ticket.setStatusTicket(StatusTicket.SOLD);
+
+        Trip trip = new Trip();
+        trip.setDepartureAt(LocalDateTime.now().plusHours(15)); // entre 12 y 24
+
+        ticket.setTrip(trip);
+
+        TicketDtos.TicketResponse mapped = mock(TicketDtos.TicketResponse.class);
+
+        when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
+        when(ticketRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(ticketMapper.toResponse(any())).thenReturn(mapped);
+
+        TicketDtos.TicketResponse result = service.cancel(ticketId);
+
+        assertThat(result).isEqualTo(mapped);
+        assertThat(ticket.getRefundAmount()).isEqualByComparingTo("100000.0"); // 50%
+        assertThat(ticket.getCancelledAt()).isNotNull();
+        assertThat(ticket.getStatusTicket()).isEqualTo(StatusTicket.CANCELLED);
+
+        verify(ticketRepository).save(ticket);
+        verify(ticketMapper).toResponse(ticket);
+    }
+    @Test
+    void cancel_debe_fallar_si_ticket_no_existe() {
+
+        when(ticketRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.cancel(999L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("ticket not found");
+
+        verify(ticketRepository, never()).save(any());
     }
+
+
 
 
     @Test
@@ -315,4 +407,5 @@ class TicketServicelmplTest {
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("QR not found");
     }
+
 }

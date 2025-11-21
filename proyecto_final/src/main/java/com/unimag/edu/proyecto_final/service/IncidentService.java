@@ -28,4 +28,6 @@ public interface IncidentService {
     void delete(Long id);
 
     int deleteOlderThan(int days);
+
+    IncidentResponse createDeliveryFailureIncident(Long parcelId, String reason);
 }
