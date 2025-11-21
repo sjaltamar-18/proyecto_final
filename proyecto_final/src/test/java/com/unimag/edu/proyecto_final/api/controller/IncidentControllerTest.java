@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unimag.edu.proyecto_final.api.dto.IncidentDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.EntityType;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.Type;
+import com.unimag.edu.proyecto_final.security.jwt.JwtService;
 import com.unimag.edu.proyecto_final.service.IncidentService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,9 @@ class IncidentControllerTest {
 
     @MockitoBean
     IncidentService incidentService;
+
+    @MockitoBean
+    JwtService jwtService;
 
     @Test
     void createIncident_shouldReturn201() throws Exception {

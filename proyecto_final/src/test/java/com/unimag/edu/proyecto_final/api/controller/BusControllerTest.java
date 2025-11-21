@@ -2,6 +2,7 @@ package com.unimag.edu.proyecto_final.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unimag.edu.proyecto_final.api.dto.BusDtos.*;
+import com.unimag.edu.proyecto_final.security.jwt.JwtService;
 import com.unimag.edu.proyecto_final.service.BusService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,9 @@ class BusControllerTest {
 
     @MockitoBean
     BusService busService;
+
+    @MockitoBean
+    JwtService jwtService;
 
     @Test
     void createBus_shouldReturn201() throws Exception {

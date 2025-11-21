@@ -3,6 +3,7 @@ package com.unimag.edu.proyecto_final.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unimag.edu.proyecto_final.api.dto.TripDtos.*;
 import com.unimag.edu.proyecto_final.domine.entities.enumera.BoardingStatus;
+import com.unimag.edu.proyecto_final.security.jwt.JwtService;
 import com.unimag.edu.proyecto_final.service.AssignmentService;
 import com.unimag.edu.proyecto_final.service.TripService;
 import org.apache.catalina.security.SecurityConfig;
@@ -43,6 +44,9 @@ class TripControllerTest {
 
     @MockitoBean
     AssignmentService assignmentService;
+
+    @MockitoBean
+    JwtService jwtService;
 
     private final LocalDateTime departureReal = LocalDateTime.of(2025, 1, 1, 8, 0);
 

@@ -3,6 +3,7 @@ package com.unimag.edu.proyecto_final.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unimag.edu.proyecto_final.api.dto.AssignmentDtos;
 import com.unimag.edu.proyecto_final.api.dto.AssignmentDtos.*;
+import com.unimag.edu.proyecto_final.security.jwt.JwtService;
 import com.unimag.edu.proyecto_final.service.AssignmentService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,9 @@ class AssignmentControllerTest {
 
     @MockitoBean
     AssignmentService service;
+
+    @MockitoBean
+    JwtService jwtService;
 
 
 

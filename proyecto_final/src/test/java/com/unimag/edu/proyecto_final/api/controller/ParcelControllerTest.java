@@ -2,6 +2,7 @@ package com.unimag.edu.proyecto_final.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unimag.edu.proyecto_final.api.dto.ParcelDtos.*;
+import com.unimag.edu.proyecto_final.security.jwt.JwtService;
 import com.unimag.edu.proyecto_final.service.ParcelService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,9 @@ class ParcelControllerTest {
 
     @MockitoBean
     ParcelService parcelService;
+
+    @MockitoBean
+    JwtService jwtService;
 
     @Test
     void create_shouldReturn201() throws Exception {

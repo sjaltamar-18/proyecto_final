@@ -2,6 +2,7 @@ package com.unimag.edu.proyecto_final.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unimag.edu.proyecto_final.api.dto.TicketDtos.*;
+import com.unimag.edu.proyecto_final.security.jwt.JwtService;
 import com.unimag.edu.proyecto_final.service.TicketService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,9 @@ class TicketControllerTest {
 
     @MockitoBean
     TicketService ticketService;
+
+    @MockitoBean
+    JwtService jwtService;
 
     @Test
     void createTicket_shouldReturn201() throws Exception {

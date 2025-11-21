@@ -2,6 +2,7 @@ package com.unimag.edu.proyecto_final.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unimag.edu.proyecto_final.api.dto.BaggageDtos.*;
+import com.unimag.edu.proyecto_final.security.jwt.JwtService;
 import com.unimag.edu.proyecto_final.service.BaggageService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,10 @@ class BaggageControllerTest {
 
     @MockitoBean
     BaggageService baggageService;
+
+
+    @MockitoBean
+    JwtService jwtService;
 
 
     @Test

@@ -3,6 +3,7 @@ package com.unimag.edu.proyecto_final.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unimag.edu.proyecto_final.api.dto.RouteDtos.*;
 import com.unimag.edu.proyecto_final.api.dto.StopDtos;
+import com.unimag.edu.proyecto_final.security.jwt.JwtService;
 import com.unimag.edu.proyecto_final.service.RouteService;
 import com.unimag.edu.proyecto_final.service.StopService;
 import org.apache.catalina.security.SecurityConfig;
@@ -43,6 +44,9 @@ class RouteControllerTest {
     RouteService routeService;
     @MockitoBean
     private StopService stopService;
+
+    @MockitoBean
+    JwtService jwtService;
 
     @Test
     void create_shouldReturn201() throws Exception {

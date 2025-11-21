@@ -2,6 +2,7 @@ package com.unimag.edu.proyecto_final.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unimag.edu.proyecto_final.api.dto.FareRuleDtos.*;
+import com.unimag.edu.proyecto_final.security.jwt.JwtService;
 import com.unimag.edu.proyecto_final.service.FareRuleService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,10 @@ class FareRuleControllerTest {
 
     @MockitoBean
     FareRuleService fareRuleService;
+
+
+    @MockitoBean
+    JwtService jwtService;
 
     @Test
     void create_shouldReturn201() throws Exception {
